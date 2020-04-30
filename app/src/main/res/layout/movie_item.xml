@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+            android:id="@+id/movieId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:paddingLeft="20dp"
+            android:text="1"/>
+
+    <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_below="@id/movieId">
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rel_lay"
+                >
+
+            <ImageView
+                    android:id="@+id/moviePhoto"
+                    android:layout_width="120dp"
+                    android:layout_height="200dp"
+                    android:layout_margin="10dp"/>
+
+
+            <TextView
+                    android:id="@+id/originalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_toRightOf="@+id/moviePhoto"
+                    android:text="Title : "
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:layout_marginRight="10dp"
+                    android:textSize="15sp" />
+
+            <TextView
+                    android:id="@+id/rusTitle"
+                    android:layout_below="@id/originalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#000"
+                    android:layout_marginRight="10dp"
+                    android:layout_toRightOf="@+id/moviePhoto"
+                    android:text="Title : "
+                    android:textSize="15sp" />
+
+            <TextView
+                    android:layout_below="@id/rusTitle"
+                    android:layout_toRightOf="@id/moviePhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/genres"
+                    android:textSize="12sp"
+                    android:layout_margin="5dp"
+                    android:text="боевик, фантастика"/>
+
+            <TextView
+                    android:id="@+id/movieRating"
+                    android:layout_toRightOf="@+id/moviePhoto"
+                    android:layout_below="@+id/genres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_margin="5dp"
+                    android:text="rating"/>
+
+            <TextView
+                    android:id="@+id/movieVotes"
+                    android:layout_toRightOf="@+id/movieRating"
+                    android:layout_below="@+id/genres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_margin="5dp"
+                    android:text="votes"/>
+
+            <TextView
+                    android:id="@+id/countries"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/movieVotes"
+                    android:layout_below="@+id/genres"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="60dp"
+                    android:text="США"
+                    android:textColor="#000"
+                    android:textSize="15sp" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
