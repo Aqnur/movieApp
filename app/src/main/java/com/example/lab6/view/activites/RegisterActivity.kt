@@ -1,6 +1,5 @@
-package com.example.lab6.view.autorization
+package com.example.lab6.view.activites
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ScrollView
@@ -8,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatTextView
 import com.example.lab6.R
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 

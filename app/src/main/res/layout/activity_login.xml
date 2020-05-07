@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         android:background="#FFFFFF"
         android:padding="20dp"
-        tools:context=".view.autorization.LoginActivity">
+        tools:context=".view.activites.LoginActivity">
 
     <ProgressBar
             android:id="@+id/progressBar"

@@ -11,18 +11,18 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-            <activity android:name="com.example.lab6.view.movie.MovieDetailActivity">
+            <activity android:name="com.example.lab6.view.activites.MovieDetailActivity">
             </activity>
-            <activity android:name=".view.autorization.Account">
+            <activity android:name="com.example.lab6.view.activities.autorization.Account">
             </activity>
             <activity android:name="com.example.lab6.view.favorite.Favourite">
             </activity>
-            <activity android:name="com.example.lab6.view.movie.MainActivity">
+            <activity android:name="com.example.lab6.view.activites.MainActivity">
             </activity>
-        <activity android:name="com.example.lab6.view.autorization.RegisterActivity">
+        <activity android:name="com.example.lab6.view.activites.RegisterActivity">
         </activity>
 
-         <activity android:name="com.example.lab6.view.autorization.LoginActivity">
+         <activity android:name="com.example.lab6.view.activites.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

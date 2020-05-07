@@ -1,4 +1,4 @@
-package com.example.lab6.view.movie
+package com.example.lab6.view.activites
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle

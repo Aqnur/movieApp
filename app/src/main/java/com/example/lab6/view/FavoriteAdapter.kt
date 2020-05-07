@@ -1,4 +1,4 @@
-package com.example.lab6.view.favorite
+package com.example.lab6.view
 
 import android.content.Context
 import android.content.Intent
@@ -9,9 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.lab6.view.movie.MovieDetailActivity
+import com.example.lab6.view.activites.MovieDetailActivity
 import com.example.lab6.R
 import com.example.lab6.model.json.movie.Result
+import com.example.lab6.view.adapters.MoviesViewHolder
 
 class FavoriteAdapter(val movies: List<Result>, val context: Context): RecyclerView.Adapter<MoviesViewHolder>() {
 

@@ -1,4 +1,4 @@
-package com.example.lab6.view.autorization
+package com.example.lab6.view.activites
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -14,11 +14,9 @@ import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.lab6.R
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
-import com.example.lab6.view.movie.MainActivity
 import com.example.lab6.view_model.LoginViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
 import com.google.gson.Gson

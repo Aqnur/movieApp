@@ -1,4 +1,4 @@
-package com.example.lab6.view.movie
+package com.example.lab6.view.adapters
 
 import android.content.Context
 import android.content.Intent
@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.model.json.movie.Result
+import com.example.lab6.view.MoviesViewHolder
+import com.example.lab6.view.activites.MovieDetailActivity
 
 class MoviesAdapter(var movies: List<Result>,
 val context: Context): RecyclerView.Adapter<MoviesViewHolder>() {
