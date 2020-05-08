@@ -11,7 +11,10 @@ import com.example.lab6.*
 import com.example.lab6.view.fragments.AccountFragment
 import com.example.lab6.view.fragments.FavouritesFragment
 import com.example.lab6.view.fragments.MoviesFragment
+import com.google.android.gms.measurement.module.Analytics
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.messaging.FirebaseMessaging
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 
 class MainActivity : AppCompatActivity() {
@@ -19,19 +22,31 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
     private lateinit var topTitle: TextView
+    private lateinit var bottomNavigation: BottomNavigationViewEx
     private val fragmentManager: FragmentManager = supportFragmentManager
     private var activeFragment: Fragment = MoviesFragment()
+
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate")
 
-        topTitle = findViewById(R.id.topTitle)
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        val bottomNavigation = findViewById<BottomNavigationViewEx>(R.id.bottomNavigationView)
+        bindViews()
         bottomNavigation.onNavigationItemSelectedListener = navListener
+        bottomNavAnimations()
+        fragmentManager.beginTransaction().replace(R.id.frame, MoviesFragment(), TAG).commit()
+    }
 
+    private fun bindViews() {
+        topTitle = findViewById(R.id.topTitle)
+        bottomNavigation = findViewById(R.id.bottomNavigationView)
+    }
+
+    private fun bottomNavAnimations() {
         bottomNavigation.setIconSize(33f, 33f)
         bottomNavigation.setTextVisibility(false)
         bottomNavigation.enableItemShiftingMode(false)
@@ -40,8 +55,6 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until bottomNavigation.menu.size()) {
             bottomNavigation.setIconTintList(i, null)
         }
-
-        fragmentManager.beginTransaction().replace(R.id.frame, MoviesFragment(), TAG).commit()
     }
 
     private val navListener =
@@ -70,5 +83,4 @@ class MainActivity : AppCompatActivity() {
             }
             return@OnNavigationItemSelectedListener false
         }
-
 }

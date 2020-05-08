@@ -14,6 +14,7 @@ import com.example.lab6.R
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
+import com.google.firebase.analytics.FirebaseAnalytics
 
 class MoviesFragment : Fragment() {
 
@@ -23,6 +24,7 @@ class MoviesFragment : Fragment() {
     lateinit var recyclerView: RecyclerView
     private lateinit var movieListViewModel: MovieListViewModel
     private var moviesAdapter: MoviesAdapter?= null
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +37,7 @@ class MoviesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
         bindViews(view)
         swipeRefresh()
         getMovies()
@@ -45,7 +48,7 @@ class MoviesFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
     }
 
-    fun swipeRefresh(){
+    fun swipeRefresh() {
         recyclerView.layoutManager = LinearLayoutManager(requireActivity())
         swipeRefreshLayout.setOnRefreshListener {
             moviesAdapter?.clearAll()
@@ -53,11 +56,10 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    fun getMovies(){
+    fun getMovies() {
         val viewModelProviderFactory = ViewModelProviderFactory(context = requireActivity())
         movieListViewModel = ViewModelProvider(this, viewModelProviderFactory).get(
             MovieListViewModel::class.java)
-
 
         movieListViewModel.getMovies()
         movieListViewModel.liveData.observe(this, Observer { result ->
@@ -81,5 +83,4 @@ class MoviesFragment : Fragment() {
             }
         })
     }
-
 }

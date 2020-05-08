@@ -5,155 +5,68 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.activities.autorization.Account">
+        tools:context=".view.fragments.AccountFragment">
+
+    <ImageView
+            android:id="@+id/userImage"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:layout_margin="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-            android:id="@+id/profileText"
-            android:layout_width="match_parent"
+        android:id="@+id/profileText"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="30dp"
+        android:paddingLeft="10dp"
+        android:text="username"
+        android:textColor="#000"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/userImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+            android:id="@+id/profileIdText"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text=" "
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textStyle="bold"
-            android:textSize="25sp"
-            android:paddingLeft="10dp"
-            android:textColor="#000"
             android:layout_marginVertical="30dp"
-    />
-
-    <TextView
-            android:id="@+id/moiKinoPoisk"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/profileText"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textStyle="bold"
-            android:textSize="15sp"
             android:paddingLeft="10dp"
+            android:text="id"
             android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="Мой КиноПоиск"
-    />
-
-    <TextView
-            android:id="@+id/text1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/moiKinoPoisk"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:padding="10dp"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="Мои звёзды"
-    />
-
-
-    <TextView
-            android:id="@+id/text2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/text1"
-            app:layout_constraintStart_toStartOf="parent"
-            android:padding="10dp"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="Мои фильмы"
-    />
-
-    <TextView
-            android:id="@+id/text3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/text2"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:padding="10dp"
-            android:layout_marginTop="10dp"
-            android:text="Мои покупки"
-    />
-
-
-    <TextView
-            android:id="@+id/text4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/text3"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:padding="10dp"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="Мои Загрузги"
-    />
-
-    <TextView
-            android:id="@+id/prilozhenie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/text4"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="25sp"
             android:textStyle="bold"
-            android:textSize="15sp"
-            android:paddingLeft="10dp"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="Приложение"
-    />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/userImage"
+            app:layout_constraintTop_toBottomOf="@+id/profileText" />
 
-
-    <TextView
-            android:id="@+id/text5"
-            android:layout_width="match_parent"
+    <Button
+            android:id="@+id/map"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/prilozhenie"
+            android:layout_margin="10dp"
+            android:background="#E94800"
+            android:text="map"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toTopOf="@+id/logout"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:padding="10dp"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="Настройки"
-    />
+            app:layout_constraintTop_toBottomOf="@+id/userImage" />
 
-    <TextView
-            android:id="@+id/text6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/text5"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:padding="10dp"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="Служба поддержки"
-    />
-
-    <TextView
-            android:id="@+id/text7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/text6"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="15sp"
-            android:padding="10dp"
-            android:textColor="#000"
-            android:layout_marginTop="10dp"
-            android:text="История"
-    />
 
     <Button
             android:id="@+id/logout"
-            android:onClick="userLogOut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/text7"
-            android:layout_marginHorizontal="10dp"
+            android:layout_margin="10dp"
             android:background="#E94800"
             android:text="Выйти"
             android:textAllCaps="false"
             android:textColor="#fff"
-    />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

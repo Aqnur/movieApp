@@ -4,14 +4,16 @@ import android.content.Context
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.lab6.model.Marker
 import com.example.lab6.model.json.GenresConverter
 import com.example.lab6.model.json.movie.Result
 
 
-@Database(entities = [Result::class],version = 2,exportSchema = false)
+@Database(entities = [Result::class, Marker::class],version = 2,exportSchema = false)
 @TypeConverters(GenresConverter::class)
-abstract class MovieDatabase:RoomDatabase() {
+abstract class MovieDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
+    abstract fun markerDao(): MarkerDao
 
     companion object {
 
