@@ -1,6 +1,7 @@
 package com.example.lab6.model.api
 
 import com.example.lab6.model.json.account.RequestToken
+import com.example.lab6.model.json.movie.Genres
 import com.example.lab6.model.json.movie.PopularMovies
 import com.example.lab6.model.json.movie.Result
 import com.google.gson.JsonObject
@@ -35,6 +36,9 @@ interface MovieApi {
                           @Query("api_key") key: String,
                           @Query("session_id") sessionId: String,
                           @Query("language") lang: String): Response<PopularMovies>
+
+    @GET("/3/genre/movie/list")
+    suspend fun getGenres(@Query("api_key") apiKey: String, @Query("language") lang: String): Response<Genres>
 
     //auth
     //new token

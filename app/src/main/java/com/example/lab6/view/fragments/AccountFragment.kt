@@ -10,8 +10,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.lab6.R
+import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.view.activites.GoogleMapsActivity
 import com.example.lab6.view.activites.LoginActivity
@@ -47,6 +50,8 @@ class AccountFragment : Fragment() {
         val viewModelProviderFactory = ViewModelProviderFactory(context = requireActivity())
         profileListViewModel = ViewModelProvider(this, viewModelProviderFactory).get(ProfileViewModel::class.java)
 
+        accountDetails()
+
         preferences = requireActivity().getSharedPreferences("Username", 0) as SharedPreferences
         editor = preferences.edit()
 
@@ -56,6 +61,19 @@ class AccountFragment : Fragment() {
             profileListViewModel.deleteProfileInform()
             startActivity(intent)
         }
+    }
+
+    private fun accountDetails() {
+        profileListViewModel.getAccountDetail()
+        profileListViewModel.liveData.observe(this, Observer {
+            setData(it)
+        })
+    }
+
+    private fun setData(account: Account) {
+        Glide.with(requireActivity())
+            .load("https://secure.gravatar.com/avatar/${account.avatar.gravatar.hash}")
+            .into(userAvatar)
     }
 
     private fun bindViews(view: View) {
@@ -75,7 +93,6 @@ class AccountFragment : Fragment() {
         val authorizedName = Singleton.getUserName()
         textViewName?.text = authorizedName
         userId.text = "id:" + Singleton.getAccountId().toString()
-        userAvatar.setImageResource(R.drawable.kinopoisk_logo)
     }
 
 }

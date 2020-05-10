@@ -58,19 +58,19 @@
                     android:textSize="15sp" />
 
             <TextView
+                    android:id="@+id/genresList"
                     android:layout_below="@id/rusTitle"
                     android:layout_toRightOf="@id/moviePhoto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/genres"
                     android:textSize="12sp"
                     android:layout_margin="5dp"
-                    android:text="боевик, фантастика"/>
+                    android:text="genre"/>
 
             <TextView
                     android:id="@+id/movieRating"
                     android:layout_toRightOf="@+id/moviePhoto"
-                    android:layout_below="@+id/genres"
+                    android:layout_below="@+id/genresList"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
@@ -80,7 +80,7 @@
             <TextView
                     android:id="@+id/movieVotes"
                     android:layout_toRightOf="@+id/movieRating"
-                    android:layout_below="@+id/genres"
+                    android:layout_below="@+id/genresList"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/movieVotes"
-                    android:layout_below="@+id/genres"
+                    android:layout_below="@+id/genresList"
                     android:layout_marginTop="11dp"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="60dp"

@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 @Entity(tableName = "movie_table")
 data class Result(
@@ -21,7 +22,9 @@ data class Result(
     @SerializedName("tagline") var tagline: String ?= null,
 
     var liked: Int? = 0,
+    var genreNames: String = "",
 
+    @Ignore @SerializedName("genre_ids") var genreIds: ArrayList<Int> ?= null,
     @Ignore var genres: List<Genre> ?= null,
     @Ignore var productionCountries: List<ProductionCountryX> ?= null
-)
+) : Serializable

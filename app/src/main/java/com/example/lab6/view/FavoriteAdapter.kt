@@ -49,7 +49,7 @@ class MoviesViewHolder(itemView : View): RecyclerView.ViewHolder(itemView){
     private val rating: TextView = itemView.findViewById(R.id.movieRating)
     private val votes: TextView = itemView.findViewById(R.id.movieVotes)
     private val movieId: TextView = itemView.findViewById(R.id.movieId)
-    private val genres: TextView = itemView.findViewById(R.id.genres)
+    private val genres: TextView = itemView.findViewById(R.id.genresList)
     private var id: Int = 0
 
     fun bind(movie: Result) {
@@ -67,9 +67,7 @@ class MoviesViewHolder(itemView : View): RecyclerView.ViewHolder(itemView){
         rusTitle.text = movie.originalTitle + "("+str+")"
         rating.text = movie.voteAverage.toString()
         votes.text = movie.voteCount.toString()
-
-//        genres.text = movie.genre_ids.toString()
-//        getGenres(movie.genre_ids)
+        genres.text = movie.genreNames.substring(0, movie.genreNames.length - 2)
     }
 
 }
