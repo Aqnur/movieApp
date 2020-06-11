@@ -2,10 +2,10 @@ package com.example.lab6.view_model
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.example.lab6.model.Marker
+import com.example.lab6.model.json.account.Marker
 import com.example.lab6.model.database.MarkerDao
 import com.example.lab6.model.database.MovieDatabase
-import com.example.lab6.model.generateMarkers
+import com.example.lab6.model.json.account.generateMarkers
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

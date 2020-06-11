@@ -48,15 +48,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationChannel.lightColor = Color.YELLOW
             notificationChannel.vibrationPattern = longArrayOf(0, 1000, 500, 1000)
             notificationChannel.enableVibration(true)
-
             notificationManager.createNotificationChannel(notificationChannel)
         }
 
         val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANEL_ID)
-
-        val remoteViews =
-            RemoteViews(applicationContext.packageName, R.layout.notification)
-
+        val remoteViews = RemoteViews(applicationContext.packageName, R.layout.notification)
         notificationBuilder
             .setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
@@ -69,4 +65,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(1, notificationBuilder.build())
     }
+
+
 }

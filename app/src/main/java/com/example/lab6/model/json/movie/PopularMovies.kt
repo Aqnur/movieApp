@@ -14,13 +14,3 @@ data class Genre(
 data class Genres(
     val genres: List<Genre>
 )
-
-data class Validation (
-    @SerializedName("username") val username: String,
-    @SerializedName("password") val password: String,
-    @SerializedName("request_token") val requestToken: String
-)
-
-data class Session(
-    @SerializedName("session_id") val sessionId: String
-)

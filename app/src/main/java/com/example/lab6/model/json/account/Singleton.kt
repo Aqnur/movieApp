@@ -16,15 +16,11 @@ class Singleton(
         private var INSTANCE: Singleton? = null
 
         @Synchronized
-        fun create(username: String, session_id: String, account_id: Int):
-                Singleton =
-            INSTANCE
-                ?: Singleton(
+        fun create(username: String, session_id: String, account_id: Int): Singleton = INSTANCE ?: Singleton(
                     username,
                     session_id,
                     account_id
-                )
-                    .also { INSTANCE = it }
+                ).also { INSTANCE = it }
 
         fun getSession(): String {
             return INSTANCE!!.sessionId

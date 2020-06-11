@@ -17,19 +17,18 @@ import com.example.lab6.view_model.ViewModelProviderFactory
 
 class MovieDetailActivity : AppCompatActivity(){
 
-    lateinit var rusTitle: TextView
-    lateinit var posterImage: ImageView
-    lateinit var titleOriginal: TextView
-    lateinit var genres: TextView
-    lateinit var release: TextView
-    lateinit var tagline: TextView
-    lateinit var countries: TextView
-    lateinit var runtime: TextView
-    lateinit var overview: TextView
-    lateinit var rating: TextView
-    lateinit var votes: TextView
-    lateinit var ratingBar: RatingBar
-    lateinit var like: ImageView
+    private lateinit var rusTitle: TextView
+    private lateinit var posterImage: ImageView
+    private lateinit var titleOriginal: TextView
+    private lateinit var genres: TextView
+    private lateinit var tagline: TextView
+    private lateinit var countries: TextView
+    private lateinit var runtime: TextView
+    private lateinit var overview: TextView
+    private lateinit var rating: TextView
+    private lateinit var votes: TextView
+    private lateinit var ratingBar: RatingBar
+    private lateinit var like: ImageView
     private lateinit var progressBar: ProgressBar
     private var movie: Result? = null
     private var movieId: Int? = null
@@ -88,25 +87,22 @@ class MovieDetailActivity : AppCompatActivity(){
         Glide.with(this@MovieDetailActivity)
             .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
             .into(posterImage)
-        var str: String = ""
 
-        for (i in 0..3){
-            str += movie.releaseDate[i]
-        }
-
-        titleOriginal.text = movie.originalTitle + "(" + str + ")"
+        titleOriginal.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
         rusTitle.text = movie.title
         overview.text = movie.overview
         rating.text = movie.voteAverage.toString()
         votes.text = movie.voteCount.toString()
         ratingBar.rating = movie.voteAverage.toFloat()
-        genres.text = getListOfString(movie.genres?.map { it.name }.toString().length, movie.genres?.map { it.name }.toString())
-        if(movie.productionCountries != null) {
-            countries.text = getListOfString(movie.productionCountries?.map { it.iso_3166_1}.toString().length, movie.productionCountries?.map { it.iso_3166_1 }.toString())
+        if(movie.genres != null){
+            genres.text = movie.genres?.map { it.name }.toString().substring(1, movie.genres?.map { it.name }.toString().length - 1)
         }
-
+        if(movie.productionCountries != null) {
+            countries.text = movie.productionCountries?.map { it.iso_3166_1 }.toString()
+                .substring(1, movie.productionCountries?.map { it.iso_3166_1 }.toString().length-1)
+        }
         if (movie.runtime != null) {
-            runtime.text = movie.runtime.toString() + "мин"
+            runtime.text = movie.runtime.toString() + " мин"
         }
         if (movie.tagline != null) {
             tagline.text = "«" + movie.tagline + "»"
@@ -126,7 +122,7 @@ class MovieDetailActivity : AppCompatActivity(){
         }
     }
 
-    fun bindViews(){
+    private fun bindViews(){
         posterImage = findViewById(R.id.moviePhoto)
         titleOriginal = findViewById(R.id.originalTitle)
         genres = findViewById(R.id.genres)
@@ -140,14 +136,6 @@ class MovieDetailActivity : AppCompatActivity(){
         ratingBar = findViewById(R.id.starRating)
         like = findViewById(R.id.like)
         progressBar = findViewById(R.id.progressBar)
-    }
-
-    private fun getListOfString(len: Int, s: String): String {
-        var str: String = ""
-        for (i in 1..len-2) {
-            str += s[i]
-        }
-        return str
     }
 
     private fun configureBackButton(){

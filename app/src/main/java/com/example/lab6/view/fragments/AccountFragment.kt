@@ -56,7 +56,7 @@ class AccountFragment : Fragment() {
         editor = preferences.edit()
 
         logout.setOnClickListener {
-            editor.clear().commit()
+            editor.clear().apply()
             val intent = Intent(requireActivity(), LoginActivity::class.java)
             profileListViewModel.deleteProfileInform()
             startActivity(intent)

@@ -34,8 +34,6 @@
                 android:name=".view.activites.GoogleMapsActivity"
                 android:label="@string/title_activity_google_maps"></activity>
         <activity android:name=".view.activites.MovieDetailActivity"></activity>
-        <activity android:name=".view.activities.autorization.Account"></activity>
-        <activity android:name=".view.favorite.Favourite"></activity>
         <activity android:name=".view.activites.MainActivity"></activity>
         <activity android:name=".view.activites.RegisterActivity"></activity>
         <activity android:name=".view.activites.LoginActivity">

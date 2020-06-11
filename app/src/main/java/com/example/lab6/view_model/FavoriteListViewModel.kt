@@ -41,17 +41,9 @@ class FavoriteListViewModel(private val context: Context) : ViewModel(), Corouti
         launch {
             liveData.value = State.ShowLoading
 
-            val likesOffline = movieDao?.getIdOffline(11)
-
-            for (i in likesOffline!!) {
-                val body = JsonObject().apply {
-                    addProperty("media_type", "movie")
-                    addProperty("media_id", i)
-                    addProperty("favorite", true)
-                }
+            val list = withContext(Dispatchers.IO) {
                 try {
-                    val response = RetrofitService.getMovieApi(
-                        MovieApi::class.java)
+                    val response = RetrofitService.getMovieApi(MovieApi::class.java)
                         .getFavoriteMoviesCoroutine(
                             accountId,
                             BuildConfig.API_KEY,
@@ -59,56 +51,8 @@ class FavoriteListViewModel(private val context: Context) : ViewModel(), Corouti
                             "rus"
                         )
                     if (response.isSuccessful) {
-                        val likeMoviesOffline = movieDao?.getMovieOffline(11)
-                        for (movie in likeMoviesOffline!!) {
-                            movie.liked = 1
-                            movieDao?.insert(movie)
-                        }
-                    }
-                } catch (e: Exception) {
-                }
-            }
-
-            val unLikesOffline = movieDao?.getIdOffline(10)
-
-            for (i in unLikesOffline!!) {
-                val body = JsonObject().apply {
-                    addProperty("media_type", "movie")
-                    addProperty("media_id", i)
-                    addProperty("favorite", false)
-                }
-                try {
-                    val response = RetrofitService.getMovieApi(
-                        MovieApi::class.java)
-                        .markFavoriteMovieCoroutine(
-                            accountId,
-                            BuildConfig.API_KEY,
-                            sessionId,
-                            body
-                        )
-                    if (response.isSuccessful) {
-                        val unlikeMoviesOffline = movieDao?.getMovieOffline(10)
-                        for (movie in unlikeMoviesOffline!!) {
-                            movie.liked = 0
-                            movieDao?.insert(movie)
-                        }
-                    }
-                } catch (e: Exception) {
-                }
-            }
-
-            val list = withContext(Dispatchers.IO) {
-                try {
-                    val response = RetrofitService.getMovieApi(
-                        MovieApi::class.java).getFavoriteMoviesCoroutine(
-                        accountId,
-                        BuildConfig.API_KEY,
-                        sessionId,
-                        "rus"
-                    )
-                    if (response.isSuccessful) {
                         val result = response.body()!!.results
-                        if (result != null) {
+                        if (!result.isNullOrEmpty()) {
                             for (m in result) {
                                 m.liked = 1
                             }

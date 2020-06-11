@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
-import com.example.lab6.view.FavoriteAdapter
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.FavoriteListViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
@@ -23,7 +22,7 @@ class FavouritesFragment : Fragment() {
     lateinit var swipeRefreshLayoutFav: SwipeRefreshLayout
     lateinit var recyclerViewFav: RecyclerView
     private lateinit var favoriteListViewModel: FavoriteListViewModel
-    private var favoriteAdapter: FavoriteAdapter?= null
+    private var favoriteAdapter: MoviesAdapter?= null
 
     override fun onCreateView(
         inflater: LayoutInflater,

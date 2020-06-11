@@ -20,8 +20,8 @@ class MoviesFragment : Fragment() {
 
     private val TAG = "MoviesFragment"
 
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    lateinit var recyclerView: RecyclerView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var recyclerView: RecyclerView
     private lateinit var movieListViewModel: MovieListViewModel
     private var moviesAdapter: MoviesAdapter?= null
     private lateinit var firebaseAnalytics: FirebaseAnalytics

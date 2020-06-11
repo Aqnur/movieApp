@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.lab6.model.Marker
-import com.example.lab6.model.json.GenresConverter
+import com.example.lab6.model.json.account.Marker
+import com.example.lab6.model.json.movie.GenresConverter
 import com.example.lab6.model.json.movie.Result
 
 

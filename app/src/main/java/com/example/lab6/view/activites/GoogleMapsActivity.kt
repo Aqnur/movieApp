@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.example.lab6.R
-import com.example.lab6.model.Marker
+import com.example.lab6.model.json.account.Marker
 import com.example.lab6.view_model.MarkersViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
 
@@ -29,9 +29,9 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
         setViewModel()
 
         markers = markersViewModel.getMarkers()
+        markersViewModel.fillDatabase()
 
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 

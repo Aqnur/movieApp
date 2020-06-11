@@ -1,4 +1,4 @@
-package com.example.lab6.model.json
+package com.example.lab6.model.json.movie
 import java.util.Collections.emptyList
 import androidx.room.TypeConverter
 import com.example.lab6.model.json.movie.Genre

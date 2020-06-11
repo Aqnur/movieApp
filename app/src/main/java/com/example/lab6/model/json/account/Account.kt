@@ -15,7 +15,7 @@ data class Account (
     @SerializedName("name")
     val name: String,
     @SerializedName("include_adult")
-    val include_adult: Boolean,
+    val includeAdult: Boolean,
     @SerializedName("username")
     val username: String
 ): Serializable

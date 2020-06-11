@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.model.json.movie.Result
-import com.example.lab6.view.MoviesViewHolder
 import com.example.lab6.view.activites.MovieDetailActivity
 
 class MoviesAdapter(var movies: List<Result>,
@@ -66,7 +65,7 @@ class MoviesViewHolder(itemView : View): RecyclerView.ViewHolder(itemView){
         rusTitle.text = movie.originalTitle + "(" + str + ")"
         rating.text = movie.voteAverage.toString()
         votes.text = movie.voteCount.toString()
-        genres.text = movie.genreNames.substring(0, movie.genreNames.length - 2)
+//        genres.text = movie.genreNames.substring(0, movie.genreNames.length - 2)
     }
 
 }
