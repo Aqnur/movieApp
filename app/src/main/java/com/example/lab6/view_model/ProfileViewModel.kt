@@ -8,6 +8,8 @@ import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Singleton
+import com.example.lab6.model.repository.AccountRepository
+import com.example.lab6.model.repository.AccountRepositoryImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
@@ -17,12 +19,15 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class ProfileViewModel(
-    private val context: Context
+    private val accountRepository: AccountRepository
 ) : ViewModel(), CoroutineScope {
 
     val liveData = MutableLiveData<Account>()
     private val job = Job()
     private var sessionId = Singleton.getSession()
+
+//    private val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
@@ -36,14 +41,13 @@ class ProfileViewModel(
             val body: JsonObject = JsonObject().apply {
                 addProperty("session_id", sessionId)
             }
-            RetrofitService.getMovieApi(MovieApi::class.java).deleteSession(BuildConfig.API_KEY, body)
+            accountRepository.deleteSession(BuildConfig.API_KEY, body)
         }
     }
 
     fun getAccountDetail() {
         launch {
-            val response = RetrofitService.getMovieApi(MovieApi::class.java)
-                .getAccount(BuildConfig.API_KEY, sessionId)
+            val response = accountRepository.getAccount(BuildConfig.API_KEY, sessionId)
             if(response.isSuccessful) {
                 val account = Gson().fromJson(
                     response.body(),

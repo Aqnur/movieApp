@@ -28,7 +28,7 @@ abstract class MovieDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(
                     context.applicationContext,
-                    MovieDatabase::class.java, "app_database.db"
+                    MovieDatabase::class.java, "app_database2.db"
                 ).addMigrations(MIGRATION_1_2)
                     .allowMainThreadQueries()
                     .build()

@@ -12,6 +12,10 @@ import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Session
 import com.example.lab6.model.json.account.RequestToken
 import com.example.lab6.model.json.account.User
+import com.example.lab6.model.repository.AccountRepository
+import com.example.lab6.model.repository.AccountRepositoryImpl
+import com.example.lab6.model.repository.MovieRepository
+import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class LoginViewModel(private val context: Context) : ViewModel(), CoroutineScope {
+class LoginViewModel(private val accountRepository: AccountRepository) : ViewModel(), CoroutineScope {
 
     private val job = Job()
 
@@ -33,6 +37,8 @@ class LoginViewModel(private val context: Context) : ViewModel(), CoroutineScope
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
+//    private val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
+
     override fun onCleared() {
         super.onCleared()
         job.cancel()
@@ -41,8 +47,7 @@ class LoginViewModel(private val context: Context) : ViewModel(), CoroutineScope
     fun makeToken(name: String, password: String) {
         liveData.value = State.ShowLoading
         launch {
-            val response = RetrofitService.getMovieApi(MovieApi::class.java)
-                .getRequestToken(BuildConfig.API_KEY)
+            val response = accountRepository.getRequestToken(BuildConfig.API_KEY)
             if(response.isSuccessful){
                 requestToken = response.body()?.requestToken.toString()
                 responseToken(name, password)
@@ -60,8 +65,7 @@ class LoginViewModel(private val context: Context) : ViewModel(), CoroutineScope
                 addProperty("password", password)
                 addProperty("request_token", requestToken)
             }
-            val responseLogin = RetrofitService.getMovieApi(MovieApi::class.java)
-                .validation(BuildConfig.API_KEY, body)
+            val responseLogin = accountRepository.validation(BuildConfig.API_KEY, body)
 
             if(responseLogin.isSuccessful) {
                 val newCreatedToken = Gson().fromJson(
@@ -79,8 +83,7 @@ class LoginViewModel(private val context: Context) : ViewModel(), CoroutineScope
 
     private fun getSession(name: String, body: JsonObject) {
         launch {
-            val responseSession = RetrofitService.getMovieApi(MovieApi::class.java)
-                .createSession(BuildConfig.API_KEY, body)
+            val responseSession = accountRepository.createSession(BuildConfig.API_KEY, body)
             if(responseSession.isSuccessful) {
                 val newSession = Gson().fromJson(
                     responseSession.body(),
@@ -97,8 +100,7 @@ class LoginViewModel(private val context: Context) : ViewModel(), CoroutineScope
 
     private fun getAccountId(name: String, sessionId: String) {
         launch {
-            val response = RetrofitService.getMovieApi(MovieApi::class.java)
-                .getAccount(BuildConfig.API_KEY, sessionId)
+            val response = accountRepository.getAccount(BuildConfig.API_KEY, sessionId)
             if (response.isSuccessful) {
                 val newAccId = Gson().fromJson(
                     response.body(),

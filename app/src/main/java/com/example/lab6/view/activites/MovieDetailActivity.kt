@@ -11,7 +11,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.lab6.R
+import com.example.lab6.model.api.RetrofitService
+import com.example.lab6.model.database.MovieDao
+import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.movie.Result
+import com.example.lab6.model.repository.MovieRepository
+import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
 
@@ -48,8 +53,10 @@ class MovieDetailActivity : AppCompatActivity(){
     }
 
     private fun getMovieCoroutine(id: Int){
-        val viewModelProviderFactory = ViewModelProviderFactory(context = this@MovieDetailActivity)
-        movieDetailsViewModel = ViewModelProvider(this, viewModelProviderFactory).get(MovieDetailViewModel::class.java)
+        val movieDao: MovieDao = MovieDatabase.getDatabase(this).movieDao()
+        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
+
+        movieDetailsViewModel = MovieDetailViewModel(movieRepository)
 
         movieDetailsViewModel.getMovie(id)
         movieDetailsViewModel.liveData.observe(this, Observer { result ->
@@ -138,7 +145,7 @@ class MovieDetailActivity : AppCompatActivity(){
         progressBar = findViewById(R.id.progressBar)
     }
 
-    private fun configureBackButton(){
+    private fun configureBackButton() {
         val back: ImageView = findViewById(R.id.back)
         back.setOnClickListener {
             finish()

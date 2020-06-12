@@ -11,6 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
+import com.example.lab6.model.api.RetrofitService
+import com.example.lab6.model.database.MovieDao
+import com.example.lab6.model.database.MovieDatabase
+import com.example.lab6.model.repository.MovieRepository
+import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.FavoriteListViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
@@ -54,8 +59,9 @@ class FavouritesFragment : Fragment() {
     }
 
     fun getFavMovieCoroutine() {
-        val viewModelProviderFactory = ViewModelProviderFactory(context = requireActivity())
-        favoriteListViewModel = ViewModelProvider(this, viewModelProviderFactory).get(FavoriteListViewModel::class.java)
+        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
+        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
+        favoriteListViewModel = FavoriteListViewModel(movieRepository)
 
         favoriteListViewModel.getFavorites()
         favoriteListViewModel.liveData.observe(this, Observer { result ->
@@ -78,6 +84,13 @@ class FavouritesFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        swipeRefreshLayoutFav.isRefreshing = true
+        getFavMovieCoroutine()
+        swipeRefreshLayoutFav.isRefreshing = false
     }
 
 }

@@ -14,9 +14,12 @@ import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.lab6.R
+import com.example.lab6.model.api.RetrofitService
 import com.google.android.material.textfield.TextInputLayout
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
+import com.example.lab6.model.repository.AccountRepository
+import com.example.lab6.model.repository.AccountRepositoryImpl
 import com.example.lab6.view_model.LoginViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
 import com.google.gson.Gson
@@ -46,8 +49,8 @@ class LoginActivity : AppCompatActivity(){
 
         initViews()
 
-        val viewModelProviderFactory = ViewModelProviderFactory(context = this@LoginActivity)
-        loginViewModel = ViewModelProvider(this, viewModelProviderFactory).get(LoginViewModel::class.java)
+        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
+        loginViewModel = LoginViewModel(accountRepository)
 
         stayLogged()
 

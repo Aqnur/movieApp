@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
+import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.R
 import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.database.MovieDao
@@ -11,24 +12,22 @@ import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.json.movie.GenresList
 import com.example.lab6.model.json.movie.Result
+import com.example.lab6.model.repository.MovieRepositoryImpl
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class MovieListViewModel(
-    private val context: Context
+    private var movieRepository: MovieRepository
 ) : ViewModel(), CoroutineScope {
 
     private val job = Job()
 
-    private val movieDao: MovieDao
-
     val liveData = MutableLiveData<State>()
 
     init {
-        GenresList.getGenres()
-        movieDao = MovieDatabase.getDatabase(context = context).movieDao()
+
     }
 
     override val coroutineContext: CoroutineContext
@@ -44,22 +43,14 @@ class MovieListViewModel(
             liveData.value = State.ShowLoading
             val list = withContext(Dispatchers.IO){
                 try {
-                    val response = RetrofitService.getMovieApi(
-                        MovieApi::class.java).getMovieListCoroutine(BuildConfig.API_KEY, "ru")
-                    if(response.isSuccessful) {
-                        val result = response.body()!!.results
+                    val response = movieRepository.getMovies(BuildConfig.API_KEY, "ru")
+                        val result = response!!.results
                         if(!result.isNullOrEmpty()){
-                            movieDao.insertAll(result)
-                            for (movie in result) {
-                                setMovieGenres(movie)
-                            }
+                            movieRepository.insertAllDB(result)
                         }
                         result
-                    }else{
-                        movieDao.getMovies() ?: emptyList()
-                    }
                 } catch (e: Exception){
-                    movieDao.getMovies() ?: emptyList()
+                    movieRepository.getMoviesDB() ?: emptyList()
                 }
             }
             liveData.value = State.HideLoading
@@ -67,14 +58,6 @@ class MovieListViewModel(
         }
     }
 
-    private fun setMovieGenres(movie: Result) {
-        movie.genreNames = ""
-        movie.genreIds?.forEach { genreId ->
-            val genreName = GenresList.genres?.get(genreId)
-                .toString().toLowerCase(Locale.ROOT)
-            movie.genreNames += context.getString(R.string.genre_name, genreName)
-        }
-    }
 
     sealed class State {
         object ShowLoading : State()

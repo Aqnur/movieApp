@@ -11,6 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
+import com.example.lab6.model.api.RetrofitService
+import com.example.lab6.model.database.MovieDao
+import com.example.lab6.model.database.MovieDatabase
+import com.example.lab6.model.repository.MovieRepository
+import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
@@ -57,9 +62,10 @@ class MoviesFragment : Fragment() {
     }
 
     fun getMovies() {
-        val viewModelProviderFactory = ViewModelProviderFactory(context = requireActivity())
-        movieListViewModel = ViewModelProvider(this, viewModelProviderFactory).get(
-            MovieListViewModel::class.java)
+        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
+        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
+
+        movieListViewModel = MovieListViewModel(movieRepository)
 
         movieListViewModel.getMovies()
         movieListViewModel.liveData.observe(this, Observer { result ->
