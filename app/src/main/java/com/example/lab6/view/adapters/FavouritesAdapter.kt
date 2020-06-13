@@ -10,10 +10,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
-import com.example.lab6.view.activites.MovieDetailActivity
 import com.example.lab6.model.json.movie.Result
+import com.example.lab6.view.activites.MovieDetailActivity
 
-class FavouritesAdapter(val movies: List<Result>, val context: Context): RecyclerView.Adapter<FavouritesViewHolder>() {
+class FavouritesAdapter(
+    private val itemClickListner: RecyclerViewItemClick? = null,
+    val movies: List<Result>,
+    val context: Context
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavouritesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
@@ -24,64 +28,64 @@ class FavouritesAdapter(val movies: List<Result>, val context: Context): Recycle
         return movies.size
     }
 
-    override fun onBindViewHolder(holder: FavouritesViewHolder, position: Int) {
-        holder.itemView.setOnClickListener {
-            val intent = Intent(context, MovieDetailActivity::class.java).also {
-                it.putExtra("id", movies[position].id)
-                it.putExtra("pos", position)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if(holder is FavouritesViewHolder) {
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context, MovieDetailActivity::class.java).also {
+                    it.putExtra("id", movies[position].id)
+                    it.putExtra("pos", position)
+                }
+                context.startActivity(intent)
             }
-            context.startActivity(intent)
+            return holder.bind(movies[position])
         }
-        return holder.bind(movies[position])
     }
 
     fun clearAll() {
         (movies as? ArrayList<Result>)?.clear()
         notifyDataSetChanged()
     }
-}
 
-class FavouritesViewHolder(itemView : View): RecyclerView.ViewHolder(itemView){
-    private val photo: ImageView = itemView.findViewById(R.id.moviePhoto)
-    private val title: TextView = itemView.findViewById(R.id.originalTitle)
-    private val rusTitle: TextView = itemView.findViewById(R.id.rusTitle)
-    private val rating: TextView = itemView.findViewById(R.id.movieRating)
-    private val votes: TextView = itemView.findViewById(R.id.movieVotes)
-    private val movieId: TextView = itemView.findViewById(R.id.movieId)
-    private val moviesLike: ImageView = itemView.findViewById(R.id.moviesLike)
-    private var id: Int = 0
+    inner class FavouritesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val photo: ImageView = itemView.findViewById(R.id.moviePhoto)
+        private val title: TextView = itemView.findViewById(R.id.originalTitle)
+        private val rusTitle: TextView = itemView.findViewById(R.id.rusTitle)
+        private val rating: TextView = itemView.findViewById(R.id.movieRating)
+        private val votes: TextView = itemView.findViewById(R.id.movieVotes)
+        private val movieId: TextView = itemView.findViewById(R.id.movieId)
+        private val moviesLike: ImageView = itemView.findViewById(R.id.moviesLike)
+        private var id: Int = 0
 
-    fun bind(movie: Result) {
-        Glide.with(itemView.context)
-            .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
-            .into(photo)
-        var str = ""
+        fun bind(movie: Result) {
+            Glide.with(itemView.context)
+                .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
+                .into(photo)
+            var str = ""
 
-        for (i in 0..3) {
-            str += movie.releaseDate[i]
-        }
-        id = movie.id
-        movieId.text = (adapterPosition + 1).toString()
-        title.text = movie.title
-        rusTitle.text = movie.originalTitle + "(" + str + ")"
-        rating.text = movie.voteAverage.toString()
-        votes.text = movie.voteCount.toString()
+            for (i in 0..3) {
+                str += movie.releaseDate[i]
+            }
+            id = movie.id
+            movieId.text = (adapterPosition + 1).toString()
+            title.text = movie.title
+            rusTitle.text = movie.originalTitle + "(" + str + ")"
+            rating.text = movie.voteAverage.toString()
+            votes.text = movie.voteCount.toString()
 
-        if (movie.liked == 1 || movie.liked == 11) {
-            moviesLike.setImageResource(R.drawable.ic_lliked)
-        } else {
-            moviesLike.setImageResource(R.drawable.ic_like)
-        }
-
-        moviesLike.setOnClickListener {
-            if (it.isActivated) {
+            if (movie.liked == 1 || movie.liked == 11) {
                 moviesLike.setImageResource(R.drawable.ic_lliked)
             } else {
                 moviesLike.setImageResource(R.drawable.ic_like)
             }
-        }
 
+            moviesLike.setOnClickListener {
+                itemClickListner?.removeFromFavourites(false, adapterPosition, movie)
+                moviesLike.setImageResource(R.drawable.ic_like)
+            }
+        }
     }
 
-
+    interface RecyclerViewItemClick {
+        fun removeFromFavourites(boolean: Boolean, position: Int, item: Result)
+    }
 }

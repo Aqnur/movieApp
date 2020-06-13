@@ -14,6 +14,7 @@ import com.example.lab6.R
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.database.MovieDao
 import com.example.lab6.model.database.MovieDatabase
+import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view.adapters.MoviesAdapter
@@ -21,15 +22,17 @@ import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
 import com.google.firebase.analytics.FirebaseAnalytics
 
-class MoviesFragment : Fragment() {
+class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
     private val TAG = "MoviesFragment"
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
+    private lateinit var layoutManager: LinearLayoutManager
     private lateinit var movieListViewModel: MovieListViewModel
-    private var moviesAdapter: MoviesAdapter?= null
+    private var moviesAdapter: MoviesAdapter? = null
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,17 +81,17 @@ class MoviesFragment : Fragment() {
                     swipeRefreshLayout.isRefreshing = false
                 }
                 is MovieListViewModel.State.Result -> {
-                    recyclerView.apply {
-                        setHasFixedSize(true)
-                        layoutManager = LinearLayoutManager(requireActivity())
-                        adapter = MoviesAdapter(
-                            result.list,
-                            requireActivity()
-                        )
-                    }
+                    layoutManager = LinearLayoutManager(requireActivity())
+                    recyclerView.layoutManager = layoutManager
+                    moviesAdapter = MoviesAdapter(this, result.list, requireActivity())
+                    recyclerView.adapter = moviesAdapter
                 }
             }
         })
+    }
+
+    override fun addToFavourites(boolean: Boolean, position: Int, item: Result) {
+        movieListViewModel.likeMovie(boolean, item, item.id)
     }
 
 }

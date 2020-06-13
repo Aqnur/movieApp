@@ -1,21 +1,17 @@
 package com.example.lab6.view_model
 
-import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
-import com.example.lab6.model.repository.MovieRepository
-import com.example.lab6.R
-import com.example.lab6.model.api.MovieApi
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.json.movie.GenresList
+import com.example.lab6.model.json.account.Singleton
+import com.example.lab6.model.json.favorites.FavResponse
 import com.example.lab6.model.json.movie.Result
-import com.example.lab6.model.repository.MovieRepositoryImpl
+import com.example.lab6.model.repository.MovieRepository
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import java.lang.Exception
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class MovieListViewModel(
@@ -56,6 +52,40 @@ class MovieListViewModel(
         }
     }
 
+
+    private val sessionId = Singleton.getSession()
+    private val accountId = Singleton.getAccountId()
+
+    fun likeMovie(favourite: Boolean, movie: Result?, movieId: Int?) {
+        liveData.value = State.ShowLoading
+        launch {
+            val body = JsonObject().apply {
+                addProperty("media_type", "movie")
+                addProperty("media_id", movieId)
+                addProperty("favorite", favourite)
+            }
+            try {
+                movieRepository.markFavourite(
+                    accountId,
+                    BuildConfig.API_KEY,
+                    sessionId, body)
+            } catch (e: Exception) { }
+            if (favourite) {
+                movie?.liked = 11
+                if (movie != null) {
+                    movieRepository.insertDB(movie)
+                }
+//                Toast.makeText(context, "Movie has been added to favourites", Toast.LENGTH_SHORT).show()
+            } else {
+                movie?.liked = 10
+                if (movie != null) {
+                    movieRepository.insertDB(movie)
+                }
+//                Toast.makeText(context,"Movie has been removed from favourites", Toast.LENGTH_SHORT).show()
+            }
+            liveData.value = State.HideLoading
+        }
+    }
 
     sealed class State {
         object ShowLoading : State()
