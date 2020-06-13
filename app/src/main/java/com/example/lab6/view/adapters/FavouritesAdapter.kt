@@ -2,32 +2,29 @@ package com.example.lab6.view.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
-import com.example.lab6.model.json.movie.Result
 import com.example.lab6.view.activites.MovieDetailActivity
+import com.example.lab6.model.json.movie.Result
 
-class MoviesAdapter(
-    var movies: List<Result>,
-    val context: Context
-) : RecyclerView.Adapter<MoviesViewHolder>() {
+class FavouritesAdapter(val movies: List<Result>, val context: Context): RecyclerView.Adapter<FavouritesViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavouritesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
-        return MoviesViewHolder(view)
+        return FavouritesViewHolder(view)
     }
 
-    override fun getItemCount(): Int = movies.size ?: 0
+    override fun getItemCount(): Int {
+        return movies.size
+    }
 
-    override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FavouritesViewHolder, position: Int) {
         holder.itemView.setOnClickListener {
             val intent = Intent(context, MovieDetailActivity::class.java).also {
                 it.putExtra("id", movies[position].id)
@@ -44,7 +41,7 @@ class MoviesAdapter(
     }
 }
 
-class MoviesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class FavouritesViewHolder(itemView : View): RecyclerView.ViewHolder(itemView){
     private val photo: ImageView = itemView.findViewById(R.id.moviePhoto)
     private val title: TextView = itemView.findViewById(R.id.originalTitle)
     private val rusTitle: TextView = itemView.findViewById(R.id.rusTitle)
@@ -77,14 +74,14 @@ class MoviesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         moviesLike.setOnClickListener {
-            val drawable: Drawable = moviesLike.drawable
-            if( drawable.constantState?.equals(getDrawable(itemView.context, R.drawable.ic_like)?.constantState) == true ){
+            if (it.isActivated) {
                 moviesLike.setImageResource(R.drawable.ic_lliked)
-            }else{
+            } else {
                 moviesLike.setImageResource(R.drawable.ic_like)
             }
         }
 
     }
+
 
 }

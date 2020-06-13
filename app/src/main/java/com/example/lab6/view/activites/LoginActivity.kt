@@ -124,13 +124,9 @@ class LoginActivity : AppCompatActivity(){
                     user.sessionId,
                     user.accountId
                 )
-            val intent = Intent(
-                    this@LoginActivity,
-                    MainActivity::class.java
-                )
-            startActivity(
-                intent
-            )
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 

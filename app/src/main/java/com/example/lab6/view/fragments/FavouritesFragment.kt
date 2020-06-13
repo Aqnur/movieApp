@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -16,9 +15,8 @@ import com.example.lab6.model.database.MovieDao
 import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
-import com.example.lab6.view.adapters.MoviesAdapter
+import com.example.lab6.view.adapters.FavouritesAdapter
 import com.example.lab6.view_model.FavoriteListViewModel
-import com.example.lab6.view_model.ViewModelProviderFactory
 
 class FavouritesFragment : Fragment() {
 
@@ -27,7 +25,7 @@ class FavouritesFragment : Fragment() {
     lateinit var swipeRefreshLayoutFav: SwipeRefreshLayout
     lateinit var recyclerViewFav: RecyclerView
     private lateinit var favoriteListViewModel: FavoriteListViewModel
-    private var favoriteAdapter: MoviesAdapter?= null
+    private var favoriteAdapter: FavouritesAdapter?= null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,7 +74,7 @@ class FavouritesFragment : Fragment() {
                     recyclerViewFav.apply {
                         setHasFixedSize(true)
                         layoutManager = LinearLayoutManager(requireActivity())
-                        adapter = MoviesAdapter(
+                        adapter = FavouritesAdapter(
                             result.list!!,
                             requireActivity()
                         )

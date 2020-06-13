@@ -26,9 +26,7 @@ class MovieListViewModel(
 
     val liveData = MutableLiveData<State>()
 
-    init {
-
-    }
+    init { }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job

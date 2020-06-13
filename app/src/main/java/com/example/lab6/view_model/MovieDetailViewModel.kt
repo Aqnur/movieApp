@@ -33,9 +33,6 @@ class MovieDetailViewModel(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-//    private val movieDao: MovieDao = MovieDatabase.getDatabase(context = context).movieDao()
-//    private val movieRepository: MovieRepository? = MovieRepositoryImpl(RetrofitService, movieDao)
-
     init {
     }
 
@@ -49,15 +46,15 @@ class MovieDetailViewModel(
         launch {
             val movieDetail = withContext(Dispatchers.IO){
                 try {
-                    val response = movieRepository?.getMovie(id, BuildConfig.API_KEY, "ru")
+                    val response = movieRepository.getMovie(id, BuildConfig.API_KEY, "ru")
                         val result = response
                         if (result != null) {
-                            result.runtime?.let { movieRepository?.updateMovieRuntime(it, id) }
-                            result.tagline?.let { movieRepository?.updateMovieTagline(it, id) }
+                            result.runtime?.let { movieRepository.updateMovieRuntime(it, id) }
+                            result.tagline?.let { movieRepository.updateMovieTagline(it, id) }
                         }
                         result
                 } catch (e: Exception) {
-                    movieRepository?.getMovieById(id)
+                    movieRepository.getMovieById(id)
                 }
             }
             liveData.value = State.HideLoading
@@ -69,7 +66,7 @@ class MovieDetailViewModel(
         launch {
             val likeInt = withContext(Dispatchers.IO) {
                 try {
-                    val response = movieRepository?.hasLike(
+                    val response = movieRepository.hasLike(
                             movieId,
                             BuildConfig.API_KEY,
                             sessionId
@@ -84,7 +81,7 @@ class MovieDetailViewModel(
                             1
                         else 0
                 } catch (e: Exception) {
-                    movieRepository?.getLiked(movieId) ?: 0
+                    movieRepository.getLiked(movieId) ?: 0
                 }
             }
             liveData.value = State.Res(likeInt)
@@ -100,7 +97,7 @@ class MovieDetailViewModel(
                 addProperty("favorite", favourite)
             }
             try {
-                movieRepository?.markFavourite(
+                movieRepository.markFavourite(
                         accountId,
                         BuildConfig.API_KEY,
                         sessionId, body)
@@ -108,13 +105,13 @@ class MovieDetailViewModel(
             if (favourite) {
                 movie?.liked = 11
                 if (movie != null) {
-                    movieRepository?.insertDB(movie)
+                    movieRepository.insertDB(movie)
                 }
 //                Toast.makeText(context, "Movie has been added to favourites", Toast.LENGTH_SHORT).show()
             } else {
                 movie?.liked = 10
                 if (movie != null) {
-                    movieRepository?.insertDB(movie)
+                    movieRepository.insertDB(movie)
                 }
 //                Toast.makeText(context,"Movie has been removed from favourites", Toast.LENGTH_SHORT).show()
             }

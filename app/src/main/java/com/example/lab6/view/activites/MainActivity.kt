@@ -33,7 +33,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate")
 
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        FirebaseMessaging.getInstance().subscribeToTopic("movies")
+            .addOnCompleteListener { task ->
+                var msg = "Subscribed"
+                if (!task.isSuccessful) {
+                    msg = "Not subscribed"
+                }
+                Log.d("TAGGG", msg)
+            }
 
         bindViews()
         bottomNavigation.onNavigationItemSelectedListener = navListener

@@ -43,17 +43,18 @@ class MoviesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
+
         bindViews(view)
         swipeRefresh()
         getMovies()
     }
 
-    fun bindViews(view: View) {
+    private fun bindViews(view: View) {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
         recyclerView = view.findViewById(R.id.recyclerView)
     }
 
-    fun swipeRefresh() {
+    private fun swipeRefresh() {
         recyclerView.layoutManager = LinearLayoutManager(requireActivity())
         swipeRefreshLayout.setOnRefreshListener {
             moviesAdapter?.clearAll()
@@ -61,7 +62,7 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    fun getMovies() {
+    private fun getMovies() {
         val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
         val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
 
@@ -89,4 +90,5 @@ class MoviesFragment : Fragment() {
             }
         })
     }
+
 }

@@ -64,6 +64,7 @@ class AccountFragment : Fragment() {
             val intent = Intent(requireActivity(), LoginActivity::class.java)
             profileListViewModel.deleteProfileInform()
             startActivity(intent)
+            requireActivity().finish()
         }
     }
 
