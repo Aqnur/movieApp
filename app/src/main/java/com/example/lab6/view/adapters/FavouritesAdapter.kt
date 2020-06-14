@@ -60,17 +60,13 @@ class FavouritesAdapter(
             Glide.with(itemView.context)
                 .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
                 .into(photo)
-            var str = ""
 
-            for (i in 0..3) {
-                str += movie.releaseDate[i]
-            }
             id = movie.id
             movieId.text = (adapterPosition + 1).toString()
             title.text = movie.title
-            rusTitle.text = movie.originalTitle + "(" + str + ")"
-            rating.text = movie.voteAverage.toString()
-            votes.text = movie.voteCount.toString()
+            rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
+            rating.text = "Рейтинг: " + movie.voteAverage.toString()
+            votes.text = "Голоса: " + movie.voteCount.toString()
 
             if (movie.liked == 1 || movie.liked == 11) {
                 moviesLike.setImageResource(R.drawable.ic_lliked)

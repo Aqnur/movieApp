@@ -65,6 +65,54 @@ class FavoriteListViewModel(private val movieRepository: MovieRepository) : View
         launch {
             liveData.value = State.ShowLoading
 
+            val likesOffline = movieRepository.getIdOffline(11)
+
+            for (i in likesOffline!!) {
+                val body = JsonObject().apply {
+                    addProperty("media_type", "movie")
+                    addProperty("media_id", i)
+                    addProperty("favorite", true)
+                }
+                try {
+                    val response = movieRepository.getFavouriteMovies(
+                            accountId,
+                            BuildConfig.API_KEY,
+                            sessionId,
+                            "rus"
+                        )
+                    val likeMoviesOffline = movieRepository.getMovieOffline(11)
+                    for (movie in likeMoviesOffline!!) {
+                        movie.liked = 1
+                        movieRepository.insertDB(movie)
+                    }
+                } catch (e: Exception) {
+                }
+            }
+
+            val unLikesOffline = movieRepository.getIdOffline(10)
+
+            for (i in unLikesOffline!!) {
+                val body = JsonObject().apply {
+                    addProperty("media_type", "movie")
+                    addProperty("media_id", i)
+                    addProperty("favorite", false)
+                }
+                try {
+                    val response = movieRepository.markFavourite(
+                            accountId,
+                            BuildConfig.API_KEY,
+                            sessionId,
+                            body
+                        )
+                    val unlikeMoviesOffline = movieRepository.getMovieOffline(10)
+                    for (movie in unlikeMoviesOffline!!) {
+                        movie.liked = 0
+                        movieRepository.insertDB(movie)
+                    }
+                } catch (e: Exception) {
+                }
+            }
+
             val list = withContext(Dispatchers.IO) {
                 try {
                     val response = movieRepository.getFavouriteMovies(

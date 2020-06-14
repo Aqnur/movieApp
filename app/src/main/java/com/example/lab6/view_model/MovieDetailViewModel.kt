@@ -106,11 +106,13 @@ class MovieDetailViewModel(
                 movie?.liked = 11
                 if (movie != null) {
                     movieRepository.insertDB(movie)
+                    movieRepository.setLike(11, movie.id)
                 }
 //                Toast.makeText(context, "Movie has been added to favourites", Toast.LENGTH_SHORT).show()
             } else {
                 movie?.liked = 10
                 if (movie != null) {
+                    movieRepository.setLike(10, movie.id)
                     movieRepository.insertDB(movie)
                 }
 //                Toast.makeText(context,"Movie has been removed from favourites", Toast.LENGTH_SHORT).show()

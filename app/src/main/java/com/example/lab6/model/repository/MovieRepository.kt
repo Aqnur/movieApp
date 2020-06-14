@@ -17,6 +17,9 @@ interface MovieRepository {
     fun getMovieById(id: Int): Result
     fun getLiked(id: Int?): Int
     fun getAllLiked(): List<Result>
+    fun setLike(liked: Int, id: Int)
+    fun getIdOffline(liked: Int?): List<Int>
+    fun getMovieOffline(liked: Int?): List<Result>
 
     suspend fun getMovies(apiKey: String, language: String): PopularMovies?
     suspend fun getMovie(movieId: Int, apiKey: String, language: String): Result?
@@ -62,6 +65,17 @@ class MovieRepositoryImpl(
         return movieDao.getAllLiked()
     }
 
+    override fun setLike(liked: Int, id: Int) {
+        return movieDao.setLike(liked, id)
+    }
+
+    override fun getIdOffline(liked: Int?): List<Int> {
+        return movieDao.getIdOffline(liked)
+    }
+
+    override fun getMovieOffline(liked: Int?): List<Result> {
+        return movieDao.getMovieOffline(liked)
+    }
 
     override suspend fun getMovies(apiKey: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language)

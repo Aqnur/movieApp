@@ -58,42 +58,41 @@ class MoviesAdapter(
         private var id: Int = 0
 
         fun bind(movie: Result) {
-            Glide.with(itemView.context)
-                .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
-                .into(photo)
-            var str = ""
+            if(movie != null){
+                Glide.with(itemView.context)
+                    .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
+                    .into(photo)
+                id = movie.id
 
-            for (i in 0..3) {
-                str += movie.releaseDate[i]
-            }
-            id = movie.id
-            movieId.text = (adapterPosition + 1).toString()
-            title.text = movie.title
-            rusTitle.text = movie.originalTitle + "(" + str + ")"
-            rating.text = "Rating: " + movie.voteAverage.toString()
-            votes.text = "Votes: " + movie.voteCount.toString()
+                movieId.text = (adapterPosition + 1).toString()
+                title.text = movie.title
+                rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
+                rating.text = "Рейтинг: " + movie.voteAverage.toString()
+                votes.text = "Голоса: " + movie.voteCount.toString()
 
-            if (movie.liked == 1 || movie.liked == 11) {
-                moviesLike.setImageResource(R.drawable.ic_lliked)
-            } else {
-                moviesLike.setImageResource(R.drawable.ic_like)
-            }
-
-            moviesLike.setOnClickListener {
-                val drawable: Drawable = moviesLike.drawable
-                if (drawable.constantState?.equals(
-                        getDrawable(
-                            itemView.context,
-                            R.drawable.ic_like
-                        )?.constantState
-                    ) == true
-                ) {
-                    itemClickListner?.addToFavourites(true, adapterPosition, movie)
-                    moviesLike.setImageResource(R.drawable.ic_lliked)
-                } else {
-                    itemClickListner?.addToFavourites(false, adapterPosition, movie)
+                if (movie.liked == 0 || movie.liked == 10) {
                     moviesLike.setImageResource(R.drawable.ic_like)
+                } else {
+                    moviesLike.setImageResource(R.drawable.ic_lliked)
                 }
+
+                moviesLike.setOnClickListener {
+                    val drawable: Drawable = moviesLike.drawable
+                    if (drawable.constantState?.equals(
+                            getDrawable(
+                                itemView.context,
+                                R.drawable.ic_like
+                            )?.constantState
+                        ) == true
+                    ) {
+                        itemClickListner?.addToFavourites(true, adapterPosition, movie)
+                        moviesLike.setImageResource(R.drawable.ic_lliked)
+                    } else {
+                        itemClickListner?.addToFavourites(false, adapterPosition, movie)
+                        moviesLike.setImageResource(R.drawable.ic_like)
+                    }
+                }
+
             }
         }
     }

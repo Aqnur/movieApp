@@ -30,6 +30,9 @@ interface MovieDao{
     @Query("SELECT*FROM movie_table where liked=1 or liked=11")
     fun getAllLiked(): List<Result>
 
+    @Query("update movie_table set liked = :likeCnt where id = :id")
+    fun setLike(likeCnt: Int, id: Int)
+
     @Query("SELECT liked FROM movie_table where id=:id")
     fun getLiked(id: Int?): Int
 
