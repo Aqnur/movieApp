@@ -125,14 +125,18 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
                     moviesAdapter?.removeFooterLoading()
                     moviesAdapter?.addItems(result.list)
                     moviesAdapter?.addFooterLoading()
+                    isLoading = false
                 }
             }
         })
     }
 
     override fun addToFavourites(boolean: Boolean, position: Int, item: Result) {
-        sharedViewModel.select(item)
         movieListViewModel.likeMovie(boolean, item, item.id)
+    }
+
+    override fun sharedView(item: Result) {
+        sharedViewModel.select(item)
     }
 
 }

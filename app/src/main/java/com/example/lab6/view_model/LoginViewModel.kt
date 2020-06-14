@@ -37,8 +37,6 @@ class LoginViewModel(private val accountRepository: AccountRepository) : ViewMod
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-//    private val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
-
     override fun onCleared() {
         super.onCleared()
         job.cancel()

@@ -56,8 +56,9 @@ class MoviesAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (isLoaderVisible && position == movies.size - 1) {
-            VIEW_TYPE_LOADING
+        return if (isLoaderVisible) {
+            if(position == movies.size - 1) VIEW_TYPE_LOADING
+            else VIEW_TYPE_NORMAL
         } else {
             VIEW_TYPE_NORMAL
         }
@@ -96,21 +97,11 @@ class MoviesAdapter(
         notifyDataSetChanged()
     }
 
-    fun addItem(movie: Result) {
-        (movies as? ArrayList<Result>)?.add(movie)
-        notifyDataSetChanged()
-    }
-
     fun updateItem(movie: Result) {
         val id = movie.id
         val isClicked = movie.liked
         val foundMovie = movies.find { it.id == id }
         foundMovie?.liked = isClicked
-        notifyDataSetChanged()
-    }
-
-    fun removeItem(movie: Result) {
-        (movies as? ArrayList<Result>)?.remove(movie)
         notifyDataSetChanged()
     }
 
@@ -159,6 +150,7 @@ class MoviesAdapter(
                 }
 
                 moviesLike.setOnClickListener {
+                    itemClickListner?.sharedView(movie)
                     val drawable: Drawable = moviesLike.drawable
                     if (drawable.constantState?.equals(
                             getDrawable(
@@ -182,5 +174,6 @@ class MoviesAdapter(
 
     interface RecyclerViewItemClick {
         fun addToFavourites(boolean: Boolean, position: Int, item: Result)
+        fun sharedView(item: Result)
     }
 }

@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         bindViews()
         bottomNavigation.onNavigationItemSelectedListener = navListener
         bottomNavAnimations()
+        fragmentManager.beginTransaction().add(R.id.frame, activeFragment).hide(moviesFragment).commit()
         hidingFragments()
     }
 
@@ -79,21 +80,24 @@ class MainActivity : AppCompatActivity() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_item_movies -> {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(moviesFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(moviesFragment)
+                        .commit()
                     activeFragment = moviesFragment
                     topTitle.text = "Popular Movies"
                     topTitle.visibility = View.VISIBLE
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_item_fav -> {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(favouritesFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(favouritesFragment)
+                        .commit()
                     activeFragment = favouritesFragment
                     topTitle.text = "Favourite Movies"
                     topTitle.visibility = View.VISIBLE
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_item_acc -> {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(accountFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(accountFragment)
+                        .commit()
                     activeFragment = accountFragment
                     topTitle.visibility = View.GONE
                     return@OnNavigationItemSelectedListener true

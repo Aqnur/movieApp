@@ -109,8 +109,6 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     override fun removeFromFavourites(boolean: Boolean, position: Int, item: Result) {
         favoriteListViewModel.likeMovie(boolean, item, item.id)
         sharedViewModel.select(item)
-        favoriteAdapter?.clearAll()
-        favoriteListViewModel.getFavorites()
     }
 
 }

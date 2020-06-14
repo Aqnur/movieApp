@@ -22,7 +22,8 @@ class MovieListViewModel(
 
     val liveData = MutableLiveData<State>()
 
-    init { }
+    init {
+    }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -35,15 +36,31 @@ class MovieListViewModel(
     fun getMovies(page: Int = 1) {
         launch {
             if (page == 1) liveData.value = State.ShowLoading
-            val list = withContext(Dispatchers.IO){
+            val list = withContext(Dispatchers.IO) {
                 try {
                     val response = movieRepository.getMovies(BuildConfig.API_KEY, "ru", page)
-                        val result = response
-                        if(!result.isNullOrEmpty()){
-                            movieRepository.insertAllDB(result)
+                    val favResponse = movieRepository.getFavouriteMovies(
+                        accountId,
+                        BuildConfig.API_KEY,
+                        sessionId,
+                        "rus"
+                    )
+                    val result = response
+                    val favResult = favResponse
+                    if (!result.isNullOrEmpty()) {
+                        movieRepository.insertAllDB(result)
+                    }
+                    if (!result.isNullOrEmpty()) {
+                        for (m in result) {
+                            for (n in favResult!!) {
+                                if(m.id == n.id) {
+                                    m.liked = 1
+                                }
+                            }
                         }
-                        result
-                } catch (e: Exception){
+                    }
+                    result
+                } catch (e: Exception) {
                     movieRepository.getMoviesDB() ?: emptyList()
                 }
             }
@@ -51,7 +68,6 @@ class MovieListViewModel(
             liveData.value = State.Result(list!!)
         }
     }
-
 
     private val sessionId = Singleton.getSession()
     private val accountId = Singleton.getAccountId()
@@ -68,8 +84,10 @@ class MovieListViewModel(
                 movieRepository.markFavourite(
                     accountId,
                     BuildConfig.API_KEY,
-                    sessionId, body)
-            } catch (e: Exception) { }
+                    sessionId, body
+                )
+            } catch (e: Exception) {
+            }
             if (favourite) {
                 movie?.liked = 11
                 if (movie != null) {
