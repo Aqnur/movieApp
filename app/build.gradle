@@ -26,6 +26,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
     buildTypes.each {
         it.buildConfigField 'String', 'API_KEY', MyTheMovieDBApiToken
     }
@@ -48,6 +51,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "androidx.fragment:fragment-ktx:1.2.5"
     // retrofit
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
 

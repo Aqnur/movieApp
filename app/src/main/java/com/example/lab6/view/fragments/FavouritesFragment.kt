@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -18,20 +18,25 @@ import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view.adapters.FavouritesAdapter
-import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.FavoriteListViewModel
-import com.example.lab6.view_model.ViewModelProviderFactory
-import kotlinx.android.synthetic.main.activity_movies.*
+import com.example.lab6.view_model.SharedViewModel
 
 class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
 
-    private val TAG = "FavouriteFragment"
-
-    lateinit var swipeRefreshLayoutFav: SwipeRefreshLayout
-    lateinit var recyclerViewFav: RecyclerView
+    private lateinit var swipeRefreshLayoutFav: SwipeRefreshLayout
+    private lateinit var recyclerViewFav: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var favoriteListViewModel: FavoriteListViewModel
-    private var favoriteAdapter: FavouritesAdapter?= null
+    private var favoriteAdapter: FavouritesAdapter? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        sharedViewModel.selected.observe(viewLifecycleOwner, Observer { item ->
+            if (item.liked == 1 || item.liked == 11) favoriteAdapter?.addItem(item)
+            else favoriteAdapter?.removeItem(item)
+        })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,17 +49,25 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setViewModel()
         bindViews(view)
         swipeRefresh()
+        setAdapter()
         getFavMovieCoroutine()
     }
 
-    fun bindViews(view: View) {
+    private fun bindViews(view: View) {
         swipeRefreshLayoutFav = view.findViewById(R.id.swipeRefreshLayoutFav)
         recyclerViewFav = view.findViewById(R.id.recyclerViewFav)
     }
 
-    fun swipeRefresh() {
+    private fun setViewModel() {
+        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
+        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
+        favoriteListViewModel = FavoriteListViewModel(movieRepository)
+    }
+
+    private fun swipeRefresh() {
         recyclerViewFav.layoutManager = LinearLayoutManager(requireActivity())
         swipeRefreshLayoutFav.setOnRefreshListener {
             favoriteAdapter?.clearAll()
@@ -62,14 +75,17 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
         }
     }
 
-    fun getFavMovieCoroutine() {
-        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
-        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
-        favoriteListViewModel = FavoriteListViewModel(movieRepository)
+    private fun setAdapter() {
+        layoutManager = LinearLayoutManager(requireActivity())
+        recyclerViewFav.layoutManager = layoutManager
+        favoriteAdapter = FavouritesAdapter(this, requireActivity())
+        recyclerViewFav.adapter = favoriteAdapter
+    }
 
+    private fun getFavMovieCoroutine() {
         favoriteListViewModel.getFavorites()
-        favoriteListViewModel.liveData.observe(this, Observer { result ->
-            when(result) {
+        favoriteListViewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
+            when (result) {
                 is FavoriteListViewModel.State.ShowLoading -> {
                     swipeRefreshLayoutFav.isRefreshing = true
                 }
@@ -77,10 +93,7 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
                     swipeRefreshLayoutFav.isRefreshing = false
                 }
                 is FavoriteListViewModel.State.Result -> {
-                    layoutManager = LinearLayoutManager(requireActivity())
-                    recyclerViewFav.layoutManager = layoutManager
-                    favoriteAdapter = FavouritesAdapter(this, result.list, requireActivity())
-                    recyclerViewFav.adapter = favoriteAdapter
+                    favoriteAdapter?.addItems(result.list)
                 }
             }
         })
@@ -95,6 +108,7 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
 
     override fun removeFromFavourites(boolean: Boolean, position: Int, item: Result) {
         favoriteListViewModel.likeMovie(boolean, item, item.id)
+        sharedViewModel.select(item)
         favoriteAdapter?.clearAll()
         favoriteListViewModel.getFavorites()
     }

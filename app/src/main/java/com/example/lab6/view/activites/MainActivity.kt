@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationViewEx
     private val fragmentManager: FragmentManager = supportFragmentManager
     private var activeFragment: Fragment = MoviesFragment()
+    private var moviesFragment: Fragment = MoviesFragment()
+    private var favouritesFragment: Fragment = FavouritesFragment()
+    private var accountFragment: Fragment = AccountFragment()
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         bindViews()
         bottomNavigation.onNavigationItemSelectedListener = navListener
         bottomNavAnimations()
-        fragmentManager.beginTransaction().replace(R.id.frame, MoviesFragment(), TAG).commit()
+        hidingFragments()
     }
 
     private fun bindViews() {
@@ -64,26 +67,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun hidingFragments() {
+        fragmentManager.beginTransaction().add(R.id.frame, moviesFragment).commit()
+        fragmentManager.beginTransaction().add(R.id.frame, favouritesFragment)
+            .hide(favouritesFragment).commit()
+        fragmentManager.beginTransaction().add(R.id.frame, accountFragment).hide(accountFragment)
+            .commit()
+    }
+
     private val navListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_item_movies -> {
-                    activeFragment = MoviesFragment()
-                    fragmentManager.beginTransaction().replace(R.id.frame, activeFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(moviesFragment).commit()
+                    activeFragment = moviesFragment
                     topTitle.text = "Popular Movies"
                     topTitle.visibility = View.VISIBLE
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_item_fav -> {
-                    activeFragment = FavouritesFragment()
-                    fragmentManager.beginTransaction().replace(R.id.frame, activeFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(favouritesFragment).commit()
+                    activeFragment = favouritesFragment
                     topTitle.text = "Favourite Movies"
                     topTitle.visibility = View.VISIBLE
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_item_acc -> {
-                    activeFragment = AccountFragment()
-                    fragmentManager.beginTransaction().replace(R.id.frame, activeFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(accountFragment).commit()
+                    activeFragment = accountFragment
                     topTitle.visibility = View.GONE
                     return@OnNavigationItemSelectedListener true
                 }

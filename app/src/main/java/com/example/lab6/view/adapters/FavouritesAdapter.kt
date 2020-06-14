@@ -15,9 +15,10 @@ import com.example.lab6.view.activites.MovieDetailActivity
 
 class FavouritesAdapter(
     private val itemClickListner: RecyclerViewItemClick? = null,
-    val movies: List<Result>,
     val context: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var movies = listOf<Result>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavouritesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
@@ -29,7 +30,7 @@ class FavouritesAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is FavouritesViewHolder) {
+        if (holder is FavouritesViewHolder) {
             holder.itemView.setOnClickListener {
                 val intent = Intent(context, MovieDetailActivity::class.java).also {
                     it.putExtra("id", movies[position].id)
@@ -39,6 +40,27 @@ class FavouritesAdapter(
             }
             return holder.bind(movies[position])
         }
+    }
+
+    fun addItems(moviesList: List<Result>) {
+        movies = moviesList
+        notifyDataSetChanged()
+    }
+
+    fun addItem(movie: Result) {
+        if (!movies.contains(movie)) {
+            (movies as? ArrayList<Result>)?.add(movie)
+            notifyItemInserted(movies.size - 1)
+        }
+    }
+
+    fun removeItem(movie: Result) {
+        val id = movie.id
+        val foundMovie = movies.find { it.id == id }
+        if (foundMovie != null) {
+            (movies as? ArrayList<Result>)?.remove(foundMovie)
+        }
+        notifyDataSetChanged()
     }
 
     fun clearAll() {
@@ -64,7 +86,10 @@ class FavouritesAdapter(
             id = movie.id
             movieId.text = (adapterPosition + 1).toString()
             title.text = movie.title
-            rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
+            rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(
+                0,
+                movie.releaseDate.length - 6
+            ) + ")"
             rating.text = "Рейтинг: " + movie.voteAverage.toString()
             votes.text = "Голоса: " + movie.voteCount.toString()
 

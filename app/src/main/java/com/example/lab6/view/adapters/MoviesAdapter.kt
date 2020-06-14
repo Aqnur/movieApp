@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.view.activites.MovieDetailActivity
-import com.example.lab6.view_model.MovieListViewModel
 
 class MoviesAdapter(
     private val itemClickListner: RecyclerViewItemClick? = null,
@@ -30,7 +29,7 @@ class MoviesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return when(viewType) {
+        return when (viewType) {
             VIEW_TYPE_NORMAL -> MoviesViewHolder(
                 inflater.inflate(R.layout.movie_item, parent, false)
             )
@@ -57,7 +56,7 @@ class MoviesAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(isLoaderVisible && position == movies.size - 1) {
+        return if (isLoaderVisible && position == movies.size - 1) {
             VIEW_TYPE_LOADING
         } else {
             VIEW_TYPE_NORMAL
@@ -89,7 +88,7 @@ class MoviesAdapter(
     }
 
     fun addItems(moviesList: List<Result>) {
-        if (movies.size == 0) movies = moviesList
+        if (movies.isEmpty()) movies = moviesList
         else {
             if (movies[movies.size - 1] != moviesList[moviesList.size - 1])
                 (movies as? ArrayList<Result>)?.addAll(moviesList)
@@ -132,7 +131,7 @@ class MoviesAdapter(
         private var id: Int = 0
 
         fun bind(movie: Result) {
-            if(movie != null) {
+            if (movie != null) {
 
                 if (movie.position == 0) {
                     movie.position = moviePosition
@@ -146,7 +145,10 @@ class MoviesAdapter(
                 id = movie.id
                 movieId.text = movie.position.toString()
                 title.text = movie.title
-                rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
+                rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(
+                    0,
+                    movie.releaseDate.length - 6
+                ) + ")"
                 rating.text = "Рейтинг: " + movie.voteAverage.toString()
                 votes.text = "Голоса: " + movie.voteCount.toString()
 

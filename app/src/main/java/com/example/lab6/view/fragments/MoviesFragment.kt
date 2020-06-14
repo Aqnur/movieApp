@@ -21,13 +21,9 @@ import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
-import com.example.lab6.view_model.ViewModelProviderFactory
 import com.google.firebase.analytics.FirebaseAnalytics
-import java.lang.Exception
 
 class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
-
-    private val TAG = "MoviesFragment"
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var movieListViewModel: MovieListViewModel
@@ -42,6 +38,13 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private var itemCnt = 0
 
     private var moviesAdapter: MoviesAdapter? = null
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        sharedViewModel.selected.observe(requireActivity(), Observer { item ->
+            moviesAdapter?.updateItem(item)
+        })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,6 +75,10 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
         val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
         movieListViewModel = MovieListViewModel(movieRepository)
+
+        sharedViewModel =
+            activity?.run { ViewModelProvider(this).get(SharedViewModel::class.java) }
+                ?: throw Exception("Invalid Activity")
     }
 
     private fun swipeRefresh() {
@@ -107,7 +114,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private fun getMovies(page: Int) {
         movieListViewModel.getMovies(page)
         movieListViewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
-            when(result) {
+            when (result) {
                 is MovieListViewModel.State.ShowLoading -> {
                     swipeRefreshLayout.isRefreshing = true
                 }
@@ -124,6 +131,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     }
 
     override fun addToFavourites(boolean: Boolean, position: Int, item: Result) {
+        sharedViewModel.select(item)
         movieListViewModel.likeMovie(boolean, item, item.id)
     }
 
