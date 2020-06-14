@@ -2,6 +2,7 @@ package com.example.lab6.model.api
 
 import com.example.lab6.model.json.account.RequestToken
 import com.example.lab6.model.json.movie.Genres
+import com.example.lab6.model.json.movie.Movies
 import com.example.lab6.model.json.movie.PopularMovies
 import com.example.lab6.model.json.movie.Result
 import com.google.gson.JsonObject
@@ -12,7 +13,8 @@ import retrofit2.http.*
 interface MovieApi {
     @GET("/3/movie/popular")
     suspend fun getMovieListCoroutine(@Query("api_key") key: String,
-                                      @Query("language") lang: String) : Response<PopularMovies>
+                                      @Query("language") lang: String,
+                                      @Query("page") page:Int) : Response<Movies>
 
     @GET("/3/movie/{movie_id}")
     suspend fun getMovieByIdCoroutine(@Path("movie_id") movieId: Int,
@@ -35,7 +37,7 @@ interface MovieApi {
      suspend fun getFavoriteMoviesCoroutine(@Path("account_id") userId: Int,
                           @Query("api_key") key: String,
                           @Query("session_id") sessionId: String,
-                          @Query("language") lang: String): Response<PopularMovies>
+                          @Query("language") lang: String): Response<Movies>
 
     @GET("/3/genre/movie/list")
     suspend fun getGenres(@Query("api_key") apiKey: String, @Query("language") lang: String): Response<Genres>

@@ -2,7 +2,7 @@ package com.example.lab6.model.json.movie
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieResponse(
+data class Movies (
     @SerializedName("page")
     val page: Int?,
     @SerializedName("results")

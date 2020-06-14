@@ -3,6 +3,7 @@ package com.example.lab6.model.repository
 import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.database.MovieDao
+import com.example.lab6.model.json.movie.Movies
 import com.example.lab6.model.json.movie.PopularMovies
 import com.example.lab6.model.json.movie.Result
 import com.google.gson.JsonObject
@@ -21,11 +22,11 @@ interface MovieRepository {
     fun getIdOffline(liked: Int?): List<Int>
     fun getMovieOffline(liked: Int?): List<Result>
 
-    suspend fun getMovies(apiKey: String, language: String): PopularMovies?
+    suspend fun getMovies(apiKey: String, language: String, page: Int): List<Result>?
     suspend fun getMovie(movieId: Int, apiKey: String, language: String): Result?
     suspend fun hasLike(movieId: Int, apiKey: String, sessionId: String): JsonObject?
     suspend fun markFavourite(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): JsonObject?
-    suspend fun getFavouriteMovies(accountId: Int, apiKey: String, sessionId: String, language: String): PopularMovies?
+    suspend fun getFavouriteMovies(accountId: Int, apiKey: String, sessionId: String, language: String): List<Result>?
 }
 
 class MovieRepositoryImpl(
@@ -77,9 +78,8 @@ class MovieRepositoryImpl(
         return movieDao.getMovieOffline(liked)
     }
 
-    override suspend fun getMovies(apiKey: String, language: String) =
-        movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language)
-            .body()
+    override suspend fun getMovies(apiKey: String, language: String, page: Int) =
+        movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language, page).body()?.results
 
     override suspend fun getMovie(movieId: Int, apiKey: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getMovieByIdCoroutine(movieId, apiKey, language)
@@ -95,6 +95,6 @@ class MovieRepositoryImpl(
 
     override suspend fun getFavouriteMovies(accountId: Int, apiKey: String, sessionId: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getFavoriteMoviesCoroutine(accountId, apiKey, sessionId, language)
-            .body()
+            .body()?.results
 
 }

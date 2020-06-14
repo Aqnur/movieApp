@@ -18,13 +18,27 @@ import com.example.lab6.view_model.MovieListViewModel
 
 class MoviesAdapter(
     private val itemClickListner: RecyclerViewItemClick? = null,
-    var movies: List<Result>,
     val context: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
-        return MoviesViewHolder(view)
+    private val VIEW_TYPE_LOADING = 0
+    private val VIEW_TYPE_NORMAL = 1
+    private var isLoaderVisible = false
+    private var moviePosition = 1
+
+    private var movies = listOf<Result>()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return when(viewType) {
+            VIEW_TYPE_NORMAL -> MoviesViewHolder(
+                inflater.inflate(R.layout.movie_item, parent, false)
+            )
+            VIEW_TYPE_LOADING -> LoaderViewHolder(
+                inflater.inflate(R.layout.loader_layout, parent, false)
+            )
+            else -> throw Throwable("Invalid View!")
+        }
     }
 
     override fun getItemCount(): Int = movies.size ?: 0
@@ -42,8 +56,68 @@ class MoviesAdapter(
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if(isLoaderVisible && position == movies.size - 1) {
+            VIEW_TYPE_LOADING
+        } else {
+            VIEW_TYPE_NORMAL
+        }
+    }
+
+
+    fun addFooterLoading() {
+        isLoaderVisible = true
+        (movies as? ArrayList<Result>)?.add(Result(id = -1))
+        notifyItemInserted(movies.size.minus(1))
+    }
+
+    fun removeFooterLoading() {
+        isLoaderVisible = false
+        val position = movies.size.minus(1)
+        if (movies.isNotEmpty()) {
+            val item = getItem(position)
+            if (item != null) {
+                (movies as? ArrayList<Result>)?.removeAt(position)
+                notifyItemRemoved(position)
+            }
+        }
+
+    }
+
+    private fun getItem(position: Int): Result? {
+        return movies[position]
+    }
+
+    fun addItems(moviesList: List<Result>) {
+        if (movies.size == 0) movies = moviesList
+        else {
+            if (movies[movies.size - 1] != moviesList[moviesList.size - 1])
+                (movies as? ArrayList<Result>)?.addAll(moviesList)
+        }
+        notifyDataSetChanged()
+    }
+
+    fun addItem(movie: Result) {
+        (movies as? ArrayList<Result>)?.add(movie)
+        notifyDataSetChanged()
+    }
+
+    fun updateItem(movie: Result) {
+        val id = movie.id
+        val isClicked = movie.liked
+        val foundMovie = movies.find { it.id == id }
+        foundMovie?.liked = isClicked
+        notifyDataSetChanged()
+    }
+
+    fun removeItem(movie: Result) {
+        (movies as? ArrayList<Result>)?.remove(movie)
+        notifyDataSetChanged()
+    }
+
     fun clearAll() {
         (movies as? ArrayList<Result>)?.clear()
+        moviePosition = 1
         notifyDataSetChanged()
     }
 
@@ -58,13 +132,19 @@ class MoviesAdapter(
         private var id: Int = 0
 
         fun bind(movie: Result) {
-            if(movie != null){
+            if(movie != null) {
+
+                if (movie.position == 0) {
+                    movie.position = moviePosition
+                    moviePosition++
+                }
+
                 Glide.with(itemView.context)
                     .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
                     .into(photo)
-                id = movie.id
 
-                movieId.text = (adapterPosition + 1).toString()
+                id = movie.id
+                movieId.text = movie.position.toString()
                 title.text = movie.title
                 rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
                 rating.text = "Рейтинг: " + movie.voteAverage.toString()
@@ -92,10 +172,11 @@ class MoviesAdapter(
                         moviesLike.setImageResource(R.drawable.ic_like)
                     }
                 }
-
             }
         }
     }
+
+    inner class LoaderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     interface RecyclerViewItemClick {
         fun addToFavourites(boolean: Boolean, position: Int, item: Result)

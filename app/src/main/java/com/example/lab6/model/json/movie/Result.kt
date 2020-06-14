@@ -24,6 +24,7 @@ data class Result(
     var liked: Int? = 0,
     var genreNames: String = "",
 
+    @Ignore var position: Int = 0,
     @Ignore @SerializedName("genre_ids") var genreIds: ArrayList<Int> ?= null,
     @Ignore var genres: List<Genre> ?= null,
     @Ignore var productionCountries: List<ProductionCountryX> ?= null

@@ -1,17 +1,11 @@
 package com.example.lab6.view_model
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
-import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.repository.MovieRepository
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.account.Singleton
-import com.example.lab6.model.json.movie.GenresList
 import com.example.lab6.model.json.movie.Result
-import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import java.lang.Exception
@@ -121,7 +115,7 @@ class FavoriteListViewModel(private val movieRepository: MovieRepository) : View
                             sessionId,
                             "rus"
                         )
-                        val result = response!!.results
+                        val result = response
                         if (!result.isNullOrEmpty()) {
                             for (m in result) {
                                 m.liked = 1
@@ -136,7 +130,7 @@ class FavoriteListViewModel(private val movieRepository: MovieRepository) : View
                 }
             }
             liveData.value = State.HideLoading
-            liveData.value = State.Result(list)
+            liveData.value = State.Result(list!!)
         }
     }
 

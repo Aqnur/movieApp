@@ -32,13 +32,13 @@ class MovieListViewModel(
         job.cancel()
     }
 
-    fun getMovies() {
+    fun getMovies(page: Int = 1) {
         launch {
-            liveData.value = State.ShowLoading
+            if (page == 1) liveData.value = State.ShowLoading
             val list = withContext(Dispatchers.IO){
                 try {
-                    val response = movieRepository.getMovies(BuildConfig.API_KEY, "ru")
-                        val result = response!!.results
+                    val response = movieRepository.getMovies(BuildConfig.API_KEY, "ru", page)
+                        val result = response
                         if(!result.isNullOrEmpty()){
                             movieRepository.insertAllDB(result)
                         }
@@ -48,7 +48,7 @@ class MovieListViewModel(
                 }
             }
             liveData.value = State.HideLoading
-            liveData.value = State.Result(list)
+            liveData.value = State.Result(list!!)
         }
     }
 

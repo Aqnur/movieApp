@@ -14,25 +14,34 @@ import com.example.lab6.R
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.database.MovieDao
 import com.example.lab6.model.database.MovieDatabase
+import com.example.lab6.model.json.PaginationCounter
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
+import com.example.lab6.view_model.SharedViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
 import com.google.firebase.analytics.FirebaseAnalytics
+import java.lang.Exception
 
 class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
     private val TAG = "MoviesFragment"
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var movieListViewModel: MovieListViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var movieListViewModel: MovieListViewModel
-    private var moviesAdapter: MoviesAdapter? = null
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var sharedViewModel: SharedViewModel
 
+    private var curPage = PaginationCounter.PAGE_START
+    private var isLastPage = false
+    private var isLoading = false
+    private var itemCnt = 0
+
+    private var moviesAdapter: MoviesAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,9 +56,11 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
 
+        setViewModels()
         bindViews(view)
         swipeRefresh()
-        getMovies()
+        adapter()
+        getMovies(curPage)
     }
 
     private fun bindViews(view: View) {
@@ -57,22 +68,45 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         recyclerView = view.findViewById(R.id.recyclerView)
     }
 
+    private fun setViewModels() {
+        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
+        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
+        movieListViewModel = MovieListViewModel(movieRepository)
+    }
+
     private fun swipeRefresh() {
         recyclerView.layoutManager = LinearLayoutManager(requireActivity())
         swipeRefreshLayout.setOnRefreshListener {
             moviesAdapter?.clearAll()
-            movieListViewModel.getMovies()
+            itemCnt = 0
+            curPage = PaginationCounter.PAGE_START
+            isLastPage = false
+            movieListViewModel.getMovies(curPage)
         }
     }
 
-    private fun getMovies() {
-        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
-        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
+    private fun adapter() {
+        layoutManager = LinearLayoutManager(requireActivity())
+        recyclerView.layoutManager = layoutManager
+        moviesAdapter = MoviesAdapter(this, requireActivity())
+        recyclerView.adapter = moviesAdapter
 
-        movieListViewModel = MovieListViewModel(movieRepository)
+        recyclerView.addOnScrollListener(object : PaginationCounter(layoutManager) {
+            override fun loadMoreItems() {
+                isLoading = false
+                curPage++
+                getMovies(curPage)
+            }
 
-        movieListViewModel.getMovies()
-        movieListViewModel.liveData.observe(this, Observer { result ->
+            override fun isLastPage(): Boolean = isLastPage
+
+            override fun isLoading(): Boolean = isLoading
+        })
+    }
+
+    private fun getMovies(page: Int) {
+        movieListViewModel.getMovies(page)
+        movieListViewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
             when(result) {
                 is MovieListViewModel.State.ShowLoading -> {
                     swipeRefreshLayout.isRefreshing = true
@@ -81,10 +115,9 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
                     swipeRefreshLayout.isRefreshing = false
                 }
                 is MovieListViewModel.State.Result -> {
-                    layoutManager = LinearLayoutManager(requireActivity())
-                    recyclerView.layoutManager = layoutManager
-                    moviesAdapter = MoviesAdapter(this, result.list, requireActivity())
-                    recyclerView.adapter = moviesAdapter
+                    moviesAdapter?.removeFooterLoading()
+                    moviesAdapter?.addItems(result.list)
+                    moviesAdapter?.addFooterLoading()
                 }
             }
         })
