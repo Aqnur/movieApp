@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.model.api.RetrofitService
+import com.example.lab6.model.database.MovieDao
+import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.repository.AccountRepository
@@ -70,7 +72,7 @@ class AccountFragment : Fragment() {
 
     private fun accountDetails() {
         profileListViewModel.getAccountDetail()
-        profileListViewModel.liveData.observe(this, Observer {
+        profileListViewModel.liveData.observe(viewLifecycleOwner, Observer {
             setData(it)
         })
     }

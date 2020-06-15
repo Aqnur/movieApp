@@ -22,8 +22,8 @@ class MovieListViewModel(
 
     val liveData = MutableLiveData<State>()
 
-    init {
-    }
+    private val sessionId = Singleton.getSession()
+    private val accountId = Singleton.getAccountId()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -38,8 +38,8 @@ class MovieListViewModel(
             if (page == 1) liveData.value = State.ShowLoading
             val list = withContext(Dispatchers.IO) {
                 try {
-                    val response = movieRepository.getMovies(BuildConfig.API_KEY, "ru", page)
-                    val favResponse = movieRepository.getFavouriteMovies(
+                    val response = movieRepository.getMoviesRemoteDS(BuildConfig.API_KEY, "ru", page)
+                    val favResponse = movieRepository.getFavouriteMoviesRemoteDS(
                         accountId,
                         BuildConfig.API_KEY,
                         sessionId,
@@ -48,7 +48,7 @@ class MovieListViewModel(
                     val result = response
                     val favResult = favResponse
                     if (!result.isNullOrEmpty()) {
-                        movieRepository.insertAllDB(result)
+                        movieRepository.insertAllLocalDS(result)
                     }
                     if (!result.isNullOrEmpty()) {
                         for (m in result) {
@@ -61,7 +61,7 @@ class MovieListViewModel(
                     }
                     result
                 } catch (e: Exception) {
-                    movieRepository.getMoviesDB() ?: emptyList()
+                    movieRepository.getMoviesLocalDS() ?: emptyList()
                 }
             }
             liveData.value = State.HideLoading
@@ -69,8 +69,81 @@ class MovieListViewModel(
         }
     }
 
-    private val sessionId = Singleton.getSession()
-    private val accountId = Singleton.getAccountId()
+    fun getFavorites(){
+        launch {
+            liveData.value = State.ShowLoading
+
+            val likesOffline = movieRepository.getIdOfflineLocalDS(11)
+
+            for (i in likesOffline!!) {
+                val body = JsonObject().apply {
+                    addProperty("media_type", "movie")
+                    addProperty("media_id", i)
+                    addProperty("favorite", true)
+                }
+                try {
+                    val response = movieRepository.getFavouriteMoviesRemoteDS(
+                        accountId,
+                        BuildConfig.API_KEY,
+                        sessionId,
+                        "rus"
+                    )
+                    val likeMoviesOffline = movieRepository.getMovieOfflineLocalDS(11)
+                    for (movie in likeMoviesOffline!!) {
+                        movie.liked = 1
+                        movieRepository.insertLocalDS(movie)
+                    }
+                } catch (e: Exception) {
+                }
+            }
+
+            val unLikesOffline = movieRepository.getIdOfflineLocalDS(10)
+
+            for (i in unLikesOffline!!) {
+                val body = JsonObject().apply {
+                    addProperty("media_type", "movie")
+                    addProperty("media_id", i)
+                    addProperty("favorite", false)
+                }
+                try {
+                    val response = movieRepository.markFavouriteRemoteDS(
+                        accountId,
+                        BuildConfig.API_KEY,
+                        sessionId,
+                        body
+                    )
+                    val unlikeMoviesOffline = movieRepository.getMovieOfflineLocalDS(10)
+                    for (movie in unlikeMoviesOffline!!) {
+                        movie.liked = 0
+                        movieRepository.insertLocalDS(movie)
+                    }
+                } catch (e: Exception) {
+                }
+            }
+
+            val list = withContext(Dispatchers.IO) {
+                try {
+                    val response = movieRepository.getFavouriteMoviesRemoteDS(
+                        accountId,
+                        BuildConfig.API_KEY,
+                        sessionId,
+                        "rus"
+                    )
+                    if (!response.isNullOrEmpty()) {
+                        movieRepository.insertAllLocalDS(response)
+                        for (m in response) {
+                            m.liked = 1
+                        }
+                    }
+                    response
+                } catch (e: Exception) {
+                    movieRepository.getAllLikedLocalDS()
+                }
+            }
+            liveData.value = State.HideLoading
+            liveData.value = State.Result(list!!)
+        }
+    }
 
     fun likeMovie(favourite: Boolean, movie: Result?, movieId: Int?) {
         liveData.value = State.ShowLoading
@@ -81,25 +154,22 @@ class MovieListViewModel(
                 addProperty("favorite", favourite)
             }
             try {
-                movieRepository.markFavourite(
+                movieRepository.markFavouriteRemoteDS(
                     accountId,
                     BuildConfig.API_KEY,
                     sessionId, body
                 )
-            } catch (e: Exception) {
-            }
+            } catch (e: Exception) { }
             if (favourite) {
                 movie?.liked = 11
                 if (movie != null) {
-                    movieRepository.insertDB(movie)
+                    movieRepository.insertLocalDS(movie)
                 }
-//                Toast.makeText(context, "Movie has been added to favourites", Toast.LENGTH_SHORT).show()
             } else {
                 movie?.liked = 10
                 if (movie != null) {
-                    movieRepository.insertDB(movie)
+                    movieRepository.insertLocalDS(movie)
                 }
-//                Toast.makeText(context,"Movie has been removed from favourites", Toast.LENGTH_SHORT).show()
             }
             liveData.value = State.HideLoading
         }

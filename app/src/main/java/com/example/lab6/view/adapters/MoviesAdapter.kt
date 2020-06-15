@@ -57,13 +57,15 @@ class MoviesAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return if (isLoaderVisible) {
-            if(position == movies.size - 1) VIEW_TYPE_LOADING
-            else VIEW_TYPE_NORMAL
+            if(position == movies.size - 1) {
+                VIEW_TYPE_LOADING
+            } else {
+                VIEW_TYPE_NORMAL
+            }
         } else {
             VIEW_TYPE_NORMAL
         }
     }
-
 
     fun addFooterLoading() {
         isLoaderVisible = true
@@ -122,49 +124,48 @@ class MoviesAdapter(
         private var id: Int = 0
 
         fun bind(movie: Result) {
-            if (movie != null) {
 
-                if (movie.position == 0) {
-                    movie.position = moviePosition
-                    moviePosition++
-                }
+            if (movie.position == 0) {
+                movie.position = moviePosition
+                moviePosition++
+            }
 
-                Glide.with(itemView.context)
-                    .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
-                    .into(photo)
+            Glide.with(itemView.context)
+                .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
+                .into(photo)
 
-                id = movie.id
-                movieId.text = movie.position.toString()
-                title.text = movie.title
-                rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(
-                    0,
-                    movie.releaseDate.length - 6
-                ) + ")"
-                rating.text = "Рейтинг: " + movie.voteAverage.toString()
-                votes.text = "Голоса: " + movie.voteCount.toString()
+            id = movie.id
+            movieId.text = movie.position.toString()
+            title.text = movie.title
+            rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(
+                0,
+                movie.releaseDate.length - 6
+            ) + ")"
+            rating.text = "Рейтинг: " + movie.voteAverage.toString()
+            votes.text = "Голоса: " + movie.voteCount.toString()
 
-                if (movie.liked == 0 || movie.liked == 10) {
-                    moviesLike.setImageResource(R.drawable.ic_like)
-                } else {
+            if (movie.liked == 1 || movie.liked == 11) {
+                moviesLike.setImageResource(R.drawable.ic_lliked)
+            } else {
+                moviesLike.setImageResource(R.drawable.ic_like)
+            }
+
+
+            moviesLike.setOnClickListener {
+                itemClickListner?.sharedView(movie)
+                val drawable: Drawable = moviesLike.drawable
+                if (drawable.constantState?.equals(
+                        getDrawable(
+                            itemView.context,
+                            R.drawable.ic_like
+                        )?.constantState
+                    ) == true
+                ) {
+                    itemClickListner?.addToFavourites(true, adapterPosition, movie)
                     moviesLike.setImageResource(R.drawable.ic_lliked)
-                }
-
-                moviesLike.setOnClickListener {
-                    itemClickListner?.sharedView(movie)
-                    val drawable: Drawable = moviesLike.drawable
-                    if (drawable.constantState?.equals(
-                            getDrawable(
-                                itemView.context,
-                                R.drawable.ic_like
-                            )?.constantState
-                        ) == true
-                    ) {
-                        itemClickListner?.addToFavourites(true, adapterPosition, movie)
-                        moviesLike.setImageResource(R.drawable.ic_lliked)
-                    } else {
-                        itemClickListner?.addToFavourites(false, adapterPosition, movie)
-                        moviesLike.setImageResource(R.drawable.ic_like)
-                    }
+                } else {
+                    itemClickListner?.addToFavourites(false, adapterPosition, movie)
+                    moviesLike.setImageResource(R.drawable.ic_like)
                 }
             }
         }

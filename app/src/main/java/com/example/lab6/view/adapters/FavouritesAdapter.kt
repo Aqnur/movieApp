@@ -2,11 +2,13 @@ package com.example.lab6.view.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
@@ -100,13 +102,25 @@ class FavouritesAdapter(
             }
 
             moviesLike.setOnClickListener {
-                itemClickListner?.removeFromFavourites(false, adapterPosition, movie)
-                moviesLike.setImageResource(R.drawable.ic_like)
+                val drawable: Drawable = moviesLike.drawable
+                if (drawable.constantState?.equals(
+                        getDrawable(
+                            itemView.context,
+                            R.drawable.ic_like
+                        )?.constantState
+                    ) == true
+                ) {
+                    itemClickListner?.addToFavourites(true, adapterPosition, movie)
+                    moviesLike.setImageResource(R.drawable.ic_lliked)
+                } else {
+                    itemClickListner?.addToFavourites(false, adapterPosition, movie)
+                    moviesLike.setImageResource(R.drawable.ic_like)
+                }
             }
         }
     }
 
     interface RecyclerViewItemClick {
-        fun removeFromFavourites(boolean: Boolean, position: Int, item: Result)
+        fun addToFavourites(boolean: Boolean, position: Int, item: Result)
     }
 }

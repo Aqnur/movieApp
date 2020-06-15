@@ -1,9 +1,10 @@
 package com.example.lab6.model.database
+
 import androidx.room.*
 import com.example.lab6.model.json.movie.Result
 
 @Dao
-interface MovieDao{
+interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(list: List<Result>)
 
@@ -11,7 +12,7 @@ interface MovieDao{
     fun insert(movie: Result)
 
     @Query("SELECT * FROM movie_table")
-    fun getMovies():List<Result>
+    fun getMovies(): List<Result>
 
     @Query("SELECT * FROM movie_table WHERE id = :id")
     fun getMovieById(id: Int): Result
@@ -38,5 +39,6 @@ interface MovieDao{
 
     @Query("SELECT id FROM movie_table where liked=:liked")
     fun getIdOffline(liked: Int?): List<Int>
+
 }
 

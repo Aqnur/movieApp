@@ -45,7 +45,7 @@ class LoginViewModel(private val accountRepository: AccountRepository) : ViewMod
     fun makeToken(name: String, password: String) {
         liveData.value = State.ShowLoading
         launch {
-            val response = accountRepository.getRequestToken(BuildConfig.API_KEY)
+            val response = accountRepository.getRequestTokenRemoteDS(BuildConfig.API_KEY)
             if(response.isSuccessful){
                 requestToken = response.body()?.requestToken.toString()
                 responseToken(name, password)
@@ -63,7 +63,7 @@ class LoginViewModel(private val accountRepository: AccountRepository) : ViewMod
                 addProperty("password", password)
                 addProperty("request_token", requestToken)
             }
-            val responseLogin = accountRepository.validation(BuildConfig.API_KEY, body)
+            val responseLogin = accountRepository.validationRemoteDS(BuildConfig.API_KEY, body)
 
             if(responseLogin.isSuccessful) {
                 val newCreatedToken = Gson().fromJson(
@@ -81,7 +81,7 @@ class LoginViewModel(private val accountRepository: AccountRepository) : ViewMod
 
     private fun getSession(name: String, body: JsonObject) {
         launch {
-            val responseSession = accountRepository.createSession(BuildConfig.API_KEY, body)
+            val responseSession = accountRepository.createSessionRemoteDS(BuildConfig.API_KEY, body)
             if(responseSession.isSuccessful) {
                 val newSession = Gson().fromJson(
                     responseSession.body(),
@@ -98,7 +98,7 @@ class LoginViewModel(private val accountRepository: AccountRepository) : ViewMod
 
     private fun getAccountId(name: String, sessionId: String) {
         launch {
-            val response = accountRepository.getAccount(BuildConfig.API_KEY, sessionId)
+            val response = accountRepository.getAccountRemoteDS(BuildConfig.API_KEY, sessionId)
             if (response.isSuccessful) {
                 val newAccId = Gson().fromJson(
                     response.body(),

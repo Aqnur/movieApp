@@ -15,6 +15,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.lab6.R
 import com.example.lab6.model.api.RetrofitService
+import com.example.lab6.model.database.MovieDao
+import com.example.lab6.model.database.MovieDatabase
 import com.google.android.material.textfield.TextInputLayout
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
@@ -27,14 +29,13 @@ import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
 
-class LoginActivity : AppCompatActivity(){
+class LoginActivity : AppCompatActivity() {
 
     private var nestedScrollView: NestedScrollView? = null
     private var textInputLayoutEmail: TextInputLayout? = null
     private var textViewLinkRegister: AppCompatTextView? = null
     private var textViewLinkForgotPassword: AppCompatTextView? = null
     private lateinit var textInputLayoutPassword: TextInputLayout
-
     private lateinit var password: EditText
     private lateinit var login: EditText
     private lateinit var appCompatButtonLogin: AppCompatButton
@@ -48,12 +49,13 @@ class LoginActivity : AppCompatActivity(){
         setContentView(R.layout.activity_login)
 
         initViews()
-
-        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
-        loginViewModel = LoginViewModel(accountRepository)
-
+        setViewModel()
         stayLogged()
+        login()
+        clickListener()
+    }
 
+    private fun login() {
         loginViewModel.liveData.observe(this, Observer {
             when (it) {
                 is LoginViewModel.State.ShowLoading -> {
@@ -70,7 +72,9 @@ class LoginActivity : AppCompatActivity(){
                 }
             }
         })
+    }
 
+    private fun clickListener() {
         textViewLinkRegister?.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
@@ -79,6 +83,11 @@ class LoginActivity : AppCompatActivity(){
         appCompatButtonLogin.setOnClickListener {
             loginViewModel.makeToken(login.text.toString(), password.text.toString())
         }
+    }
+
+    private fun setViewModel() {
+        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
+        loginViewModel = LoginViewModel(accountRepository)
     }
 
     private fun check() {
@@ -132,7 +141,8 @@ class LoginActivity : AppCompatActivity(){
 
     private fun initViews() {
         textInputLayoutEmail = findViewById<View>(R.id.textInputLayoutEmail) as TextInputLayout
-        textInputLayoutPassword = findViewById<View>(R.id.textInputLayoutPassword) as TextInputLayout
+        textInputLayoutPassword =
+            findViewById<View>(R.id.textInputLayoutPassword) as TextInputLayout
         appCompatButtonLogin = findViewById<View>(R.id.appCompatButtonLogin) as AppCompatButton
         textViewLinkRegister = findViewById<View>(R.id.textViewLinkRegister) as AppCompatTextView
         textViewLinkForgotPassword = findViewById<View>(R.id.forgotPassword) as AppCompatTextView

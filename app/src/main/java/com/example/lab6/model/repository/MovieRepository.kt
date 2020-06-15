@@ -10,23 +10,23 @@ import com.google.gson.JsonObject
 import retrofit2.Response
 
 interface MovieRepository {
-    fun insertAllDB(list: List<Result>)
-    fun insertDB(movie: Result)
-    fun getMoviesDB():List<Result>
-    fun updateMovieTagline(tagline: String, id: Int)
-    fun updateMovieRuntime(runtime: Int, id: Int)
-    fun getMovieById(id: Int): Result
-    fun getLiked(id: Int?): Int
-    fun getAllLiked(): List<Result>
-    fun setLike(liked: Int, id: Int)
-    fun getIdOffline(liked: Int?): List<Int>
-    fun getMovieOffline(liked: Int?): List<Result>
+    fun insertAllLocalDS(list: List<Result>)
+    fun insertLocalDS(movie: Result)
+    fun getMoviesLocalDS():List<Result>
+    fun updateMovieTaglineLocalDS(tagline: String, id: Int)
+    fun updateMovieRuntimeLocalDS(runtime: Int, id: Int)
+    fun getMovieByIdLocalDS(id: Int): Result
+    fun getLikedLocalDS(id: Int?): Int
+    fun getAllLikedLocalDS(): List<Result>
+    fun setLikeLocalDS(liked: Int, id: Int)
+    fun getIdOfflineLocalDS(liked: Int?): List<Int>
+    fun getMovieOfflineLocalDS(liked: Int?): List<Result>
 
-    suspend fun getMovies(apiKey: String, language: String, page: Int): List<Result>?
-    suspend fun getMovie(movieId: Int, apiKey: String, language: String): Result?
-    suspend fun hasLike(movieId: Int, apiKey: String, sessionId: String): JsonObject?
-    suspend fun markFavourite(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): JsonObject?
-    suspend fun getFavouriteMovies(accountId: Int, apiKey: String, sessionId: String, language: String): List<Result>?
+    suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int): List<Result>?
+    suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String): Result?
+    suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String): JsonObject?
+    suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): JsonObject?
+    suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): List<Result>?
 }
 
 class MovieRepositoryImpl(
@@ -34,66 +34,66 @@ class MovieRepositoryImpl(
   private val movieDao: MovieDao
 ): MovieRepository {
 
-    override fun insertAllDB(list: List<Result>) {
+    override fun insertAllLocalDS(list: List<Result>) {
         return movieDao.insertAll(list)
     }
 
-    override fun insertDB(movie: Result) {
+    override fun insertLocalDS(movie: Result) {
         return movieDao.insert(movie)
     }
 
-    override fun getMoviesDB(): List<Result> {
+    override fun getMoviesLocalDS(): List<Result> {
         return movieDao.getMovies()
     }
 
-    override fun updateMovieTagline(tagline: String, id: Int) {
+    override fun updateMovieTaglineLocalDS(tagline: String, id: Int) {
         return movieDao.updateMovieTagline(tagline, id)
     }
 
-    override fun updateMovieRuntime(runtime: Int, id: Int) {
+    override fun updateMovieRuntimeLocalDS(runtime: Int, id: Int) {
         return movieDao.updateMovieRuntime(runtime, id)
     }
 
-    override fun getMovieById(id: Int): Result {
+    override fun getMovieByIdLocalDS(id: Int): Result {
         return movieDao.getMovieById(id)
     }
 
-    override fun getLiked(id: Int?): Int {
+    override fun getLikedLocalDS(id: Int?): Int {
         return movieDao.getLiked((id))
     }
 
-    override fun getAllLiked(): List<Result> {
+    override fun getAllLikedLocalDS(): List<Result> {
         return movieDao.getAllLiked()
     }
 
-    override fun setLike(liked: Int, id: Int) {
+    override fun setLikeLocalDS(liked: Int, id: Int) {
         return movieDao.setLike(liked, id)
     }
 
-    override fun getIdOffline(liked: Int?): List<Int> {
+    override fun getIdOfflineLocalDS(liked: Int?): List<Int> {
         return movieDao.getIdOffline(liked)
     }
 
-    override fun getMovieOffline(liked: Int?): List<Result> {
+    override fun getMovieOfflineLocalDS(liked: Int?): List<Result> {
         return movieDao.getMovieOffline(liked)
     }
 
-    override suspend fun getMovies(apiKey: String, language: String, page: Int) =
+    override suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int) =
         movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language, page).body()?.results
 
-    override suspend fun getMovie(movieId: Int, apiKey: String, language: String) =
+    override suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getMovieByIdCoroutine(movieId, apiKey, language)
             .body()
 
-    override suspend fun hasLike(movieId: Int, apiKey: String, sessionId: String) =
+    override suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String) =
         movieApi.getMovieApi(MovieApi::class.java).hasLikeCoroutine(movieId, apiKey, sessionId)
             .body()
 
-    override suspend fun markFavourite(accountId: Int, apiKey: String, sessionId: String, body: JsonObject) =
+    override suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject) =
         movieApi.getMovieApi(MovieApi::class.java).markFavoriteMovieCoroutine(accountId, apiKey, sessionId, body)
             .body()
 
-    override suspend fun getFavouriteMovies(accountId: Int, apiKey: String, sessionId: String, language: String) =
+    override suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getFavoriteMoviesCoroutine(accountId, apiKey, sessionId, language)
             .body()?.results
 

@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
 import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
+import com.example.lab6.model.database.MovieDao
+import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.repository.AccountRepository
@@ -41,13 +43,13 @@ class ProfileViewModel(
             val body: JsonObject = JsonObject().apply {
                 addProperty("session_id", sessionId)
             }
-            accountRepository.deleteSession(BuildConfig.API_KEY, body)
+            accountRepository.deleteSessionRemoteDS(BuildConfig.API_KEY, body)
         }
     }
 
     fun getAccountDetail() {
         launch {
-            val response = accountRepository.getAccount(BuildConfig.API_KEY, sessionId)
+            val response = accountRepository.getAccountRemoteDS(BuildConfig.API_KEY, sessionId)
             if(response.isSuccessful) {
                 val account = Gson().fromJson(
                     response.body(),

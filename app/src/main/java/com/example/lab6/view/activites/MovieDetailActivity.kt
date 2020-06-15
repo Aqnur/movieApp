@@ -7,6 +7,7 @@ import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -20,7 +21,7 @@ import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
 
-class MovieDetailActivity : AppCompatActivity(){
+class MovieDetailActivity : AppCompatActivity() {
 
     private lateinit var rusTitle: TextView
     private lateinit var posterImage: ImageView
@@ -35,6 +36,7 @@ class MovieDetailActivity : AppCompatActivity(){
     private lateinit var ratingBar: RatingBar
     private lateinit var like: ImageView
     private lateinit var progressBar: ProgressBar
+    private lateinit var nestedScrollView: NestedScrollView
     private var movie: Result? = null
     private var movieId: Int? = null
 
@@ -49,18 +51,20 @@ class MovieDetailActivity : AppCompatActivity(){
         movieId = intent.getIntExtra("id", 1)
 
         configureBackButton()
-        getMovieCoroutine(id= movieId!!)
+        setViewModel()
+        getMovieCoroutine(id = movieId!!)
     }
 
-    private fun getMovieCoroutine(id: Int){
+    private fun setViewModel() {
         val movieDao: MovieDao = MovieDatabase.getDatabase(this).movieDao()
         val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
-
         movieDetailsViewModel = MovieDetailViewModel(movieRepository)
+    }
 
+    private fun getMovieCoroutine(id: Int) {
         movieDetailsViewModel.getMovie(id)
         movieDetailsViewModel.liveData.observe(this, Observer { result ->
-            when(result){
+            when (result) {
                 is MovieDetailViewModel.State.ShowLoading -> {
                     progressBar.visibility = ProgressBar.VISIBLE
                 }
@@ -95,18 +99,25 @@ class MovieDetailActivity : AppCompatActivity(){
             .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
             .into(posterImage)
 
-        titleOriginal.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
+        titleOriginal.text = movie.originalTitle + "(" + movie.releaseDate.substring(
+            0,
+            movie.releaseDate.length - 6
+        ) + ")"
         rusTitle.text = movie.title
         overview.text = movie.overview
         rating.text = movie.voteAverage.toString()
         votes.text = movie.voteCount.toString()
         ratingBar.rating = movie.voteAverage.toFloat()
-        if(movie.genres != null){
-            genres.text = movie.genres?.map { it.name }.toString().substring(1, movie.genres?.map { it.name }.toString().length - 1)
+        if (movie.genres != null) {
+            genres.text = movie.genres?.map { it.name }.toString()
+                .substring(1, movie.genres?.map { it.name }.toString().length - 1)
         }
-        if(movie.productionCountries != null) {
+        if (movie.productionCountries != null) {
             countries.text = movie.productionCountries?.map { it.iso_3166_1 }.toString()
-                .substring(1, movie.productionCountries?.map { it.iso_3166_1 }.toString().length-1)
+                .substring(
+                    1,
+                    movie.productionCountries?.map { it.iso_3166_1 }.toString().length - 1
+                )
         }
         if (movie.runtime != null) {
             runtime.text = movie.runtime.toString() + " мин"
@@ -119,17 +130,17 @@ class MovieDetailActivity : AppCompatActivity(){
 
         like.setOnClickListener {
             val drawable: Drawable = like.drawable
-            if( drawable.constantState?.equals(getDrawable(R.drawable.ic_like)?.constantState) == true ){
+            if (drawable.constantState?.equals(getDrawable(R.drawable.ic_like)?.constantState) == true) {
                 like.setImageResource(R.drawable.ic_lliked)
                 likeMovie(true)
-            }else{
+            } else {
                 like.setImageResource(R.drawable.ic_like)
                 likeMovie(false)
             }
         }
     }
 
-    private fun bindViews(){
+    private fun bindViews() {
         posterImage = findViewById(R.id.moviePhoto)
         titleOriginal = findViewById(R.id.originalTitle)
         genres = findViewById(R.id.genres)
@@ -143,6 +154,7 @@ class MovieDetailActivity : AppCompatActivity(){
         ratingBar = findViewById(R.id.starRating)
         like = findViewById(R.id.like)
         progressBar = findViewById(R.id.progressBar)
+        nestedScrollView = findViewById(R.id.nestedScrollView2)
     }
 
     private fun configureBackButton() {
