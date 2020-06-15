@@ -54,7 +54,8 @@ class MovieListViewModel(
                         for (m in result) {
                             for (n in favResult!!) {
                                 if(m.id == n.id) {
-                                    m.liked = 1
+                                    m.liked = true
+                                    movieRepository.setLikeLocalDS(true, m.id)
                                 }
                             }
                         }
@@ -65,61 +66,13 @@ class MovieListViewModel(
                 }
             }
             liveData.value = State.HideLoading
-            liveData.value = State.Result(list!!)
+            liveData.value = State.Result(list)
         }
     }
 
     fun getFavorites(){
         launch {
             liveData.value = State.ShowLoading
-
-            val likesOffline = movieRepository.getIdOfflineLocalDS(11)
-
-            for (i in likesOffline!!) {
-                val body = JsonObject().apply {
-                    addProperty("media_type", "movie")
-                    addProperty("media_id", i)
-                    addProperty("favorite", true)
-                }
-                try {
-                    val response = movieRepository.getFavouriteMoviesRemoteDS(
-                        accountId,
-                        BuildConfig.API_KEY,
-                        sessionId,
-                        "rus"
-                    )
-                    val likeMoviesOffline = movieRepository.getMovieOfflineLocalDS(11)
-                    for (movie in likeMoviesOffline!!) {
-                        movie.liked = 1
-                        movieRepository.insertLocalDS(movie)
-                    }
-                } catch (e: Exception) {
-                }
-            }
-
-            val unLikesOffline = movieRepository.getIdOfflineLocalDS(10)
-
-            for (i in unLikesOffline!!) {
-                val body = JsonObject().apply {
-                    addProperty("media_type", "movie")
-                    addProperty("media_id", i)
-                    addProperty("favorite", false)
-                }
-                try {
-                    val response = movieRepository.markFavouriteRemoteDS(
-                        accountId,
-                        BuildConfig.API_KEY,
-                        sessionId,
-                        body
-                    )
-                    val unlikeMoviesOffline = movieRepository.getMovieOfflineLocalDS(10)
-                    for (movie in unlikeMoviesOffline!!) {
-                        movie.liked = 0
-                        movieRepository.insertLocalDS(movie)
-                    }
-                } catch (e: Exception) {
-                }
-            }
 
             val list = withContext(Dispatchers.IO) {
                 try {
@@ -130,29 +83,34 @@ class MovieListViewModel(
                         "rus"
                     )
                     if (!response.isNullOrEmpty()) {
-                        movieRepository.insertAllLocalDS(response)
                         for (m in response) {
-                            m.liked = 1
+                            m.liked = true
+                            movieRepository.setLikeLocalDS(true, m.id)
                         }
                     }
                     response
                 } catch (e: Exception) {
-                    movieRepository.getAllLikedLocalDS()
+                    movieRepository.getAllLikedLocalDS(true)
                 }
             }
             liveData.value = State.HideLoading
-            liveData.value = State.Result(list!!)
+            liveData.value = State.Result(list)
         }
     }
 
-    fun likeMovie(favourite: Boolean, movie: Result?, movieId: Int?) {
-        liveData.value = State.ShowLoading
+    fun addToFavourite(movie: Result) {
+        movie.liked = !movie.liked
+        val body = JsonObject().apply {
+            addProperty("media_type", "movie")
+            addProperty("media_id", movie.id)
+            addProperty("favorite", movie.liked)
+        }
+        updateFavourite(body)
+        movieRepository.insertLocalDS(movie)
+    }
+
+    private fun updateFavourite(body: JsonObject) {
         launch {
-            val body = JsonObject().apply {
-                addProperty("media_type", "movie")
-                addProperty("media_id", movieId)
-                addProperty("favorite", favourite)
-            }
             try {
                 movieRepository.markFavouriteRemoteDS(
                     accountId,
@@ -160,25 +118,13 @@ class MovieListViewModel(
                     sessionId, body
                 )
             } catch (e: Exception) { }
-            if (favourite) {
-                movie?.liked = 11
-                if (movie != null) {
-                    movieRepository.insertLocalDS(movie)
-                }
-            } else {
-                movie?.liked = 10
-                if (movie != null) {
-                    movieRepository.insertLocalDS(movie)
-                }
-            }
-            liveData.value = State.HideLoading
         }
     }
 
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
-        data class Result(val list: List<com.example.lab6.model.json.movie.Result>) : State()
+        data class Result(val list: List<com.example.lab6.model.json.movie.Result>?) : State()
     }
 
 }

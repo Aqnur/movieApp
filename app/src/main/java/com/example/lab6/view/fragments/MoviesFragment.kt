@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import com.example.lab6.model.json.PaginationCounter
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
+import com.example.lab6.view.MyApplication
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
@@ -30,7 +32,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-    private lateinit var sharedViewModel: SharedViewModel
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private var curPage = PaginationCounter.PAGE_START
     private var isLastPage = false
@@ -72,13 +74,10 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     }
 
     private fun setViewModels() {
+//        val appContainer = (activity?.application as MyApplication).appContainer
         val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
         val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
         movieListViewModel = MovieListViewModel(movieRepository)
-
-        sharedViewModel =
-            activity?.run { ViewModelProvider(this).get(SharedViewModel::class.java) }
-                ?: throw Exception("Invalid Activity")
     }
 
     private fun swipeRefresh() {
@@ -100,7 +99,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
         recyclerView.addOnScrollListener(object : PaginationCounter(layoutManager) {
             override fun loadMoreItems() {
-                isLoading = false
+                isLoading = true
                 curPage++
                 getMovies(curPage)
             }
@@ -123,7 +122,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
                 }
                 is MovieListViewModel.State.Result -> {
                     moviesAdapter?.removeFooterLoading()
-                    moviesAdapter?.addItems(result.list)
+                    moviesAdapter?.addItems(result.list!!)
                     moviesAdapter?.addFooterLoading()
                     isLoading = false
                 }
@@ -131,11 +130,8 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         })
     }
 
-    override fun addToFavourites(boolean: Boolean, position: Int, item: Result) {
-        movieListViewModel.likeMovie(boolean, item, item.id)
-    }
-
-    override fun sharedView(item: Result) {
+    override fun addToFavourites(position: Int, item: Result) {
+        movieListViewModel.addToFavourite(item)
         sharedViewModel.select(item)
     }
 

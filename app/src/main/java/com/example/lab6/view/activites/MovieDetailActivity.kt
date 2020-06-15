@@ -19,7 +19,6 @@ import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view_model.MovieDetailViewModel
-import com.example.lab6.view_model.ViewModelProviderFactory
 
 class MovieDetailActivity : AppCompatActivity() {
 

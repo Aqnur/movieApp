@@ -100,10 +100,8 @@ class MoviesAdapter(
     }
 
     fun updateItem(movie: Result) {
-        val id = movie.id
-        val isClicked = movie.liked
-        val foundMovie = movies.find { it.id == id }
-        foundMovie?.liked = isClicked
+        val foundMovie = movies.find { it.id == movie.id }
+        foundMovie?.liked = movie.liked
         notifyDataSetChanged()
     }
 
@@ -144,15 +142,14 @@ class MoviesAdapter(
             rating.text = "Рейтинг: " + movie.voteAverage.toString()
             votes.text = "Голоса: " + movie.voteCount.toString()
 
-            if (movie.liked == 1 || movie.liked == 11) {
+            if (movie.liked) {
                 moviesLike.setImageResource(R.drawable.ic_lliked)
             } else {
                 moviesLike.setImageResource(R.drawable.ic_like)
             }
 
-
             moviesLike.setOnClickListener {
-                itemClickListner?.sharedView(movie)
+                itemClickListner?.addToFavourites(adapterPosition, movie)
                 val drawable: Drawable = moviesLike.drawable
                 if (drawable.constantState?.equals(
                         getDrawable(
@@ -161,10 +158,8 @@ class MoviesAdapter(
                         )?.constantState
                     ) == true
                 ) {
-                    itemClickListner?.addToFavourites(true, adapterPosition, movie)
                     moviesLike.setImageResource(R.drawable.ic_lliked)
                 } else {
-                    itemClickListner?.addToFavourites(false, adapterPosition, movie)
                     moviesLike.setImageResource(R.drawable.ic_like)
                 }
             }
@@ -174,7 +169,6 @@ class MoviesAdapter(
     inner class LoaderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     interface RecyclerViewItemClick {
-        fun addToFavourites(boolean: Boolean, position: Int, item: Result)
-        fun sharedView(item: Result)
+        fun addToFavourites(position: Int, item: Result)
     }
 }

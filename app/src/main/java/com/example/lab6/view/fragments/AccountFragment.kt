@@ -24,7 +24,6 @@ import com.example.lab6.model.repository.AccountRepositoryImpl
 import com.example.lab6.view.activites.GoogleMapsActivity
 import com.example.lab6.view.activites.LoginActivity
 import com.example.lab6.view_model.ProfileViewModel
-import com.example.lab6.view_model.ViewModelProviderFactory
 
 class AccountFragment : Fragment() {
 

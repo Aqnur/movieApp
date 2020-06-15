@@ -17,10 +17,10 @@ interface MovieRepository {
     fun updateMovieRuntimeLocalDS(runtime: Int, id: Int)
     fun getMovieByIdLocalDS(id: Int): Result
     fun getLikedLocalDS(id: Int?): Int
-    fun getAllLikedLocalDS(): List<Result>
-    fun setLikeLocalDS(liked: Int, id: Int)
-    fun getIdOfflineLocalDS(liked: Int?): List<Int>
-    fun getMovieOfflineLocalDS(liked: Int?): List<Result>
+    fun getAllLikedLocalDS(liked: Boolean): List<Result>
+    fun setLikeLocalDS(liked: Boolean, id: Int)
+    fun getIdOfflineLocalDS(liked: Boolean?): List<Int>
+    fun getMovieOfflineLocalDS(liked: Boolean?): List<Result>
 
     suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int): List<Result>?
     suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String): Result?
@@ -59,22 +59,22 @@ class MovieRepositoryImpl(
     }
 
     override fun getLikedLocalDS(id: Int?): Int {
-        return movieDao.getLiked((id))
+        return movieDao.getLiked(id)
     }
 
-    override fun getAllLikedLocalDS(): List<Result> {
-        return movieDao.getAllLiked()
+    override fun getAllLikedLocalDS(liked: Boolean): List<Result> {
+        return movieDao.getFavouriteMovies(liked)
     }
 
-    override fun setLikeLocalDS(liked: Int, id: Int) {
+    override fun setLikeLocalDS(liked: Boolean, id: Int) {
         return movieDao.setLike(liked, id)
     }
 
-    override fun getIdOfflineLocalDS(liked: Int?): List<Int> {
+    override fun getIdOfflineLocalDS(liked: Boolean?): List<Int> {
         return movieDao.getIdOffline(liked)
     }
 
-    override fun getMovieOfflineLocalDS(liked: Int?): List<Result> {
+    override fun getMovieOfflineLocalDS(liked: Boolean?): List<Result> {
         return movieDao.getMovieOffline(liked)
     }
 

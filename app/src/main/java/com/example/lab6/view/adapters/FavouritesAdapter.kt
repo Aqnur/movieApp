@@ -95,32 +95,20 @@ class FavouritesAdapter(
             rating.text = "Рейтинг: " + movie.voteAverage.toString()
             votes.text = "Голоса: " + movie.voteCount.toString()
 
-            if (movie.liked == 1 || movie.liked == 11) {
+            if (movie.liked) {
                 moviesLike.setImageResource(R.drawable.ic_lliked)
             } else {
                 moviesLike.setImageResource(R.drawable.ic_like)
             }
 
             moviesLike.setOnClickListener {
-                val drawable: Drawable = moviesLike.drawable
-                if (drawable.constantState?.equals(
-                        getDrawable(
-                            itemView.context,
-                            R.drawable.ic_like
-                        )?.constantState
-                    ) == true
-                ) {
-                    itemClickListner?.addToFavourites(true, adapterPosition, movie)
-                    moviesLike.setImageResource(R.drawable.ic_lliked)
-                } else {
-                    itemClickListner?.addToFavourites(false, adapterPosition, movie)
-                    moviesLike.setImageResource(R.drawable.ic_like)
-                }
+                itemClickListner?.removeFromFavourite(adapterPosition, movie)
+                moviesLike.setImageResource(R.drawable.ic_like)
             }
         }
     }
 
     interface RecyclerViewItemClick {
-        fun addToFavourites(boolean: Boolean, position: Int, item: Result)
+        fun removeFromFavourite(position: Int, item: Result)
     }
 }

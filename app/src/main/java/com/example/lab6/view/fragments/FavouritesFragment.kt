@@ -33,7 +33,7 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sharedViewModel.selected.observe(viewLifecycleOwner, Observer { item ->
-            if (item.liked == 1 || item.liked == 11) favoriteAdapter?.addItem(item)
+            if (item.liked) favoriteAdapter?.addItem(item)
             else favoriteAdapter?.removeItem(item)
         })
     }
@@ -106,8 +106,8 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
         swipeRefreshLayoutFav.isRefreshing = false
     }
 
-    override fun addToFavourites(boolean: Boolean, position: Int, item: Result) {
-        movieListViewModel.likeMovie(boolean, item, item.id)
+    override fun removeFromFavourite(position: Int, item: Result) {
+        movieListViewModel.addToFavourite(item)
         sharedViewModel.select(item)
     }
 

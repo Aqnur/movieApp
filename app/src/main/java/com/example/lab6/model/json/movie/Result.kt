@@ -21,7 +21,7 @@ data class Result(
     @SerializedName("runtime") var runtime: Int ?= null,
     @SerializedName("tagline") var tagline: String ?= null,
 
-    var liked: Int? = 0,
+    var liked: Boolean = false,
     var genreNames: String = "",
 
     @Ignore var position: Int = 0,

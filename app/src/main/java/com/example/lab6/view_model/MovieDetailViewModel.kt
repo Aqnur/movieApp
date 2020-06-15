@@ -103,19 +103,17 @@ class MovieDetailViewModel(
                         sessionId, body)
             } catch (e: Exception) { }
             if (favourite) {
-                movie?.liked = 11
+                movie?.liked = true
                 if (movie != null) {
                     movieRepository.insertLocalDS(movie)
-                    movieRepository.setLikeLocalDS(11, movie.id)
+                    movieRepository.setLikeLocalDS(true, movie.id)
                 }
-//                Toast.makeText(context, "Movie has been added to favourites", Toast.LENGTH_SHORT).show()
             } else {
-                movie?.liked = 10
+                movie?.liked = false
                 if (movie != null) {
-                    movieRepository.setLikeLocalDS(10, movie.id)
+                    movieRepository.setLikeLocalDS(false, movie.id)
                     movieRepository.insertLocalDS(movie)
                 }
-//                Toast.makeText(context,"Movie has been removed from favourites", Toast.LENGTH_SHORT).show()
             }
             liveData.value = State.HideLoading
         }

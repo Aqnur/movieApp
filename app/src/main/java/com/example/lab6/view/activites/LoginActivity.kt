@@ -22,8 +22,8 @@ import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
 import com.example.lab6.model.repository.AccountRepository
 import com.example.lab6.model.repository.AccountRepositoryImpl
+import com.example.lab6.view.MyApplication
 import com.example.lab6.view_model.LoginViewModel
-import com.example.lab6.view_model.ViewModelProviderFactory
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
@@ -86,8 +86,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setViewModel() {
-        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
-        loginViewModel = LoginViewModel(accountRepository)
+        val appContainer = (application as MyApplication).appContainer
+//        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
+        loginViewModel = LoginViewModel(appContainer.accountRepository)
     }
 
     private fun check() {
