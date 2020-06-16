@@ -12,17 +12,11 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.lab6.R
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
 import com.google.android.material.textfield.TextInputLayout
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
-import com.example.lab6.model.repository.AccountRepository
-import com.example.lab6.model.repository.AccountRepositoryImpl
-import com.example.lab6.view.MyApplication
+import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view_model.LoginViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -86,7 +80,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setViewModel() {
-        val appContainer = (application as MyApplication).appContainer
+        val appContainer = (application as MoviesApplication).appContainer
 //        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
         loginViewModel = LoginViewModel(appContainer.accountRepository)
     }

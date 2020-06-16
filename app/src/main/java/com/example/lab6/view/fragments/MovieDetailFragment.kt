@@ -1,15 +1,18 @@
-package com.example.lab6.view.activites
+package com.example.lab6.view.fragments
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.model.api.RetrofitService
@@ -20,7 +23,7 @@ import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view_model.MovieDetailViewModel
 
-class MovieDetailActivity : AppCompatActivity() {
+class MovieDetailFragment : Fragment() {
 
     private lateinit var rusTitle: TextView
     private lateinit var posterImage: ImageView
@@ -41,28 +44,35 @@ class MovieDetailActivity : AppCompatActivity() {
 
     private lateinit var movieDetailsViewModel: MovieDetailViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movie_detail)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.activity_movie_detail, container, false)
+    }
 
-        bindViews()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        movieId = intent.getIntExtra("id", 1)
+        bindViews(view)
 
-        configureBackButton()
+        movieId = activity?.intent?.getIntExtra("id", 1)
+
+        configureBackButton(view)
         setViewModel()
         getMovieCoroutine(id = movieId!!)
     }
 
     private fun setViewModel() {
-        val movieDao: MovieDao = MovieDatabase.getDatabase(this).movieDao()
+        val movieDao: MovieDao = MovieDatabase.getDatabase(requireActivity()).movieDao()
         val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
         movieDetailsViewModel = MovieDetailViewModel(movieRepository)
     }
 
     private fun getMovieCoroutine(id: Int) {
         movieDetailsViewModel.getMovie(id)
-        movieDetailsViewModel.liveData.observe(this, Observer { result ->
+        movieDetailsViewModel.liveData.observe(requireActivity(), Observer { result ->
             when (result) {
                 is MovieDetailViewModel.State.ShowLoading -> {
                     progressBar.visibility = ProgressBar.VISIBLE
@@ -94,9 +104,10 @@ class MovieDetailActivity : AppCompatActivity() {
     }
 
     private fun setData(movie: Result) {
-        Glide.with(this@MovieDetailActivity)
+        Glide.with(this)
             .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
             .into(posterImage)
+
         if(movie.releaseDate.length != 10) {
             rusTitle.text = movie.originalTitle
         } else {
@@ -129,7 +140,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
         like.setOnClickListener {
             val drawable: Drawable = like.drawable
-            if (drawable.constantState?.equals(getDrawable(R.drawable.ic_like)?.constantState) == true) {
+            if (drawable.constantState?.equals(getDrawable(requireContext(), R.drawable.ic_like)?.constantState) == true) {
                 like.setImageResource(R.drawable.ic_lliked)
                 likeMovie(true)
             } else {
@@ -139,27 +150,27 @@ class MovieDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun bindViews() {
-        posterImage = findViewById(R.id.moviePhoto)
-        titleOriginal = findViewById(R.id.originalTitle)
-        genres = findViewById(R.id.genres)
-        tagline = findViewById(R.id.tagline)
-        countries = findViewById(R.id.countries)
-        runtime = findViewById(R.id.runtime)
-        rusTitle = findViewById(R.id.rusTitle)
-        overview = findViewById(R.id.overview)
-        rating = findViewById(R.id.rating)
-        votes = findViewById(R.id.voteCount)
-        ratingBar = findViewById(R.id.starRating)
-        like = findViewById(R.id.like)
-        progressBar = findViewById(R.id.progressBar)
-        nestedScrollView = findViewById(R.id.nestedScrollView2)
+    private fun bindViews(view: View) {
+        posterImage = view.findViewById(R.id.moviePhoto)
+        titleOriginal = view.findViewById(R.id.originalTitle)
+        genres = view.findViewById(R.id.genres)
+        tagline = view.findViewById(R.id.tagline)
+        countries = view.findViewById(R.id.countries)
+        runtime = view.findViewById(R.id.runtime)
+        rusTitle = view.findViewById(R.id.rusTitle)
+        overview = view.findViewById(R.id.overview)
+        rating = view.findViewById(R.id.rating)
+        votes = view.findViewById(R.id.voteCount)
+        ratingBar = view.findViewById(R.id.starRating)
+        like = view.findViewById(R.id.like)
+        progressBar = view.findViewById(R.id.progressBar)
+        nestedScrollView = view.findViewById(R.id.nestedScrollView2)
     }
 
-    private fun configureBackButton() {
-        val back: ImageView = findViewById(R.id.back)
+    private fun configureBackButton(view: View) {
+        val back: ImageView = view.findViewById(R.id.back)
         back.setOnClickListener {
-            finish()
+            requireActivity().finish()
         }
     }
 

@@ -14,10 +14,8 @@ import com.example.lab6.model.repository.AccountRepository
 import com.example.lab6.model.repository.AccountRepositoryImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 class ProfileViewModel(
@@ -49,14 +47,18 @@ class ProfileViewModel(
 
     fun getAccountDetail() {
         launch {
-            val response = accountRepository.getAccountRemoteDS(BuildConfig.API_KEY, sessionId)
-            if(response.isSuccessful) {
-                val account = Gson().fromJson(
-                    response.body(),
-                    Account::class.java
-                )
-                liveData.value = account
+                try {
+                    val response = accountRepository.getAccountRemoteDS(BuildConfig.API_KEY, sessionId)
+                    if (response.isSuccessful) {
+                        val account = Gson().fromJson(
+                            response.body(),
+                            Account::class.java
+                        )
+                        liveData.value = account
+                    }
+                } catch (e: Exception) {
+
+                }
             }
-        }
     }
 }

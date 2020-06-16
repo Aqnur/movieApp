@@ -12,6 +12,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import java.lang.Exception
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class MovieListViewModel(
@@ -38,21 +39,19 @@ class MovieListViewModel(
             if (page == 1) liveData.value = State.ShowLoading
             val list = withContext(Dispatchers.IO) {
                 try {
-                    val response = movieRepository.getMoviesRemoteDS(BuildConfig.API_KEY, "ru", page)
+                    val response = movieRepository.getMoviesRemoteDS(BuildConfig.API_KEY, Locale.getDefault().language, page)
                     val favResponse = movieRepository.getFavouriteMoviesRemoteDS(
                         accountId,
                         BuildConfig.API_KEY,
                         sessionId,
-                        "rus"
+                        Locale.getDefault().language
                     )
-                    val result = response
-                    val favResult = favResponse
-                    if (!result.isNullOrEmpty()) {
-                        movieRepository.insertAllLocalDS(result)
+                    if (!response.isNullOrEmpty()) {
+                        movieRepository.insertAllLocalDS(response)
                     }
-                    if (!result.isNullOrEmpty()) {
-                        for (m in result) {
-                            for (n in favResult!!) {
+                    if (!response.isNullOrEmpty()) {
+                        for (m in response) {
+                            for (n in favResponse!!) {
                                 if(m.id == n.id) {
                                     m.liked = true
                                     movieRepository.setLikeLocalDS(true, m.id)
@@ -60,7 +59,7 @@ class MovieListViewModel(
                             }
                         }
                     }
-                    result
+                    response
                 } catch (e: Exception) {
                     movieRepository.getMoviesLocalDS() ?: emptyList()
                 }
@@ -80,7 +79,7 @@ class MovieListViewModel(
                         accountId,
                         BuildConfig.API_KEY,
                         sessionId,
-                        "rus"
+                        Locale.getDefault().language
                     )
                     if (!response.isNullOrEmpty()) {
                         for (m in response) {
