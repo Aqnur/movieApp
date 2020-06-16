@@ -81,8 +81,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setViewModel() {
         val appContainer = (application as MoviesApplication).appContainer
-//        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
-        loginViewModel = LoginViewModel(appContainer.accountRepository)
+        loginViewModel = appContainer.moviesViewModelFactory.createLogin()
     }
 
     private fun check() {

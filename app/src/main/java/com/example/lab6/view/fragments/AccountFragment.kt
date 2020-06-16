@@ -21,6 +21,7 @@ import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.repository.AccountRepository
 import com.example.lab6.model.repository.AccountRepositoryImpl
+import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view.activites.GoogleMapsActivity
 import com.example.lab6.view.activites.LoginActivity
 import com.example.lab6.view_model.ProfileViewModel
@@ -52,8 +53,8 @@ class AccountFragment : Fragment() {
         bindViews(view)
         initViews()
 
-        val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
-        profileListViewModel = ProfileViewModel(accountRepository)
+        val appContainer = (activity?.application as MoviesApplication).appContainer
+        profileListViewModel = appContainer.moviesViewModelFactory.createProfile()
 
         accountDetails()
 

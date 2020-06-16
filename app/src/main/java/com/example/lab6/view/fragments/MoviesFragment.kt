@@ -18,6 +18,7 @@ import com.example.lab6.model.json.PaginationCounter
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
+import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
@@ -74,10 +75,8 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     }
 
     private fun setViewModels() {
-//        val appContainer = (activity?.application as MyApplication).appContainer
-        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
-        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
-        movieListViewModel = MovieListViewModel(movieRepository)
+        val appContainer = (activity?.application as MoviesApplication).appContainer
+        movieListViewModel = appContainer.moviesViewModelFactory.createMovies()
     }
 
     private fun swipeRefresh() {
@@ -131,11 +130,6 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     }
 
     override fun itemClick(position: Int, item: Result) {
-//        val intent = Intent(context, MovieDetailActivity::class.java).also {
-//            it.putExtra("id", item.id)
-//            it.putExtra("pos", position)
-//        }
-//        context?.startActivity(intent)
         val bundle = Bundle()
         bundle.putInt("id", item.id)
         val movieDetailFragment = MovieDetailFragment()

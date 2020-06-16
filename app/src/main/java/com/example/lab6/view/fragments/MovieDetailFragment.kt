@@ -22,6 +22,7 @@ import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
+import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.SharedViewModel
 
@@ -68,9 +69,8 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        val movieDao: MovieDao = MovieDatabase.getDatabase(requireActivity()).movieDao()
-        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
-        movieDetailsViewModel = MovieDetailViewModel(movieRepository)
+        val appContainer = (activity?.application as MoviesApplication).appContainer
+        movieDetailsViewModel = appContainer.moviesViewModelFactory.createMovie()
     }
 
     private fun getMovieCoroutine(id: Int) {

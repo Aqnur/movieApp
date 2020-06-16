@@ -17,6 +17,7 @@ import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
+import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view.adapters.FavouritesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
@@ -64,9 +65,8 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     }
 
     private fun setViewModel() {
-        val movieDao: MovieDao = MovieDatabase.getDatabase(requireContext()).movieDao()
-        val movieRepository: MovieRepository = MovieRepositoryImpl(RetrofitService, movieDao)
-        movieListViewModel = MovieListViewModel(movieRepository)
+        val appContainer = (activity?.application as MoviesApplication).appContainer
+        movieListViewModel = appContainer.moviesViewModelFactory.createMovies()
     }
 
     private fun swipeRefresh() {
