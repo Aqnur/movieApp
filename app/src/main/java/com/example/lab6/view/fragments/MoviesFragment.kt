@@ -22,6 +22,8 @@ import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_nav.*
 
 class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
@@ -126,6 +128,21 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
                 }
             }
         })
+    }
+
+    override fun itemClick(position: Int, item: Result) {
+//        val intent = Intent(context, MovieDetailActivity::class.java).also {
+//            it.putExtra("id", item.id)
+//            it.putExtra("pos", position)
+//        }
+//        context?.startActivity(intent)
+        val bundle = Bundle()
+        bundle.putInt("id", item.id)
+        val movieDetailFragment = MovieDetailFragment()
+        movieDetailFragment.arguments = bundle
+        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment).addToBackStack(null).commit()
+        requireActivity().topTitle.visibility = View.GONE
+        requireActivity().bottomNavigationView.visibility = View.GONE
     }
 
     override fun addToFavourites(position: Int, item: Result) {

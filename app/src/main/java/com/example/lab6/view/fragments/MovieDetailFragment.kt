@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.lab6.R
@@ -22,6 +23,7 @@ import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view_model.MovieDetailViewModel
+import com.example.lab6.view_model.SharedViewModel
 
 class MovieDetailFragment : Fragment() {
 
@@ -39,10 +41,10 @@ class MovieDetailFragment : Fragment() {
     private lateinit var like: ImageView
     private lateinit var progressBar: ProgressBar
     private lateinit var nestedScrollView: NestedScrollView
+    private lateinit var movieDetailsViewModel: MovieDetailViewModel
     private var movie: Result? = null
     private var movieId: Int? = null
-
-    private lateinit var movieDetailsViewModel: MovieDetailViewModel
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +59,8 @@ class MovieDetailFragment : Fragment() {
 
         bindViews(view)
 
-        movieId = activity?.intent?.getIntExtra("id", 1)
+        val bundle = this.arguments
+        movieId = bundle?.getInt("id")
 
         configureBackButton(view)
         setViewModel()
@@ -87,8 +90,10 @@ class MovieDetailFragment : Fragment() {
                 is MovieDetailViewModel.State.Res -> {
                     if (result.likeInt == 1 || result.likeInt == 11) {
                         like.setImageResource(R.drawable.ic_lliked)
+                        movie?.liked = true
                     } else {
                         like.setImageResource(R.drawable.ic_like)
+                        movie?.liked = false
                     }
                 }
             }
@@ -99,8 +104,8 @@ class MovieDetailFragment : Fragment() {
         movieDetailsViewModel.haslike(id)
     }
 
-    private fun likeMovie(favourite: Boolean) {
-        movieDetailsViewModel.likeMovie(favourite, movie, movieId)
+    private fun likeMovie(movie: Result) {
+        movieDetailsViewModel.addToFavourite(movie)
     }
 
     private fun setData(movie: Result) {
@@ -140,13 +145,13 @@ class MovieDetailFragment : Fragment() {
 
         like.setOnClickListener {
             val drawable: Drawable = like.drawable
-            if (drawable.constantState?.equals(getDrawable(requireContext(), R.drawable.ic_like)?.constantState) == true) {
+            if (!movie.liked) {
                 like.setImageResource(R.drawable.ic_lliked)
-                likeMovie(true)
             } else {
                 like.setImageResource(R.drawable.ic_like)
-                likeMovie(false)
             }
+            likeMovie(movie)
+            sharedViewModel.select(movie)
         }
     }
 

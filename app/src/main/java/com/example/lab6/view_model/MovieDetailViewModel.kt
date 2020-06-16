@@ -43,6 +43,9 @@ class MovieDetailViewModel(
                         if (response != null) {
                             response.runtime?.let { movieRepository.updateMovieRuntimeLocalDS(it, id) }
                             response.tagline?.let { movieRepository.updateMovieTaglineLocalDS(it, id) }
+                            if(response.liked) {
+                                movieRepository.setLikeLocalDS(true, response.id)
+                            }
                         }
                         response
                 } catch (e: Exception) {
@@ -69,14 +72,41 @@ class MovieDetailViewModel(
                             response,
                             FavResponse::class.java
                         ).favorite
-                        if (like)
+                        if (like) {
+                            movieRepository.setLikeLocalDS(true, movieId)
                             1
-                        else 0
+                        } else {
+                            movieRepository.setLikeLocalDS(false, movieId)
+                            0
+                        }
                 } catch (e: Exception) {
                     movieRepository.getLikedLocalDS(movieId) ?: 0
                 }
             }
             liveData.value = State.Res(likeInt)
+        }
+    }
+
+    fun addToFavourite(movie: Result) {
+        movie.liked = !movie.liked
+        val body = JsonObject().apply {
+            addProperty("media_type", "movie")
+            addProperty("media_id", movie.id)
+            addProperty("favorite", movie.liked)
+        }
+        updateFavourite(body)
+        movieRepository.insertLocalDS(movie)
+    }
+
+    private fun updateFavourite(body: JsonObject) {
+        launch {
+            try {
+                movieRepository.markFavouriteRemoteDS(
+                    accountId,
+                    BuildConfig.API_KEY,
+                    sessionId, body
+                )
+            } catch (e: Exception) { }
         }
     }
 

@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.model.json.movie.Result
-import com.example.lab6.view.activites.MovieDetailActivity
 
 class MoviesAdapter(
     private val itemClickListner: RecyclerViewItemClick? = null,
@@ -44,13 +43,6 @@ class MoviesAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MoviesViewHolder) {
-            holder.itemView.setOnClickListener {
-                val intent = Intent(context, MovieDetailActivity::class.java).also {
-                    it.putExtra("id", movies[position].id)
-                    it.putExtra("pos", position)
-                }
-                context.startActivity(intent)
-            }
             return holder.bind(movies[position])
         }
     }
@@ -135,18 +127,23 @@ class MoviesAdapter(
             id = movie.id
             movieId.text = movie.position.toString()
             title.text = movie.title
+            rating.text = "Рейтинг: " + movie.voteAverage.toString()
+            votes.text = "Голоса: " + movie.voteCount.toString()
+
             if(movie.releaseDate.length != 10) {
                 rusTitle.text = movie.originalTitle
             } else {
                 rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
             }
-            rating.text = "Рейтинг: " + movie.voteAverage.toString()
-            votes.text = "Голоса: " + movie.voteCount.toString()
 
             if (movie.liked) {
                 moviesLike.setImageResource(R.drawable.ic_lliked)
             } else {
                 moviesLike.setImageResource(R.drawable.ic_like)
+            }
+
+            itemView.setOnClickListener {
+                itemClickListner?.itemClick(adapterPosition, movie)
             }
 
             moviesLike.setOnClickListener {
@@ -170,6 +167,7 @@ class MoviesAdapter(
     inner class LoaderViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     interface RecyclerViewItemClick {
+        fun itemClick(position: Int, item: Result)
         fun addToFavourites(position: Int, item: Result)
     }
 }

@@ -20,6 +20,8 @@ import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.example.lab6.view.adapters.FavouritesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_nav.*
 
 class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
 
@@ -99,11 +101,14 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
         })
     }
 
-    override fun onResume() {
-        super.onResume()
-        swipeRefreshLayoutFav.isRefreshing = true
-        getFavMovieCoroutine()
-        swipeRefreshLayoutFav.isRefreshing = false
+    override fun itemClick(position: Int, item: Result) {
+        val bundle = Bundle()
+        bundle.putInt("id", item.id)
+        val movieDetailFragment = MovieDetailFragment()
+        movieDetailFragment.arguments = bundle
+        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment).addToBackStack(null).commit()
+        requireActivity().topTitle.visibility = View.GONE
+        requireActivity().bottomNavigationView.visibility = View.GONE
     }
 
     override fun removeFromFavourite(position: Int, item: Result) {
