@@ -3,6 +3,7 @@ package com.example.lab6.view
 import android.accounts.Account
 import android.content.Context
 import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import androidx.fragment.app.activityViewModels
 import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
@@ -28,7 +29,7 @@ class AppContainer private constructor(context: Context) {
             initialized = true
         }
 
-//        fun getPreferences() : SharedPreferences = INSTANCE.preferences
+        fun getPreferences() : SharedPreferences = INSTANCE.preferences
         fun getMovieRepository() : MovieRepository = INSTANCE.movieRepository
         fun getAccountRepository() : AccountRepository = INSTANCE.accountRepository
         fun getMapRepository() : MapRepository = INSTANCE.mapRepository
@@ -38,6 +39,10 @@ class AppContainer private constructor(context: Context) {
 
     private val movieDao: MovieDao = MovieDatabase.getDatabase(context).movieDao()
     private val markerDao: MarkerDao = MovieDatabase.getDatabase(context).markerDao()
+
+    val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(context)
+    }
 
     val movieRepository: MovieRepository by lazy {
         MovieRepositoryImpl(RetrofitService, movieDao)

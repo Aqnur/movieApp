@@ -38,7 +38,7 @@ class AccountFragment : Fragment() {
 
     private lateinit var profileListViewModel: ProfileViewModel
     private lateinit var editor: SharedPreferences.Editor
-    private lateinit var preferences: SharedPreferences
+    private var preferences = AppContainer.getPreferences()
 
     override fun onCreateView(
         inflater: LayoutInflater,

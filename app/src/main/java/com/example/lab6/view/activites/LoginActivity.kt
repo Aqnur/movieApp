@@ -36,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var appCompatButtonLogin: AppCompatButton
     private lateinit var progressBar: ProgressBar
     private lateinit var loginViewModel: LoginViewModel
-    private lateinit var preferences: SharedPreferences
+    private var preferences = AppContainer.getPreferences()
     private var data: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
