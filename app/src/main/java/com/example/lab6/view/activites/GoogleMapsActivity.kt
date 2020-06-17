@@ -9,6 +9,7 @@ import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.account.Marker
 import com.example.lab6.model.repository.MapRepository
 import com.example.lab6.model.repository.MapRepositoryImpl
+import com.example.lab6.view.AppContainer
 import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view_model.MarkersViewModel
 import com.example.lab6.view_model.ViewModelProviderFactory
@@ -41,8 +42,7 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setViewModel() {
-        val appContainer = (application as MoviesApplication).appContainer
-        markersViewModel = appContainer.moviesViewModelFactory.createMap()
+        markersViewModel = MarkersViewModel(AppContainer.getMapRepository())
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

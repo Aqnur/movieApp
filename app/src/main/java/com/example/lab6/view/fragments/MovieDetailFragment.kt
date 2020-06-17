@@ -22,6 +22,7 @@ import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.example.lab6.model.repository.MovieRepositoryImpl
+import com.example.lab6.view.AppContainer
 import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.SharedViewModel
@@ -69,8 +70,7 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        val appContainer = (activity?.application as MoviesApplication).appContainer
-        movieDetailsViewModel = appContainer.moviesViewModelFactory.createMovie()
+        movieDetailsViewModel = MovieDetailViewModel(AppContainer.getMovieRepository())
     }
 
     private fun getMovieCoroutine(id: Int) {
@@ -98,10 +98,6 @@ class MovieDetailFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private fun hasLike(id: Int) {
-        movieDetailsViewModel.haslike(id)
     }
 
     private fun likeMovie(movie: Result) {
@@ -141,7 +137,7 @@ class MovieDetailFragment : Fragment() {
             tagline.text = "«" + movie.tagline + "»"
         }
 
-        hasLike(movie.id)
+        movieDetailsViewModel.isFavourite(movie.id)
 
         like.setOnClickListener {
             val drawable: Drawable = like.drawable

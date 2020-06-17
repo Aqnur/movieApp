@@ -57,7 +57,7 @@ class MovieDetailViewModel(
         }
     }
 
-    fun haslike(movieId: Int) {
+    fun isFavourite(movieId: Int) {
         launch {
             val likeInt = withContext(Dispatchers.IO) {
                 try {

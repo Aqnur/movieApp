@@ -16,6 +16,7 @@ import com.example.lab6.R
 import com.google.android.material.textfield.TextInputLayout
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
+import com.example.lab6.view.AppContainer
 import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view_model.LoginViewModel
 import com.google.gson.Gson
@@ -80,8 +81,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setViewModel() {
-        val appContainer = (application as MoviesApplication).appContainer
-        loginViewModel = appContainer.moviesViewModelFactory.createLogin()
+        loginViewModel = LoginViewModel(AppContainer.getAccountRepository())
     }
 
     private fun check() {
