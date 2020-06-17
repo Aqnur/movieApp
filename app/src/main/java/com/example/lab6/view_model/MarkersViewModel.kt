@@ -11,15 +11,12 @@ import com.example.lab6.model.repository.MapRepositoryImpl
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class MarkersViewModel(context: Context) : ViewModel(), CoroutineScope {
+class MarkersViewModel(private val mapRepository: MapRepository) : ViewModel(), CoroutineScope {
 
     private val job = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    private var markerDao: MarkerDao = MovieDatabase.getDatabase(context = context).markerDao()
-    private val mapRepository: MapRepository = MapRepositoryImpl(markerDao)
 
     fun fillDatabase() {
         launch {
