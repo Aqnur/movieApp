@@ -30,9 +30,11 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     private lateinit var swipeRefreshLayoutFav: SwipeRefreshLayout
     private lateinit var recyclerViewFav: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var movieListViewModel: MovieListViewModel
     private var favoriteAdapter: FavouritesAdapter? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val movieListViewModel: MovieListViewModel by lazy {
+        MovieListViewModel(AppContainer.getMovieRepository())
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -53,7 +55,6 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setViewModel()
         bindViews(view)
         swipeRefresh()
         setAdapter()
@@ -63,10 +64,6 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     private fun bindViews(view: View) {
         swipeRefreshLayoutFav = view.findViewById(R.id.swipeRefreshLayoutFav)
         recyclerViewFav = view.findViewById(R.id.recyclerViewFav)
-    }
-
-    private fun setViewModel() {
-        movieListViewModel = MovieListViewModel(AppContainer.getMovieRepository())
     }
 
     private fun swipeRefresh() {

@@ -36,9 +36,11 @@ class AccountFragment : Fragment() {
     private lateinit var userId: TextView
     private lateinit var userAvatar: ImageView
 
-    private lateinit var profileListViewModel: ProfileViewModel
     private lateinit var editor: SharedPreferences.Editor
     private var preferences = AppContainer.getPreferences()
+    private val profileListViewModel: ProfileViewModel by lazy {
+        ProfileViewModel(AppContainer.getAccountRepository())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,9 +55,6 @@ class AccountFragment : Fragment() {
 
         bindViews(view)
         initViews()
-
-        profileListViewModel = ProfileViewModel(AppContainer.getAccountRepository())
-
         accountDetails()
 
         preferences = requireActivity().getSharedPreferences("Username", 0) as SharedPreferences

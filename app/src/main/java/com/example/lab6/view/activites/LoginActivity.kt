@@ -35,16 +35,17 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var login: EditText
     private lateinit var appCompatButtonLogin: AppCompatButton
     private lateinit var progressBar: ProgressBar
-    private lateinit var loginViewModel: LoginViewModel
     private var preferences = AppContainer.getPreferences()
     private var data: String? = null
+    private val loginViewModel: LoginViewModel by lazy {
+        LoginViewModel(AppContainer.getAccountRepository())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         initViews()
-        setViewModel()
         stayLogged()
         login()
         clickListener()
@@ -78,10 +79,6 @@ class LoginActivity : AppCompatActivity() {
         appCompatButtonLogin.setOnClickListener {
             loginViewModel.makeToken(login.text.toString(), password.text.toString())
         }
-    }
-
-    private fun setViewModel() {
-        loginViewModel = LoginViewModel(AppContainer.getAccountRepository())
     }
 
     private fun check() {

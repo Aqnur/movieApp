@@ -43,10 +43,12 @@ class MovieDetailFragment : Fragment() {
     private lateinit var like: ImageView
     private lateinit var progressBar: ProgressBar
     private lateinit var nestedScrollView: NestedScrollView
-    private lateinit var movieDetailsViewModel: MovieDetailViewModel
     private var movie: Result? = null
     private var movieId: Int? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val movieDetailsViewModel: MovieDetailViewModel by lazy {
+        MovieDetailViewModel(AppContainer.getMovieRepository())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,12 +67,7 @@ class MovieDetailFragment : Fragment() {
         movieId = bundle?.getInt("id")
 
         configureBackButton(view)
-        setViewModel()
         getMovieCoroutine(id = movieId!!)
-    }
-
-    private fun setViewModel() {
-        movieDetailsViewModel = MovieDetailViewModel(AppContainer.getMovieRepository())
     }
 
     private fun getMovieCoroutine(id: Int) {

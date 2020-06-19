@@ -30,11 +30,13 @@ import kotlinx.android.synthetic.main.bottom_nav.*
 class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var movieListViewModel: MovieListViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val movieListViewModel: MovieListViewModel by lazy {
+        MovieListViewModel(AppContainer.getMovieRepository())
+    }
 
     private var curPage = PaginationCounter.PAGE_START
     private var isLastPage = false
@@ -63,7 +65,6 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
 
-        setViewModels()
         bindViews(view)
         swipeRefresh()
         adapter()
@@ -73,10 +74,6 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private fun bindViews(view: View) {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
         recyclerView = view.findViewById(R.id.recyclerView)
-    }
-
-    private fun setViewModels() {
-        movieListViewModel = MovieListViewModel(AppContainer.getMovieRepository())
     }
 
     private fun swipeRefresh() {

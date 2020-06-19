@@ -1,22 +1,14 @@
 package com.example.lab6.view
 
-import android.accounts.Account
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import androidx.fragment.app.activityViewModels
-import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.database.MarkerDao
 import com.example.lab6.model.database.MovieDao
 import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.repository.*
-import com.example.lab6.view.fragments.MoviesFragment
-import com.example.lab6.view_model.SharedViewModel
-import com.example.lab6.view_model.ViewModelProviderFactory
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.lab6.view_model.MovieListViewModel
 
 class AppContainer private constructor(context: Context) {
 
@@ -34,8 +26,6 @@ class AppContainer private constructor(context: Context) {
         fun getAccountRepository() : AccountRepository = INSTANCE.accountRepository
         fun getMapRepository() : MapRepository = INSTANCE.mapRepository
     }
-
-//    private lateinit var preferences: SharedPreferences
 
     private val movieDao: MovieDao = MovieDatabase.getDatabase(context).movieDao()
     private val markerDao: MarkerDao = MovieDatabase.getDatabase(context).markerDao()
