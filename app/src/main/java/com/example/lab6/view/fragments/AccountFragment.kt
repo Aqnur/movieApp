@@ -11,21 +11,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.lab6.R
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Singleton
-import com.example.lab6.model.repository.AccountRepository
-import com.example.lab6.model.repository.AccountRepositoryImpl
-import com.example.lab6.view.AppContainer
-import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view.activites.GoogleMapsActivity
 import com.example.lab6.view.activites.LoginActivity
 import com.example.lab6.view_model.ProfileViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AccountFragment : Fragment() {
 
@@ -37,10 +30,8 @@ class AccountFragment : Fragment() {
     private lateinit var userAvatar: ImageView
 
     private lateinit var editor: SharedPreferences.Editor
-    private var preferences = AppContainer.getPreferences()
-    private val profileListViewModel: ProfileViewModel by lazy {
-        ProfileViewModel(AppContainer.getAccountRepository())
-    }
+    private lateinit var preferences: SharedPreferences
+    private val profileListViewModel by viewModel<ProfileViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -11,21 +11,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.PaginationCounter
 import com.example.lab6.model.json.movie.Result
-import com.example.lab6.model.repository.MovieRepository
-import com.example.lab6.model.repository.MovieRepositoryImpl
-import com.example.lab6.view.AppContainer
-import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_nav.*
+import org.koin.androidx.viewmodel.compat.ScopeCompat.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
@@ -34,9 +29,8 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val movieListViewModel: MovieListViewModel by lazy {
-        MovieListViewModel(AppContainer.getMovieRepository())
-    }
+
+    private val movieListViewModel by viewModel<MovieListViewModel>()
 
     private var curPage = PaginationCounter.PAGE_START
     private var isLastPage = false

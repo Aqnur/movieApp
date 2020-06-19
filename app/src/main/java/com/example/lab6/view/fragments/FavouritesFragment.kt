@@ -11,19 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.movie.Result
-import com.example.lab6.model.repository.MovieRepository
-import com.example.lab6.model.repository.MovieRepositoryImpl
-import com.example.lab6.view.AppContainer
-import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view.adapters.FavouritesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_nav.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
 
@@ -32,9 +26,7 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
     private lateinit var layoutManager: LinearLayoutManager
     private var favoriteAdapter: FavouritesAdapter? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val movieListViewModel: MovieListViewModel by lazy {
-        MovieListViewModel(AppContainer.getMovieRepository())
-    }
+    private val movieListViewModel by viewModel<MovieListViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

@@ -9,23 +9,16 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.lab6.R
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.movie.Result
-import com.example.lab6.model.repository.MovieRepository
-import com.example.lab6.model.repository.MovieRepositoryImpl
-import com.example.lab6.view.AppContainer
-import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.SharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MovieDetailFragment : Fragment() {
 
@@ -46,9 +39,7 @@ class MovieDetailFragment : Fragment() {
     private var movie: Result? = null
     private var movieId: Int? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private val movieDetailsViewModel: MovieDetailViewModel by lazy {
-        MovieDetailViewModel(AppContainer.getMovieRepository())
-    }
+    private val movieDetailsViewModel by viewModel<MovieDetailViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

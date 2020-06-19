@@ -16,11 +16,10 @@ import com.example.lab6.R
 import com.google.android.material.textfield.TextInputLayout
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
-import com.example.lab6.view.AppContainer
-import com.example.lab6.view.MoviesApplication
 import com.example.lab6.view_model.LoginViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.reflect.Type
 
 
@@ -35,11 +34,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var login: EditText
     private lateinit var appCompatButtonLogin: AppCompatButton
     private lateinit var progressBar: ProgressBar
-    private var preferences = AppContainer.getPreferences()
+    private lateinit var preferences: SharedPreferences
     private var data: String? = null
-    private val loginViewModel: LoginViewModel by lazy {
-        LoginViewModel(AppContainer.getAccountRepository())
-    }
+    private val loginViewModel by viewModel<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
