@@ -22,6 +22,10 @@ class Singleton(
                     account_id
                 ).also { INSTANCE = it }
 
+        fun reset() {
+            INSTANCE = null
+        }
+
         fun getSession(): String {
             return INSTANCE!!.sessionId
         }

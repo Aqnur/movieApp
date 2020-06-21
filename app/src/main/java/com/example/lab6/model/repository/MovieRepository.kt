@@ -22,11 +22,11 @@ interface MovieRepository {
     fun getIdOfflineLocalDS(liked: Boolean?): List<Int>
     fun getMovieOfflineLocalDS(liked: Boolean?): List<Result>
 
-    suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int): List<Result>?
+    suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int): Movies?
     suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String): Result?
     suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String): JsonObject?
     suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): JsonObject?
-    suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): List<Result>?
+    suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Movies?
 }
 
 class MovieRepositoryImpl(
@@ -79,7 +79,8 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int) =
-        movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language, page).body()?.results
+        movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language, page)
+            .body()
 
     override suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getMovieByIdCoroutine(movieId, apiKey, language)
@@ -95,6 +96,6 @@ class MovieRepositoryImpl(
 
     override suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getFavoriteMoviesCoroutine(accountId, apiKey, sessionId, language)
-            .body()?.results
+            .body()
 
 }

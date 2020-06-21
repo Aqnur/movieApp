@@ -1,6 +1,7 @@
 package com.example.lab6.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.database.MarkerDao
@@ -19,6 +20,7 @@ val networkModule = module {
 val daoModule = module {
     single { getMovieDao(context = get()) }
     single { getMarkerDao(context = get()) }
+    single { getSharedPreference(context = get()) }
 }
 
 val repositoryModule = module {
@@ -37,10 +39,7 @@ val viewModelModule = module {
 
 val appModule =  repositoryModule + viewModelModule + networkModule + daoModule
 
-private fun getSharedPreference(context: Context) {
-    PreferenceManager.getDefaultSharedPreferences(context)
-}
-
+private fun getSharedPreference(context: Context) : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 private fun getRetrofitService() : RetrofitService = RetrofitService
 private fun getMovieDao(context: Context) : MovieDao = MovieDatabase.getDatabase(context).movieDao()
 private fun getMarkerDao(context: Context) : MarkerDao = MovieDatabase.getDatabase(context).markerDao()

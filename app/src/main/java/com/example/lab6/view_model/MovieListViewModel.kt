@@ -46,12 +46,12 @@ class MovieListViewModel(
                         sessionId,
                         Locale.getDefault().language
                     )
-                    if (!response.isNullOrEmpty()) {
-                        movieRepository.insertAllLocalDS(response)
-                    }
-                    if (!response.isNullOrEmpty()) {
-                        for (m in response) {
-                            for (n in favResponse!!) {
+                    val result = response!!.results
+                    val favResult = favResponse!!.results
+                    if (!result.isNullOrEmpty()) {
+                        movieRepository.insertAllLocalDS(result)
+                        for (m in result) {
+                            for (n in favResult!!) {
                                 if(m.id == n.id) {
                                     m.liked = true
                                     movieRepository.setLikeLocalDS(true, m.id)
@@ -59,7 +59,7 @@ class MovieListViewModel(
                             }
                         }
                     }
-                    response
+                    result
                 } catch (e: Exception) {
                     movieRepository.getMoviesLocalDS() ?: emptyList()
                 }
@@ -81,13 +81,14 @@ class MovieListViewModel(
                         sessionId,
                         Locale.getDefault().language
                     )
-                    if (!response.isNullOrEmpty()) {
-                        for (m in response) {
+                    val result = response!!.results
+                    if (!result.isNullOrEmpty()) {
+                        for (m in result) {
                             m.liked = true
                             movieRepository.setLikeLocalDS(true, m.id)
                         }
                     }
-                    response
+                    result
                 } catch (e: Exception) {
                     movieRepository.getAllLikedLocalDS(true)
                 }

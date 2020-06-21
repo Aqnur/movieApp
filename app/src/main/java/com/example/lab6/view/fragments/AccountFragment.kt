@@ -22,15 +22,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AccountFragment : Fragment() {
 
-    private val TAG = "AccountFragment"
-    private var textViewName: TextView? = null
-
     private lateinit var logout: Button
     private lateinit var userId: TextView
     private lateinit var userAvatar: ImageView
-
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var preferences: SharedPreferences
+    private var textViewName: TextView? = null
     private val profileListViewModel by viewModel<ProfileViewModel>()
 
     override fun onCreateView(
@@ -49,12 +46,12 @@ class AccountFragment : Fragment() {
         accountDetails()
 
         preferences = requireActivity().getSharedPreferences("Username", 0) as SharedPreferences
-        editor = preferences.edit()
 
         logout.setOnClickListener {
-            editor.clear().apply()
+            preferences.edit().clear().commit()
             val intent = Intent(requireActivity(), LoginActivity::class.java)
             profileListViewModel.deleteProfileInform()
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             requireActivity().finish()
         }

@@ -91,10 +91,11 @@ class LoginActivity : AppCompatActivity() {
     private fun loginCoroutine(data: String?) {
         try {
             preferences = this@LoginActivity.getSharedPreferences("Username", 0)
-            preferences.edit().putString("user", data).apply()
+            preferences.edit().putString("user", data).commit()
             val gsonGen = Gson()
             val type: Type = object : TypeToken<User>() {}.type
             val user = gsonGen.fromJson<User>(data, type)
+            Singleton.reset()
             openApp(user)
         } catch (e: Exception) {
         }
@@ -115,12 +116,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun openApp(user: User) {
         if (user.sessionId != "") {
-            var MySingleton =
-                Singleton.create(
-                    user.username,
-                    user.sessionId,
-                    user.accountId
-                )
+            Singleton.create(
+                user.username,
+                user.sessionId,
+                user.accountId
+            )
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
