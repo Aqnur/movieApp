@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.account.User
 import com.example.lab6.view_model.LoginViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -95,8 +96,8 @@ class LoginActivity : AppCompatActivity() {
             val gsonGen = Gson()
             val type: Type = object : TypeToken<User>() {}.type
             val user = gsonGen.fromJson<User>(data, type)
-            Singleton.reset()
             openApp(user)
+            FirebaseCrashlytics.getInstance().setUserId(Singleton.getAccountId().toString())
         } catch (e: Exception) {
         }
     }

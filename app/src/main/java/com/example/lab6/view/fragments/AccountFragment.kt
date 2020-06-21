@@ -18,6 +18,7 @@ import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.view.activites.GoogleMapsActivity
 import com.example.lab6.view.activites.LoginActivity
 import com.example.lab6.view_model.ProfileViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AccountFragment : Fragment() {
@@ -51,6 +52,7 @@ class AccountFragment : Fragment() {
             preferences.edit().clear().commit()
             val intent = Intent(requireActivity(), LoginActivity::class.java)
             profileListViewModel.deleteProfileInform()
+            Singleton.reset()
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             requireActivity().finish()

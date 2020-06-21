@@ -15,6 +15,7 @@ import com.example.lab6.view.fragments.MoviesFragment
 import com.google.android.gms.measurement.module.Analytics
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.messaging.FirebaseMessaging
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import kotlinx.android.synthetic.main.activity_movie_detail.*
@@ -39,6 +40,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate")
+
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
 
         FirebaseMessaging.getInstance().subscribeToTopic("movies")
             .addOnCompleteListener { task ->
