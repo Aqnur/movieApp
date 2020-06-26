@@ -4,12 +4,16 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
+import com.example.lab6.model.api.ApiResponse
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.json.favorites.FavResponse
 import com.example.lab6.model.json.movie.Result
 import com.example.lab6.model.repository.MovieRepository
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.util.*
@@ -31,71 +35,83 @@ class MovieListViewModel(
 
     override fun onCleared() {
         super.onCleared()
+        disposable.clear()
         job.cancel()
     }
 
+    private var disposable = CompositeDisposable()
+
     fun getMovies(page: Int = 1) {
-        launch {
-            if (page == 1) liveData.value = State.ShowLoading
-            val list = withContext(Dispatchers.IO) {
-                try {
-                    val response = movieRepository.getMoviesRemoteDS(BuildConfig.API_KEY, Locale.getDefault().language, page)
-                    val favResponse = movieRepository.getFavouriteMoviesRemoteDS(
-                        accountId,
-                        BuildConfig.API_KEY,
-                        sessionId,
-                        Locale.getDefault().language
-                    )
-                    val result = response!!.results
-                    val favResult = favResponse!!.results
-                    if (!result.isNullOrEmpty()) {
-                        movieRepository.insertAllLocalDS(result)
-                        for (m in result) {
-                            for (n in favResult!!) {
-                                if(m.id == n.id) {
+        if (page == 1) liveData.value = State.ShowLoading
+        disposable.add(
+            movieRepository.getMoviesRemoteDS(
+                BuildConfig.API_KEY,
+                Locale.getDefault().language,
+                page
+            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { result ->
+                        when (result) {
+                            is ApiResponse.Success<List<Result>> -> {
+                                Log.d("movies", result.result.toString())
+                                for(movie in result.result) {
+                                    isFavourite(movie)
+                                }
+                                movieRepository.insertAllLocalDS(result.result)
+                                liveData.value = State.HideLoading
+                                liveData.value = State.Result(result.result)
+                            }
+                            is ApiResponse.Error -> {
+                                Log.d("movies", result.error)
+                                movieRepository.getMoviesLocalDS()
+                            }
+                        }
+                    },
+                    { error ->
+                        error.printStackTrace()
+                        Log.d("movies", error.toString())
+                    }
+                )
+        )
+    }
+
+    fun getFavorites() {
+        liveData.value = State.ShowLoading
+        disposable.add(
+            movieRepository.getFavouriteMoviesRemoteDS(
+                accountId,
+                BuildConfig.API_KEY,
+                sessionId,
+                Locale.getDefault().language
+            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { result ->
+                        when (result) {
+                            is ApiResponse.Success<List<Result>> -> {
+                                Log.d("fav_movies", result.result.toString())
+                                for (m in result.result) {
                                     m.liked = true
                                     movieRepository.setLikeLocalDS(true, m.id)
                                 }
+                                liveData.value = State.HideLoading
+                                liveData.value = State.Result(result.result)
+                            }
+                            is ApiResponse.Error -> {
+                                Log.d("fav_movies", result.error)
+                                movieRepository.getAllLikedLocalDS(true)
                             }
                         }
+                    },
+                    { error ->
+                        error.printStackTrace()
+                        Log.d("fav_movies", error.toString())
                     }
-                    result
-                } catch (e: Exception) {
-                    movieRepository.getMoviesLocalDS() ?: emptyList()
-                }
-            }
-            liveData.value = State.HideLoading
-            liveData.value = State.Result(list)
-        }
-    }
-
-    fun getFavorites(){
-        launch {
-            liveData.value = State.ShowLoading
-
-            val list = withContext(Dispatchers.IO) {
-                try {
-                    val response = movieRepository.getFavouriteMoviesRemoteDS(
-                        accountId,
-                        BuildConfig.API_KEY,
-                        sessionId,
-                        Locale.getDefault().language
-                    )
-                    val result = response!!.results
-                    if (!result.isNullOrEmpty()) {
-                        for (m in result) {
-                            m.liked = true
-                            movieRepository.setLikeLocalDS(true, m.id)
-                        }
-                    }
-                    result
-                } catch (e: Exception) {
-                    movieRepository.getAllLikedLocalDS(true)
-                }
-            }
-            liveData.value = State.HideLoading
-            liveData.value = State.Result(list)
-        }
+                )
+        )
     }
 
     fun addToFavourite(movie: Result) {
@@ -110,15 +126,54 @@ class MovieListViewModel(
     }
 
     private fun updateFavourite(body: JsonObject) {
-        launch {
-            try {
-                movieRepository.markFavouriteRemoteDS(
-                    accountId,
-                    BuildConfig.API_KEY,
-                    sessionId, body
-                )
-            } catch (e: Exception) { }
-        }
+        disposable.add(
+            movieRepository.markFavouriteRemoteDS(accountId, BuildConfig.API_KEY, sessionId, body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
+                { result ->
+                    when (result) {
+                        is ApiResponse.Success<JsonObject> -> {
+                            Log.d("mark_favourite", result.result.toString())
+                        }
+                        is ApiResponse.Error -> {
+                            Log.d("mark_favourite", result.error)
+                        }
+                    }
+                }
+        )
+    }
+
+    private fun isFavourite(movie: Result) {
+        disposable.add(
+            movieRepository.hasLikeRemoteDS(movie.id, BuildConfig.API_KEY, sessionId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
+                { result ->
+                    when (result) {
+                        is ApiResponse.Success<JsonObject> -> {
+                            Log.d("is_favourite", result.result.toString())
+                            val gson = Gson()
+                            val like = gson.fromJson(
+                                result.result,
+                                FavResponse::class.java
+                            ).favorite
+                            if (like) {
+                                movieRepository.setLikeLocalDS(true, movie.id)
+                                movie.liked = true
+                            } else {
+                                movieRepository.setLikeLocalDS(false, movie.id)
+                                movie.liked = false
+                            }
+                        }
+                        is ApiResponse.Error -> {
+                            movieRepository.getLikedLocalDS(movie.id) ?: 0
+                            Log.d("is_favourite", result.error)
+                        }
+                    }
+                }
+        )
     }
 
     sealed class State {

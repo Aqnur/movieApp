@@ -115,6 +115,12 @@ class MoviesAdapter(
 
         fun bind(movie: Result) {
 
+            if (movie.liked) {
+                moviesLike.setImageResource(R.drawable.ic_lliked)
+            } else {
+                moviesLike.setImageResource(R.drawable.ic_like)
+            }
+
             if (movie.position == 0) {
                 movie.position = moviePosition
                 moviePosition++
@@ -136,11 +142,6 @@ class MoviesAdapter(
                 rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
             }
 
-            if (movie.liked) {
-                moviesLike.setImageResource(R.drawable.ic_lliked)
-            } else {
-                moviesLike.setImageResource(R.drawable.ic_like)
-            }
 
             itemView.setOnClickListener {
                 itemClickListner?.itemClick(adapterPosition, movie)
@@ -148,14 +149,7 @@ class MoviesAdapter(
 
             moviesLike.setOnClickListener {
                 itemClickListner?.addToFavourites(adapterPosition, movie)
-                val drawable: Drawable = moviesLike.drawable
-                if (drawable.constantState?.equals(
-                        getDrawable(
-                            itemView.context,
-                            R.drawable.ic_like
-                        )?.constantState
-                    ) == true
-                ) {
+                if (movie.liked) {
                     moviesLike.setImageResource(R.drawable.ic_lliked)
                 } else {
                     moviesLike.setImageResource(R.drawable.ic_like)

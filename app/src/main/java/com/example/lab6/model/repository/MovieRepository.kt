@@ -1,5 +1,6 @@
 package com.example.lab6.model.repository
 
+import com.example.lab6.model.api.ApiResponse
 import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.database.MovieDao
@@ -7,6 +8,7 @@ import com.example.lab6.model.json.movie.Movies
 import com.example.lab6.model.json.movie.PopularMovies
 import com.example.lab6.model.json.movie.Result
 import com.google.gson.JsonObject
+import io.reactivex.Single
 import retrofit2.Response
 
 interface MovieRepository {
@@ -22,11 +24,11 @@ interface MovieRepository {
     fun getIdOfflineLocalDS(liked: Boolean?): List<Int>
     fun getMovieOfflineLocalDS(liked: Boolean?): List<Result>
 
-    suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int): Movies?
-    suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String): Result?
-    suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String): JsonObject?
-    suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): JsonObject?
-    suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Movies?
+    fun getMoviesRemoteDS(apiKey: String, language: String, page: Int): Single<ApiResponse<List<Result>>>
+    fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String): Single<ApiResponse<Result>>
+    fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String): Single<ApiResponse<JsonObject>>
+    fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): Single<ApiResponse<JsonObject>>
+    fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Single<ApiResponse<List<Result>>>
 }
 
 class MovieRepositoryImpl(
@@ -78,24 +80,67 @@ class MovieRepositoryImpl(
         return movieDao.getMovieOffline(liked)
     }
 
-    override suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int) =
-        movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language, page)
-            .body()
+    override fun getMoviesRemoteDS(
+        apiKey: String,
+        language: String,
+        page: Int
+    ): Single<ApiResponse<List<Result>>> {
+        return movieApi.getMovieApi(MovieApi::class.java).getMovieList(apiKey, language, page)
+            .map { response ->
+                if (response.isSuccessful) {
+                    val list = response.body()?.results ?: emptyList()
+                    ApiResponse.Success(list)
+                } else {
+                    ApiResponse.Error<List<Result>>("Response Error")
+                }
+            }
+    }
 
-    override suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String) =
-        movieApi.getMovieApi(MovieApi::class.java).getMovieByIdCoroutine(movieId, apiKey, language)
-            .body()
+    override fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String): Single<ApiResponse<Result>> {
+        return movieApi.getMovieApi(MovieApi::class.java).getMovieById(movieId, apiKey, language)
+            .map { response ->
+                if (response.isSuccessful) {
+                    val list = response.body()
+                    ApiResponse.Success(list!!)
+                } else {
+                    ApiResponse.Error<Result>("Response Error")
+                }
+            }
+    }
+    override fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String): Single<ApiResponse<JsonObject>> {
+        return movieApi.getMovieApi(MovieApi::class.java).hasLike(movieId, apiKey, sessionId)
+            .map { response ->
+                if (response.isSuccessful) {
+                    val list = response.body()
+                    ApiResponse.Success(list!!)
+                } else {
+                    ApiResponse.Error<JsonObject>("Response Error")
+                }
+            }
+    }
 
-    override suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String) =
-        movieApi.getMovieApi(MovieApi::class.java).hasLikeCoroutine(movieId, apiKey, sessionId)
-            .body()
+    override fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): Single<ApiResponse<JsonObject>> {
+        return movieApi.getMovieApi(MovieApi::class.java).markFavoriteMovie(accountId, apiKey, sessionId, body)
+            .map { response ->
+                if (response.isSuccessful) {
+                    val list = response.body()
+                    ApiResponse.Success(list!!)
+                } else {
+                    ApiResponse.Error<JsonObject>("Response Error")
+                }
+            }
+    }
 
-    override suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject) =
-        movieApi.getMovieApi(MovieApi::class.java).markFavoriteMovieCoroutine(accountId, apiKey, sessionId, body)
-            .body()
 
-    override suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String) =
-        movieApi.getMovieApi(MovieApi::class.java).getFavoriteMoviesCoroutine(accountId, apiKey, sessionId, language)
-            .body()
-
+    override fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Single<ApiResponse<List<Result>>> {
+        return movieApi.getMovieApi(MovieApi::class.java).getFavoriteMovies(accountId, apiKey, sessionId, language)
+            .map { response->
+                if(response.isSuccessful) {
+                    val list = response.body()?.results ?: emptyList()
+                    ApiResponse.Success(list)
+                } else {
+                    ApiResponse.Error<List<Result>>("Response Error")
+                }
+            }
+    }
 }
