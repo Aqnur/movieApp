@@ -72,6 +72,7 @@ class MovieListViewModel(
                     { error ->
                         error.printStackTrace()
                         Log.d("movies", error.toString())
+                        movieRepository.getMoviesLocalDS()
                     }
                 )
         )
@@ -109,6 +110,7 @@ class MovieListViewModel(
                     { error ->
                         error.printStackTrace()
                         Log.d("fav_movies", error.toString())
+                        movieRepository.getAllLikedLocalDS(true)
                     }
                 )
         )

@@ -69,6 +69,7 @@ class MovieDetailViewModel(
                     { error ->
                         error.printStackTrace()
                         Log.d("movie", error.toString())
+                        movieRepository.getMovieByIdLocalDS(id)
                     }
                 )
         )
