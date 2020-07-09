@@ -98,9 +98,9 @@ class MovieDetailFragment : Fragment() {
             .into(posterImage)
 
         if(movie.releaseDate.length != 10) {
-            rusTitle.text = movie.originalTitle
+            titleOriginal.text = movie.originalTitle
         } else {
-            rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
+            titleOriginal.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
         }
         rusTitle.text = movie.title
         overview.text = movie.overview

@@ -11,6 +11,11 @@
             android:title=""
     />
     <item
+            android:id="@+id/nav_item_search"
+            android:icon="@drawable/ic_search_selector"
+            android:title=""
+        />
+    <item
             android:id="@+id/nav_item_acc"
             android:icon="@drawable/ic_acc_selector"
             android:title=""

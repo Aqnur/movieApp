@@ -178,6 +178,32 @@ class MovieListViewModel(
         )
     }
 
+    fun search(query: String) {
+        disposable.add(
+            movieRepository.searchMovieRemoteDS(BuildConfig.API_KEY, Locale.getDefault().language, query)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { result ->
+                        when (result) {
+                            is ApiResponse.Success<List<Result>> -> {
+                                Log.d("search", result.result.toString())
+                                liveData.value = State.HideLoading
+                                liveData.value = State.Result(result.result)
+                            }
+                            is ApiResponse.Error -> {
+                                Log.d("search", result.error)
+                            }
+                        }
+                    },
+                    { error ->
+                        error.printStackTrace()
+                        Log.d("search", error.toString())
+                    }
+                )
+        )
+    }
+
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()

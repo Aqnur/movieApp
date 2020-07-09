@@ -8,10 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.lab6.*
-import com.example.lab6.view.fragments.AccountFragment
-import com.example.lab6.view.fragments.FavouritesFragment
-import com.example.lab6.view.fragments.MovieDetailFragment
-import com.example.lab6.view.fragments.MoviesFragment
+import com.example.lab6.view.fragments.*
 import com.google.android.gms.measurement.module.Analytics
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -33,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private var favouritesFragment: Fragment = FavouritesFragment()
     private var accountFragment: Fragment = AccountFragment()
     private var movieDetailsFragment: Fragment = MovieDetailFragment()
+    private var searchFragment: Fragment = SearchFragment()
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
@@ -86,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         fragmentManager.beginTransaction().add(R.id.frame, favouritesFragment).hide(favouritesFragment).commit()
         fragmentManager.beginTransaction().add(R.id.frame, accountFragment).hide(accountFragment).commit()
         fragmentManager.beginTransaction().add(R.id.frame, movieDetailsFragment).hide(movieDetailsFragment)
+        fragmentManager.beginTransaction().add(R.id.frame, searchFragment).hide(searchFragment).commit()
     }
 
     private val navListener =
@@ -107,6 +106,12 @@ class MainActivity : AppCompatActivity() {
                     topTitle.text = "Favourite Movies"
                     topTitle.visibility = View.VISIBLE
                     bottomNavigationView.visibility = View.VISIBLE
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.nav_item_search -> {
+                    fragmentManager.beginTransaction().hide(activeFragment).show(searchFragment).commit()
+                    activeFragment = searchFragment
+                    topTitle.visibility = View.GONE
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_item_acc -> {

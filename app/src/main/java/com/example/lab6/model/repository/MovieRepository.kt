@@ -29,6 +29,7 @@ interface MovieRepository {
     fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String): Single<ApiResponse<JsonObject>>
     fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): Single<ApiResponse<JsonObject>>
     fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Single<ApiResponse<List<Result>>>
+    fun searchMovieRemoteDS(key: String, lang: String, query: String): Single<ApiResponse<List<Result>>>
 }
 
 class MovieRepositoryImpl(
@@ -134,6 +135,22 @@ class MovieRepositoryImpl(
 
     override fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Single<ApiResponse<List<Result>>> {
         return movieApi.getMovieApi(MovieApi::class.java).getFavoriteMovies(accountId, apiKey, sessionId, language)
+            .map { response->
+                if(response.isSuccessful) {
+                    val list = response.body()?.results ?: emptyList()
+                    ApiResponse.Success(list)
+                } else {
+                    ApiResponse.Error<List<Result>>("Response Error")
+                }
+            }
+    }
+
+    override fun searchMovieRemoteDS(
+        key: String,
+        lang: String,
+        query: String
+    ): Single<ApiResponse<List<Result>>> {
+        return movieApi.getMovieApi(MovieApi::class.java).searchMovie(key, lang, query)
             .map { response->
                 if(response.isSuccessful) {
                     val list = response.body()?.results ?: emptyList()
