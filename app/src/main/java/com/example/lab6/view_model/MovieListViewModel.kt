@@ -21,22 +21,16 @@ import kotlin.coroutines.CoroutineContext
 
 class MovieListViewModel(
     private var movieRepository: MovieRepository
-) : ViewModel(), CoroutineScope {
-
-    private val job = Job()
+) : ViewModel() {
 
     val liveData = MutableLiveData<State>()
 
     private val sessionId = Singleton.getSession()
     private val accountId = Singleton.getAccountId()
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
-        job.cancel()
     }
 
     private var disposable = CompositeDisposable()

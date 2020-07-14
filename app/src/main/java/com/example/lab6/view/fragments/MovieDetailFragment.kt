@@ -62,7 +62,7 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun getMovieCoroutine(id: Int) {
-        movieDetailsViewModel.getMovie(id)
+        movieDetailsViewModel.getDetails(id)
         movieDetailsViewModel.liveData.observe(requireActivity(), Observer { result ->
             when (result) {
                 is MovieDetailViewModel.State.ShowLoading -> {
@@ -124,8 +124,6 @@ class MovieDetailFragment : Fragment() {
         if (movie.tagline != null) {
             tagline.text = "«" + movie.tagline + "»"
         }
-
-        movieDetailsViewModel.isFavourite(movie.id)
 
         like.setOnClickListener {
             val drawable: Drawable = like.drawable

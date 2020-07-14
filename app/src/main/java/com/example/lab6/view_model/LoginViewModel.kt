@@ -29,9 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class LoginViewModel(private val accountRepository: AccountRepository) : ViewModel(), CoroutineScope {
-
-    private val job = Job()
+class LoginViewModel(private val accountRepository: AccountRepository) : ViewModel() {
 
     var liveData = MutableLiveData<State>()
 
@@ -40,13 +38,9 @@ class LoginViewModel(private val accountRepository: AccountRepository) : ViewMod
     private var json: String = ""
     private var disposable = CompositeDisposable()
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
-        job.cancel()
     }
 
     fun makeToken(name: String, password: String) {

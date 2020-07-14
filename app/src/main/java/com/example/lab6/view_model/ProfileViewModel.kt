@@ -25,22 +25,17 @@ import kotlin.coroutines.CoroutineContext
 
 class ProfileViewModel(
     private val accountRepository: AccountRepository
-) : ViewModel(), CoroutineScope {
+) : ViewModel() {
 
     val liveData = MutableLiveData<Account>()
-    private val job = Job()
     private var sessionId = Singleton.getSession()
     private var disposable = CompositeDisposable()
 
 //    private val accountRepository: AccountRepository = AccountRepositoryImpl(RetrofitService)
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
-        job.cancel()
     }
 
     fun deleteProfileInform() {
