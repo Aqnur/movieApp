@@ -4,10 +4,8 @@ import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.database.MovieDao
 import com.example.lab6.model.json.movie.Movies
-import com.example.lab6.model.json.movie.PopularMovies
 import com.example.lab6.model.json.movie.Result
 import com.google.gson.JsonObject
-import retrofit2.Response
 
 interface MovieRepository {
     fun insertAllLocalDS(list: List<Result>)
@@ -27,11 +25,12 @@ interface MovieRepository {
     suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String): JsonObject?
     suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): JsonObject?
     suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Movies?
+    suspend fun searchMovieRemoteDS(key: String, lang: String, query: String): Movies?
 }
 
 class MovieRepositoryImpl(
-  private val movieApi: RetrofitService,
-  private val movieDao: MovieDao
+    private val movieApi: RetrofitService,
+    private val movieDao: MovieDao
 ): MovieRepository {
 
     override fun insertAllLocalDS(list: List<Result>) {
@@ -79,23 +78,26 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int) =
-        movieApi.getMovieApi(MovieApi::class.java).getMovieListCoroutine(apiKey, language, page)
+        movieApi.getMovieApi(MovieApi::class.java).getMovieList(apiKey, language, page)
             .body()
 
     override suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String) =
-        movieApi.getMovieApi(MovieApi::class.java).getMovieByIdCoroutine(movieId, apiKey, language)
+        movieApi.getMovieApi(MovieApi::class.java).getMovieById(movieId, apiKey, language)
             .body()
 
     override suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String) =
-        movieApi.getMovieApi(MovieApi::class.java).hasLikeCoroutine(movieId, apiKey, sessionId)
+        movieApi.getMovieApi(MovieApi::class.java).hasLike(movieId, apiKey, sessionId)
             .body()
 
     override suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject) =
-        movieApi.getMovieApi(MovieApi::class.java).markFavoriteMovieCoroutine(accountId, apiKey, sessionId, body)
+        movieApi.getMovieApi(MovieApi::class.java).markFavoriteMovie(accountId, apiKey, sessionId, body)
             .body()
 
     override suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String) =
-        movieApi.getMovieApi(MovieApi::class.java).getFavoriteMoviesCoroutine(accountId, apiKey, sessionId, language)
+        movieApi.getMovieApi(MovieApi::class.java).getFavoriteMovies(accountId, apiKey, sessionId, language)
             .body()
 
+    override suspend fun searchMovieRemoteDS(key: String, lang: String, query: String) =
+        movieApi.getMovieApi(MovieApi::class.java).searchMovie(key, lang, query)
+            .body()
 }

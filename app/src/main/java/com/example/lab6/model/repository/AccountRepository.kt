@@ -2,9 +2,7 @@ package com.example.lab6.model.repository
 
 import com.example.lab6.model.api.MovieApi
 import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MovieDao
 import com.example.lab6.model.json.account.RequestToken
-import com.example.lab6.model.json.movie.Result
 import com.google.gson.JsonObject
 import retrofit2.Response
 

@@ -1,21 +1,17 @@
 package com.example.lab6.view_model
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
-import com.example.lab6.model.api.MovieApi
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
 import com.example.lab6.model.json.account.Account
 import com.example.lab6.model.json.account.Singleton
 import com.example.lab6.model.repository.AccountRepository
-import com.example.lab6.model.repository.AccountRepositoryImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import kotlinx.coroutines.*
-import java.lang.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class ProfileViewModel(
@@ -47,18 +43,18 @@ class ProfileViewModel(
 
     fun getAccountDetail() {
         launch {
-                try {
-                    val response = accountRepository.getAccountRemoteDS(BuildConfig.API_KEY, sessionId)
-                    if (response.isSuccessful) {
-                        val account = Gson().fromJson(
-                            response.body(),
-                            Account::class.java
-                        )
-                        liveData.value = account
-                    }
-                } catch (e: Exception) {
-
+            try {
+                val response = accountRepository.getAccountRemoteDS(BuildConfig.API_KEY, sessionId)
+                if (response.isSuccessful) {
+                    val account = Gson().fromJson(
+                        response.body(),
+                        Account::class.java
+                    )
+                    liveData.value = account
                 }
+            } catch (e: Exception) {
+
             }
+        }
     }
 }

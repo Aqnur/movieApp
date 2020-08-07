@@ -98,9 +98,9 @@ class MovieDetailFragment : Fragment() {
             .into(posterImage)
 
         if(movie.releaseDate.length != 10) {
-            rusTitle.text = movie.originalTitle
+            titleOriginal.text = movie.originalTitle
         } else {
-            rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
+            titleOriginal.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
         }
         rusTitle.text = movie.title
         overview.text = movie.overview
@@ -118,14 +118,15 @@ class MovieDetailFragment : Fragment() {
                     movie.productionCountries?.map { it.iso_3166_1 }.toString().length - 1
                 )
         }
+
+        movieDetailsViewModel.isFavourite(movie.id)
+
         if (movie.runtime != null) {
             runtime.text = movie.runtime.toString() + " мин"
         }
         if (movie.tagline != null) {
             tagline.text = "«" + movie.tagline + "»"
         }
-
-        movieDetailsViewModel.isFavourite(movie.id)
 
         like.setOnClickListener {
             val drawable: Drawable = like.drawable

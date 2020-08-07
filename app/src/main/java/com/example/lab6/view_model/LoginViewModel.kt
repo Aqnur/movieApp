@@ -1,21 +1,13 @@
 package com.example.lab6.view_model
 
-import android.content.Context
-import android.view.contentcapture.ContentCaptureSessionId
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
-import com.example.lab6.model.api.MovieApi
-import com.example.lab6.model.api.RetrofitService
 import com.example.lab6.model.json.account.Account
-import com.example.lab6.model.json.account.Session
 import com.example.lab6.model.json.account.RequestToken
+import com.example.lab6.model.json.account.Session
 import com.example.lab6.model.json.account.User
 import com.example.lab6.model.repository.AccountRepository
-import com.example.lab6.model.repository.AccountRepositoryImpl
-import com.example.lab6.model.repository.MovieRepository
-import com.example.lab6.model.repository.MovieRepositoryImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope

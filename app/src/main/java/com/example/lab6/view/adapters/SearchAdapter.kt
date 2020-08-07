@@ -14,81 +14,38 @@ import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.model.json.movie.Result
 
-class MoviesAdapter(
+class SearchAdapter(
     private val itemClickListner: RecyclerViewItemClick? = null,
     val context: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val VIEW_TYPE_LOADING = 0
-    private val VIEW_TYPE_NORMAL = 1
-    private var isLoaderVisible = false
-    private var moviePosition = 1
-
     private var movies = listOf<Result>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            VIEW_TYPE_NORMAL -> MoviesViewHolder(
-                inflater.inflate(R.layout.movie_item, parent, false)
-            )
-            VIEW_TYPE_LOADING -> LoaderViewHolder(
-                inflater.inflate(R.layout.loader_layout, parent, false)
-            )
-            else -> throw Throwable("Invalid View!")
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
+        return SearchViewHolder(view)
     }
 
-    override fun getItemCount(): Int = movies.size ?: 0
+    override fun getItemCount(): Int {
+        return movies.size
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is MoviesViewHolder) {
+        if (holder is SearchViewHolder) {
             return holder.bind(movies[position])
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (isLoaderVisible) {
-            if(position == movies.size - 1) {
-                VIEW_TYPE_LOADING
-            } else {
-                VIEW_TYPE_NORMAL
-            }
-        } else {
-            VIEW_TYPE_NORMAL
-        }
-    }
-
-    fun addFooterLoading() {
-        isLoaderVisible = true
-        (movies as? ArrayList<Result>)?.add(Result(id = -1))
-        notifyItemInserted(movies.size.minus(1))
-    }
-
-    fun removeFooterLoading() {
-        isLoaderVisible = false
-        val position = movies.size.minus(1)
-        if (movies.isNotEmpty()) {
-            val item = getItem(position)
-            if (item != null) {
-                (movies as? ArrayList<Result>)?.removeAt(position)
-                notifyItemRemoved(position)
-            }
-        }
-
-    }
-
-    private fun getItem(position: Int): Result? {
-        return movies[position]
-    }
-
     fun addItems(moviesList: List<Result>) {
-        if (movies.isEmpty()) movies = moviesList
-        else {
-            if (movies[movies.size - 1] != moviesList[moviesList.size - 1])
-                (movies as? ArrayList<Result>)?.addAll(moviesList)
-        }
+        movies = moviesList
         notifyDataSetChanged()
+    }
+
+    fun addItem(movie: Result) {
+        if (!movies.contains(movie)) {
+            (movies as? ArrayList<Result>)?.add(movie)
+            notifyItemInserted(movies.size - 1)
+        }
     }
 
     fun updateItem(movie: Result) {
@@ -97,13 +54,21 @@ class MoviesAdapter(
         notifyDataSetChanged()
     }
 
-    fun clearAll() {
-        (movies as? ArrayList<Result>)?.clear()
-        moviePosition = 1
+    fun removeItem(movie: Result) {
+        val id = movie.id
+        val foundMovie = movies.find { it.id == id }
+        if (foundMovie != null) {
+            (movies as? ArrayList<Result>)?.remove(foundMovie)
+        }
         notifyDataSetChanged()
     }
 
-    inner class MoviesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun clearAll() {
+        (movies as? ArrayList<Result>)?.clear()
+        notifyDataSetChanged()
+    }
+
+    inner class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val photo: ImageView = itemView.findViewById(R.id.moviePhoto)
         private val title: TextView = itemView.findViewById(R.id.originalTitle)
         private val rusTitle: TextView = itemView.findViewById(R.id.rusTitle)
@@ -114,24 +79,12 @@ class MoviesAdapter(
         private var id: Int = 0
 
         fun bind(movie: Result) {
-
-            if (movie.liked) {
-                moviesLike.setImageResource(R.drawable.ic_lliked)
-            } else {
-                moviesLike.setImageResource(R.drawable.ic_like)
-            }
-
-            if (movie.position == 0) {
-                movie.position = moviePosition
-                moviePosition++
-            }
-
             Glide.with(itemView.context)
                 .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
                 .into(photo)
 
             id = movie.id
-            movieId.text = movie.position.toString()
+            movieId.text = (adapterPosition + 1).toString()
             title.text = movie.title
             rating.text = "Рейтинг: " + movie.voteAverage.toString()
             votes.text = "Голоса: " + movie.voteCount.toString()
@@ -142,13 +95,18 @@ class MoviesAdapter(
                 rusTitle.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
             }
 
+            if (movie.liked) {
+                moviesLike.setImageResource(R.drawable.ic_lliked)
+            } else {
+                moviesLike.setImageResource(R.drawable.ic_like)
+            }
 
             itemView.setOnClickListener {
                 itemClickListner?.itemClick(adapterPosition, movie)
             }
 
             moviesLike.setOnClickListener {
-                itemClickListner?.addToFavourites(adapterPosition, movie)
+                itemClickListner?.addToFavourite(adapterPosition, movie)
                 if (movie.liked) {
                     moviesLike.setImageResource(R.drawable.ic_lliked)
                 } else {
@@ -158,10 +116,8 @@ class MoviesAdapter(
         }
     }
 
-    inner class LoaderViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
     interface RecyclerViewItemClick {
         fun itemClick(position: Int, item: Result)
-        fun addToFavourites(position: Int, item: Result)
+        fun addToFavourite(position: Int, item: Result)
     }
 }

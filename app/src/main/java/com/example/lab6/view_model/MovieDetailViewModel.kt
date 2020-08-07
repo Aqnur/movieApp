@@ -18,16 +18,14 @@ class MovieDetailViewModel(
     private val movieRepository: MovieRepository
 ) : ViewModel(), CoroutineScope {
 
-    private val job = Job()
     private val sessionId = Singleton.getSession()
     private val accountId = Singleton.getAccountId()
     val liveData = MutableLiveData<State>()
 
+    private val job = Job()
+
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    init {
-    }
 
     override fun onCleared() {
         super.onCleared()
@@ -40,14 +38,14 @@ class MovieDetailViewModel(
             val movieDetail = withContext(Dispatchers.IO){
                 try {
                     val response = movieRepository.getMovieRemoteDS(id, BuildConfig.API_KEY, Locale.getDefault().language)
-                        if (response != null) {
-                            response.runtime?.let { movieRepository.updateMovieRuntimeLocalDS(it, id) }
-                            response.tagline?.let { movieRepository.updateMovieTaglineLocalDS(it, id) }
-                            if(response.liked) {
-                                movieRepository.setLikeLocalDS(true, response.id)
-                            }
+                    if (response != null) {
+                        response.runtime?.let { movieRepository.updateMovieRuntimeLocalDS(it, id) }
+                        response.tagline?.let { movieRepository.updateMovieTaglineLocalDS(it, id) }
+                        if(response.liked) {
+                            movieRepository.setLikeLocalDS(true, response.id)
                         }
-                        response
+                    }
+                    response
                 } catch (e: Exception) {
                     movieRepository.getMovieByIdLocalDS(id)
                 }
@@ -62,23 +60,23 @@ class MovieDetailViewModel(
             val likeInt = withContext(Dispatchers.IO) {
                 try {
                     val response = movieRepository.hasLikeRemoteDS(
-                            movieId,
-                            BuildConfig.API_KEY,
-                            sessionId
-                        )
+                        movieId,
+                        BuildConfig.API_KEY,
+                        sessionId
+                    )
                     Log.d("TAG", response.toString())
-                        val gson = Gson()
-                        val like = gson.fromJson(
-                            response,
-                            FavResponse::class.java
-                        ).favorite
-                        if (like) {
-                            movieRepository.setLikeLocalDS(true, movieId)
-                            1
-                        } else {
-                            movieRepository.setLikeLocalDS(false, movieId)
-                            0
-                        }
+                    val gson = Gson()
+                    val like = gson.fromJson(
+                        response,
+                        FavResponse::class.java
+                    ).favorite
+                    if (like) {
+                        movieRepository.setLikeLocalDS(true, movieId)
+                        1
+                    } else {
+                        movieRepository.setLikeLocalDS(false, movieId)
+                        0
+                    }
                 } catch (e: Exception) {
                     movieRepository.getLikedLocalDS(movieId) ?: 0
                 }
@@ -120,9 +118,9 @@ class MovieDetailViewModel(
             }
             try {
                 movieRepository.markFavouriteRemoteDS(
-                        accountId,
-                        BuildConfig.API_KEY,
-                        sessionId, body)
+                    accountId,
+                    BuildConfig.API_KEY,
+                    sessionId, body)
             } catch (e: Exception) { }
             if (favourite) {
                 movie?.liked = true

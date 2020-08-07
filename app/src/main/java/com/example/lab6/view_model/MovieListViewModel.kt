@@ -11,7 +11,6 @@ import com.example.lab6.model.repository.MovieRepository
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
-import java.lang.Exception
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -19,12 +18,12 @@ class MovieListViewModel(
     private var movieRepository: MovieRepository
 ) : ViewModel(), CoroutineScope {
 
-    private val job = Job()
-
     val liveData = MutableLiveData<State>()
 
     private val sessionId = Singleton.getSession()
     private val accountId = Singleton.getAccountId()
+
+    private val job = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -40,23 +39,12 @@ class MovieListViewModel(
             val list = withContext(Dispatchers.IO) {
                 try {
                     val response = movieRepository.getMoviesRemoteDS(BuildConfig.API_KEY, Locale.getDefault().language, page)
-                    val favResponse = movieRepository.getFavouriteMoviesRemoteDS(
-                        accountId,
-                        BuildConfig.API_KEY,
-                        sessionId,
-                        Locale.getDefault().language
-                    )
                     val result = response!!.results
-                    val favResult = favResponse!!.results
+                    Log.d("movies", result.toString())
                     if (!result.isNullOrEmpty()) {
                         movieRepository.insertAllLocalDS(result)
-                        for (m in result) {
-                            for (n in favResult!!) {
-                                if(m.id == n.id) {
-                                    m.liked = true
-                                    movieRepository.setLikeLocalDS(true, m.id)
-                                }
-                            }
+                        for(movie in result) {
+                            isFavourite(movie)
                         }
                     }
                     result
@@ -69,7 +57,7 @@ class MovieListViewModel(
         }
     }
 
-    fun getFavorites(){
+    fun getFavorites() {
         launch {
             liveData.value = State.ShowLoading
 
@@ -82,6 +70,7 @@ class MovieListViewModel(
                         Locale.getDefault().language
                     )
                     val result = response!!.results
+                    Log.d("fav_movies", result.toString())
                     if (!result.isNullOrEmpty()) {
                         for (m in result) {
                             m.liked = true
@@ -121,10 +110,54 @@ class MovieListViewModel(
         }
     }
 
+    private fun isFavourite(movie: Result) {
+        launch {
+            try {
+                val result = movieRepository.hasLikeRemoteDS(movie.id, BuildConfig.API_KEY, sessionId)
+                Log.d("is_favourite", result.toString())
+                val gson = Gson()
+                val like = gson.fromJson(
+                    result,
+                    FavResponse::class.java
+                ).favorite
+                if (like) {
+                    movieRepository.setLikeLocalDS(true, movie.id)
+                    movie.liked = true
+                } else {
+                    movieRepository.setLikeLocalDS(false, movie.id)
+                    movie.liked = false
+                }
+            } catch (e: Exception) { }
+        }
+    }
+
+    fun search(query: String) {
+        liveData.value = State.ShowLoading
+        launch {
+                try {
+                    val response = movieRepository.searchMovieRemoteDS(
+                        BuildConfig.API_KEY,
+                        Locale.getDefault().language,
+                        query
+                    )
+                    val result = response!!.results
+                    if (!result.isNullOrEmpty()) {
+                        for(movie in result) {
+                            isFavourite(movie)
+                        }
+                    }
+                    Log.d("search", result.toString())
+                    liveData.value = State.Result(result)
+                    liveData.value = State.HideLoading
+                } catch (e: Exception) {
+                }
+            }
+
+    }
+
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
         data class Result(val list: List<com.example.lab6.model.json.movie.Result>?) : State()
     }
-
 }
