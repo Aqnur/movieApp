@@ -62,7 +62,7 @@ class MovieDetailFragment : Fragment() {
     }
 
     private fun getMovieCoroutine(id: Int) {
-        movieDetailsViewModel.getDetails(id)
+        movieDetailsViewModel.getMovie(id)
         movieDetailsViewModel.liveData.observe(requireActivity(), Observer { result ->
             when (result) {
                 is MovieDetailViewModel.State.ShowLoading -> {
@@ -118,6 +118,9 @@ class MovieDetailFragment : Fragment() {
                     movie.productionCountries?.map { it.iso_3166_1 }.toString().length - 1
                 )
         }
+
+        movieDetailsViewModel.isFavourite(movie.id)
+
         if (movie.runtime != null) {
             runtime.text = movie.runtime.toString() + " мин"
         }

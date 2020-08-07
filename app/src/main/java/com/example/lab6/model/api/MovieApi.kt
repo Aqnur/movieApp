@@ -13,87 +13,81 @@ import retrofit2.http.*
 
 interface MovieApi {
     @GET("/3/movie/popular")
-    fun getMovieList(
+    suspend fun getMovieList(
         @Query("api_key") key: String,
         @Query("language") lang: String,
         @Query("page") page: Int
-    ): Single<Response<Movies>>
+    ): Response<Movies>
 
     @GET("/3/movie/{movie_id}")
-    fun getMovieById(
+    suspend fun getMovieById(
         @Path("movie_id") movieId: Int,
         @Query("api_key") key: String,
         @Query("language") lang: String
-    ): Single<Response<Result>>
+    ): Response<Result>
 
     @POST("/3/account/{account_id}/favorite")
-    fun markFavoriteMovie(
+    suspend fun markFavoriteMovie(
         @Path("account_id") userId: Int,
         @Query("api_key") key: String,
         @Query("session_id") sessionId: String,
         @Body favoriteRequest: JsonObject
-    ): Single<Response<JsonObject>>
+    ): Response<JsonObject>
 
     @GET("/3/movie/{movie_id}/account_states")
-    fun hasLike(
+    suspend fun hasLike(
         @Path("movie_id") movieId: Int?,
         @Query("api_key") apiKey: String,
         @Query("session_id") sessionId: String?
-    ): Single<Response<JsonObject>>
+    ): Response<JsonObject>
 
     @GET("/3/account/{account_id}/favorite/movies")
-    fun getFavoriteMovies(
+    suspend fun getFavoriteMovies(
         @Path("account_id") userId: Int,
         @Query("api_key") key: String,
         @Query("session_id") sessionId: String,
         @Query("language") lang: String
-    ): Single<Response<Movies>>
-
-    @GET("/3/genre/movie/list")
-    suspend fun getGenres(
-        @Query("api_key") apiKey: String,
-        @Query("language") lang: String
-    ): Response<Genres>
+    ): Response<Movies>
 
     //auth
     //new token
     @GET("/3/authentication/token/new")
-    fun getRequestToken(@Query("api_key") key: String): Single<Response<RequestToken>>
+    suspend fun getRequestToken(@Query("api_key") key: String): Response<RequestToken>
 
     //validation with token
     @POST("/3/authentication/token/validate_with_login")
-    fun validation(
+    suspend fun validation(
         @Query("api_key") key: String,
         @Body body: JsonObject
-    ): Single<Response<JsonObject>>
+    ): Response<JsonObject>
 
     //create new session
     @POST("/3/authentication/session/new")
-    fun createSession(
+    suspend fun createSession(
         @Query("api_key") key: String,
         @Body body: JsonObject
-    ): Single<Response<JsonObject>>
+    ): Response<JsonObject>
 
     //account
     @GET("/3/account")
-    fun getAccount(
+    suspend fun getAccount(
         @Query("api_key") key: String,
         @Query("session_id") sessionId: String
-    ): Single<Response<JsonObject>>
+    ): Response<JsonObject>
 
     //delete
     @HTTP(method = "DELETE", path = "/3/authentication/session", hasBody = true)
-    fun deleteSession(
+    suspend fun deleteSession(
         @Query("api_key") apiKey: String,
         @Body body: JsonObject
-    ): Single<Response<JsonObject>>
+    ): Response<JsonObject>
 
     //search
     @GET("/3/search/movie")
-    fun searchMovie(
+    suspend fun searchMovie(
         @Query("api_key") key: String,
         @Query("language") lang: String,
         @Query("query") query: String
-    ): Single<Response<Movies>>
+    ): Response<Movies>
 
 }
