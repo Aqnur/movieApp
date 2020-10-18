@@ -3,15 +3,14 @@ package com.example.lab6.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.example.lab6.model.api.RetrofitService
-import com.example.lab6.model.database.MarkerDao
-import com.example.lab6.model.database.MovieDao
-import com.example.lab6.model.database.MovieDatabase
-import com.example.lab6.model.repository.*
+import com.example.lab6.data.api.RetrofitService
+import com.example.lab6.data.database.MarkerDao
+import com.example.lab6.data.database.MovieDao
+import com.example.lab6.data.database.MovieDatabase
+import com.example.lab6.data.repository.*
 import com.example.lab6.view_model.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import retrofit2.Retrofit
 
 val networkModule = module {
     single { getRetrofitService() }
