@@ -3,11 +3,11 @@ package com.example.lab6.view_model
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
-import com.example.lab6.model.json.account.Account
-import com.example.lab6.model.json.account.RequestToken
-import com.example.lab6.model.json.account.Session
-import com.example.lab6.model.json.account.User
-import com.example.lab6.model.repository.AccountRepository
+import com.example.lab6.data.model.account.Account
+import com.example.lab6.data.model.account.RequestToken
+import com.example.lab6.data.model.account.Session
+import com.example.lab6.data.model.account.User
+import com.example.lab6.data.repository.AccountRepository
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
@@ -16,23 +16,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class LoginViewModel(private val accountRepository: AccountRepository) : ViewModel(), CoroutineScope {
-
-    private val job = Job()
+class LoginViewModel(private val accountRepository: AccountRepository) : BaseViewModel() {
 
     var liveData = MutableLiveData<State>()
 
     private lateinit var requestToken: String
     private lateinit var newRequestToken: String
     private var json: String = ""
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()
-    }
 
     fun makeToken(name: String, password: String) {
         liveData.value = State.ShowLoading

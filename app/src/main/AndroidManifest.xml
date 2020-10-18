@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:name=".di.MoviesApplication"
+            android:name=".MoviesApplication"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -36,11 +36,11 @@
                 android:value="@string/google_maps_key" />
 
         <activity
-                android:name=".view.activites.GoogleMapsActivity"
+                android:name=".ui.activites.GoogleMapsActivity"
                 android:label="@string/title_activity_google_maps"></activity>
-        <activity android:name=".view.activites.MainActivity"></activity>
-        <activity android:name=".view.activites.RegisterActivity"></activity>
-        <activity android:name=".view.activites.LoginActivity">
+        <activity android:name=".ui.activites.MainActivity"></activity>
+        <activity android:name=".ui.activites.RegisterActivity"></activity>
+        <activity android:name=".ui.activites.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
-import com.example.lab6.model.json.account.Singleton
-import com.example.lab6.model.json.favorites.FavResponse
-import com.example.lab6.model.json.movie.Result
-import com.example.lab6.model.repository.MovieRepository
+import com.example.lab6.data.model.account.Singleton
+import com.example.lab6.data.model.favorites.FavResponse
+import com.example.lab6.data.model.movie.Result
+import com.example.lab6.data.repository.MovieRepository
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
@@ -16,22 +16,12 @@ import kotlin.coroutines.CoroutineContext
 
 class MovieListViewModel(
     private var movieRepository: MovieRepository
-) : ViewModel(), CoroutineScope {
+) : BaseViewModel() {
 
     val liveData = MutableLiveData<State>()
 
     private val sessionId = Singleton.getSession()
     private val accountId = Singleton.getAccountId()
-
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()
-    }
 
     fun getMovies(page: Int = 1) {
         launch {
@@ -158,6 +148,6 @@ class MovieListViewModel(
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
-        data class Result(val list: List<com.example.lab6.model.json.movie.Result>?) : State()
+        data class Result(val list: List<com.example.lab6.data.model.movie.Result>?) : State()
     }
 }

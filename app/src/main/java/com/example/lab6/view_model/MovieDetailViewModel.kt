@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
-import com.example.lab6.model.json.account.Singleton
-import com.example.lab6.model.json.favorites.FavResponse
-import com.example.lab6.model.json.movie.Result
-import com.example.lab6.model.repository.MovieRepository
+import com.example.lab6.data.model.account.Singleton
+import com.example.lab6.data.model.favorites.FavResponse
+import com.example.lab6.data.model.movie.Result
+import com.example.lab6.data.repository.MovieRepository
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
@@ -16,21 +16,11 @@ import kotlin.coroutines.CoroutineContext
 
 class MovieDetailViewModel(
     private val movieRepository: MovieRepository
-) : ViewModel(), CoroutineScope {
+) : BaseViewModel() {
 
     private val sessionId = Singleton.getSession()
     private val accountId = Singleton.getAccountId()
     val liveData = MutableLiveData<State>()
-
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()
-    }
 
     fun getMovie(id: Int) {
         liveData.value = State.ShowLoading

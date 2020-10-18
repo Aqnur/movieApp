@@ -1,22 +1,13 @@
 package com.example.lab6.view_model
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.example.lab6.model.json.account.Marker
-import com.example.lab6.model.database.MarkerDao
-import com.example.lab6.model.database.MovieDatabase
-import com.example.lab6.model.json.account.generateMarkers
-import com.example.lab6.model.repository.MapRepository
-import com.example.lab6.model.repository.MapRepositoryImpl
+import com.example.lab6.data.model.account.Marker
+import com.example.lab6.data.model.account.generateMarkers
+import com.example.lab6.data.repository.MapRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class MarkersViewModel(private val mapRepository: MapRepository) : ViewModel(), CoroutineScope {
-
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+class MarkersViewModel(private val mapRepository: MapRepository) : BaseViewModel() {
 
     fun fillDatabase() {
         launch {

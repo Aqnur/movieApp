@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         android:background="#FFFFFF"
         android:padding="20dp"
-        tools:context=".view.activites.LoginActivity">
+        tools:context=".ui.activites.LoginActivity">
 
     <ProgressBar
             android:id="@+id/progressBar"
@@ -41,14 +41,6 @@
                 android:textColor="#2E0FA5"
                 android:textSize="16sp" />
 
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="150dp"
-                android:layout_height="200dp"
-                android:layout_gravity="left"
-                android:layout_marginTop="0dp"
-                android:background="#00FFFFFF"
-                android:src="@drawable/logoo" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutEmail"
@@ -106,44 +98,6 @@
                 android:textAllCaps="false"
                 android:textColor="#000000" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:gravity="left"
-                android:text="Войти через соцсети"
-                android:textColor="#000000"
-                android:textSize="16sp" />
-
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="580dp"
-            android:layout_marginEnd="241dp"
-            android:layout_marginBottom="439dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/google" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="582dp"
-            android:layout_marginRight="232dp"
-            android:layout_marginBottom="439dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/facebook" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="30dp"
-            android:layout_height="35dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="578dp"
-            android:layout_marginRight="260dp"
-            android:layout_marginBottom="439dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/vk" />
 </RelativeLayout>
