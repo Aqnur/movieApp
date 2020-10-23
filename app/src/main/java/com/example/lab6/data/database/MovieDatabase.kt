@@ -5,12 +5,10 @@ import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.lab6.data.model.account.Marker
-import com.example.lab6.data.model.movie.GenresConverter
 import com.example.lab6.data.model.movie.Result
 
 
 @Database(entities = [Result::class, Marker::class],version = 2,exportSchema = false)
-@TypeConverters(GenresConverter::class)
 abstract class MovieDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
     abstract fun markerDao(): MarkerDao

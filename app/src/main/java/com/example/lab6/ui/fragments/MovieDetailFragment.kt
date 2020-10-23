@@ -162,8 +162,6 @@ class MovieDetailFragment : Fragment() {
     private fun configureBackButton(view: View) {
         val back: ImageView = view.findViewById(R.id.back)
         back.setOnClickListener {
-            requireActivity().topTitle.visibility = View.VISIBLE
-            requireActivity().bottomNavigationView.visibility = View.VISIBLE
             parentFragmentManager.popBackStack()
         }
     }

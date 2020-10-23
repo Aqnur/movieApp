@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var topTitle: TextView
     private lateinit var bottomNavigation: BottomNavigationViewEx
     private val fragmentManager: FragmentManager = supportFragmentManager
-    private var activeFragment: Fragment = MoviesFragment()
-    private var moviesFragment: Fragment = MoviesFragment()
+    private var activeFragment: Fragment = MediaFragment()
+    private var moviesFragment: Fragment = MediaFragment()
     private var favouritesFragment: Fragment = FavouritesFragment()
     private var accountFragment: Fragment = AccountFragment()
     private var movieDetailsFragment: Fragment = MovieDetailFragment()
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     fragmentManager.beginTransaction().hide(activeFragment).show(moviesFragment)
                         .commit()
                     activeFragment = moviesFragment
-                    topTitle.text = "Popular Movies"
+                    topTitle.text = "Media"
                     topTitle.visibility = View.VISIBLE
                     bottomNavigationView.visibility = View.VISIBLE
                     return@OnNavigationItemSelectedListener true

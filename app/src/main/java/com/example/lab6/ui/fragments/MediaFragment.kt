@@ -12,16 +12,19 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
 import com.example.lab6.data.model.PaginationCounter
+import com.example.lab6.data.model.movie.MoviesType
 import com.example.lab6.data.model.movie.Result
+import com.example.lab6.ui.adapters.MediaListAdapter
 import com.example.lab6.ui.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_movies.*
 import kotlinx.android.synthetic.main.bottom_nav.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
+class MediaFragment : Fragment(), MediaListAdapter.RecyclerViewItemClick {
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
@@ -32,14 +35,14 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private val movieListViewModel by viewModel<MovieListViewModel>()
 
     private var curPage = PaginationCounter.PAGE_START
-    private var isLastPage = false
-    private var isLoading = false
-    private var itemCnt = 0
 
-    private var moviesAdapter: MoviesAdapter? = null
+    private var moviesAdapter: MediaListAdapter? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        sharedViewModel.selected.observe(requireActivity(), Observer { item ->
+            moviesAdapter?.updateItem(item)
+        })
     }
 
     override fun onCreateView(
@@ -47,7 +50,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_popular_movies, container, false)
+        return inflater.inflate(R.layout.activity_movies, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,6 +58,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
 
+        goToMoviesList(MoviesType.POPULAR)
         bindViews(view)
         swipeRefresh()
         adapter()
@@ -63,37 +67,35 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
 
     private fun bindViews(view: View) {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
-        recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView = view.findViewById(R.id.rv_popularMovies)
+    }
+
+    private fun goToMoviesList(type: MoviesType) {
+        tv_popularMovies.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable("type", type)
+            val movieFragment = MoviesFragment()
+            movieFragment.arguments = bundle
+            parentFragmentManager.beginTransaction().add(R.id.frame, movieFragment).addToBackStack(null).commit()
+            requireActivity().topTitle.visibility = View.GONE
+            requireActivity().bottomNavigationView.visibility = View.GONE
+        }
     }
 
     private fun swipeRefresh() {
         recyclerView.layoutManager = LinearLayoutManager(requireActivity())
         swipeRefreshLayout.setOnRefreshListener {
             moviesAdapter?.clearAll()
-            itemCnt = 0
             curPage = PaginationCounter.PAGE_START
-            isLastPage = false
             movieListViewModel.getMovies(curPage)
         }
     }
 
     private fun adapter() {
-        layoutManager = LinearLayoutManager(requireActivity())
+        layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
-        moviesAdapter = MoviesAdapter(this, requireActivity())
+        moviesAdapter = MediaListAdapter(this, requireActivity())
         recyclerView.adapter = moviesAdapter
-
-        recyclerView.addOnScrollListener(object : PaginationCounter(layoutManager) {
-            override fun loadMoreItems() {
-                isLoading = true
-                curPage++
-                getMovies(curPage)
-            }
-
-            override fun isLastPage(): Boolean = isLastPage
-
-            override fun isLoading(): Boolean = isLoading
-        })
     }
 
     private fun getMovies(page: Int) {
@@ -107,10 +109,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
                     swipeRefreshLayout.isRefreshing = false
                 }
                 is MovieListViewModel.State.Result -> {
-                    moviesAdapter?.removeFooterLoading()
                     moviesAdapter?.addItems(result.list!!)
-                    moviesAdapter?.addFooterLoading()
-                    isLoading = false
                 }
             }
         })
@@ -125,10 +124,4 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         requireActivity().topTitle.visibility = View.GONE
         requireActivity().bottomNavigationView.visibility = View.GONE
     }
-
-    override fun addToFavourites(position: Int, item: Result) {
-        movieListViewModel.addToFavourite(item)
-        sharedViewModel.select(item)
-    }
-
 }
