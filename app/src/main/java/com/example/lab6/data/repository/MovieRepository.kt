@@ -27,6 +27,8 @@ interface MovieRepository {
     suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Movies?
     suspend fun searchMovieRemoteDS(key: String, lang: String, query: String): Movies?
     suspend fun getTopRatedRemoteDS(apiKey: String, language: String, page: Int): Movies?
+    suspend fun getUpcomingRemoteDS(apiKey: String, language: String, page: Int): Movies?
+    suspend fun getNowPlayingRemoteDS(apiKey: String, language: String, page: Int): Movies?
 }
 
 class MovieRepositoryImpl(
@@ -84,6 +86,14 @@ class MovieRepositoryImpl(
 
     override suspend fun getTopRatedRemoteDS(apiKey: String, language: String, page: Int) =
         movieApi.getMovieApi(MovieApi::class.java).getTopMovies(apiKey, language, page)
+            .body()
+
+    override suspend fun getUpcomingRemoteDS(apiKey: String, language: String, page: Int) =
+        movieApi.getMovieApi(MovieApi::class.java).getUpcoming(apiKey, language, page)
+            .body()
+
+    override suspend fun getNowPlayingRemoteDS(apiKey: String, language: String, page: Int) =
+        movieApi.getMovieApi(MovieApi::class.java).getNowPlaying(apiKey, language, page)
             .body()
 
     override suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String) =

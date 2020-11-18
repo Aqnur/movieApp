@@ -25,13 +25,13 @@ class MovieListViewModel(
     private val accountId = Singleton.getAccountId()
 
     fun getMovies(type: MoviesType, page: Int = 1) {
-        launch {
-            if (page == 1) liveData.value = State.ShowLoading
-            when (type) {
-                MoviesType.POPULAR -> getPopularMovies(page)
-                MoviesType.TOPRATED -> getTopRatedMovies(page)
-                MoviesType.FAVOURITES -> getFavorites()
-            }
+        if (page == 1) liveData.value = State.ShowLoading
+        when (type) {
+            MoviesType.POPULAR -> getPopularMovies(page)
+            MoviesType.TOPRATED -> getTopRatedMovies(page)
+            MoviesType.UPCOMING -> getUpcomingMovies(page)
+            MoviesType.NOW_PLAYING -> getNowPlayingMovies(page)
+            MoviesType.FAVOURITES -> getFavorites()
         }
     }
 
@@ -40,12 +40,16 @@ class MovieListViewModel(
             if (page == 1) liveData.value = State.ShowLoading
             val list = withContext(Dispatchers.IO) {
                 try {
-                    val response = movieRepository.getMoviesRemoteDS(BuildConfig.API_KEY, Locale.getDefault().language, page)
+                    val response = movieRepository.getMoviesRemoteDS(
+                        BuildConfig.API_KEY,
+                        Locale.getDefault().language,
+                        page
+                    )
                     val result = response!!.results
                     Log.d("movies", result.toString())
                     if (!result.isNullOrEmpty()) {
                         movieRepository.insertAllLocalDS(result)
-                        for(movie in result) {
+                        for (movie in result) {
                             isFavourite(movie)
                         }
                     }
@@ -64,12 +68,16 @@ class MovieListViewModel(
             if (page == 1) liveData.value = State.ShowLoading
             val list = withContext(Dispatchers.IO) {
                 try {
-                    val response = movieRepository.getTopRatedRemoteDS(BuildConfig.API_KEY, Locale.getDefault().language, page)
+                    val response = movieRepository.getTopRatedRemoteDS(
+                        BuildConfig.API_KEY,
+                        Locale.getDefault().language,
+                        page
+                    )
                     val result = response!!.results
                     Log.d("movies", result.toString())
                     if (!result.isNullOrEmpty()) {
                         movieRepository.insertAllLocalDS(result)
-                        for(movie in result) {
+                        for (movie in result) {
                             isFavourite(movie)
                         }
                     }
@@ -80,6 +88,62 @@ class MovieListViewModel(
             }
             liveData.value = State.HideLoading
             liveData.value = State.Result(list, MoviesType.TOPRATED)
+        }
+    }
+
+    fun getUpcomingMovies(page: Int = 1) {
+        launch {
+            if (page == 1) liveData.value = State.ShowLoading
+            val list = withContext(Dispatchers.IO) {
+                try {
+                    val response = movieRepository.getUpcomingRemoteDS(
+                        BuildConfig.API_KEY,
+                        Locale.getDefault().language,
+                        page
+                    )
+                    val result = response!!.results
+                    Log.d("movies", result.toString())
+                    if (!result.isNullOrEmpty()) {
+                        movieRepository.insertAllLocalDS(result)
+                        for (movie in result) {
+                            isFavourite(movie)
+                        }
+                    }
+                    result
+                } catch (e: Exception) {
+                    movieRepository.getMoviesLocalDS() ?: emptyList()
+                }
+            }
+            liveData.value = State.HideLoading
+            liveData.value = State.Result(list, MoviesType.UPCOMING)
+        }
+    }
+
+    fun getNowPlayingMovies(page: Int = 1) {
+        launch {
+            if (page == 1) liveData.value = State.ShowLoading
+            val list = withContext(Dispatchers.IO) {
+                try {
+                    val response = movieRepository.getNowPlayingRemoteDS(
+                        BuildConfig.API_KEY,
+                        Locale.getDefault().language,
+                        page
+                    )
+                    val result = response!!.results
+                    Log.d("movies", result.toString())
+                    if (!result.isNullOrEmpty()) {
+                        movieRepository.insertAllLocalDS(result)
+                        for (movie in result) {
+                            isFavourite(movie)
+                        }
+                    }
+                    result
+                } catch (e: Exception) {
+                    movieRepository.getMoviesLocalDS() ?: emptyList()
+                }
+            }
+            liveData.value = State.HideLoading
+            liveData.value = State.Result(list, MoviesType.NOW_PLAYING)
         }
     }
 
@@ -132,14 +196,16 @@ class MovieListViewModel(
                     BuildConfig.API_KEY,
                     sessionId, body
                 )
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+            }
         }
     }
 
     private fun isFavourite(movie: Result) {
         launch {
             try {
-                val result = movieRepository.hasLikeRemoteDS(movie.id, BuildConfig.API_KEY, sessionId)
+                val result =
+                    movieRepository.hasLikeRemoteDS(movie.id, BuildConfig.API_KEY, sessionId)
                 Log.d("is_favourite", result.toString())
                 val gson = Gson()
                 val like = gson.fromJson(
@@ -153,37 +219,41 @@ class MovieListViewModel(
                     movieRepository.setLikeLocalDS(false, movie.id)
                     movie.liked = false
                 }
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+            }
         }
     }
 
     fun search(query: String) {
         liveData.value = State.ShowLoading
         launch {
-                try {
-                    val response = movieRepository.searchMovieRemoteDS(
-                        BuildConfig.API_KEY,
-                        Locale.getDefault().language,
-                        query
-                    )
-                    val result = response!!.results
-                    if (!result.isNullOrEmpty()) {
-                        for(movie in result) {
-                            isFavourite(movie)
-                        }
+            try {
+                val response = movieRepository.searchMovieRemoteDS(
+                    BuildConfig.API_KEY,
+                    Locale.getDefault().language,
+                    query
+                )
+                val result = response!!.results
+                if (!result.isNullOrEmpty()) {
+                    for (movie in result) {
+                        isFavourite(movie)
                     }
-                    Log.d("search", result.toString())
-                    liveData.value = State.Result(result)
-                    liveData.value = State.HideLoading
-                } catch (e: Exception) {
                 }
+                Log.d("search", result.toString())
+                liveData.value = State.Result(result)
+                liveData.value = State.HideLoading
+            } catch (e: Exception) {
             }
+        }
 
     }
 
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
-        data class Result(val list: List<com.example.lab6.data.model.movie.Result>?, val type: MoviesType? = null) : State()
+        data class Result(
+            val list: List<com.example.lab6.data.model.movie.Result>?,
+            val type: MoviesType? = null
+        ) : State()
     }
 }

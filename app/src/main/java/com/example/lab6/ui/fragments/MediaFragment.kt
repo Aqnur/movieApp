@@ -29,7 +29,8 @@ class MediaFragment : Fragment() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var popularMoviesRV: RecyclerView
     private lateinit var topRatedMoviesRV: RecyclerView
-    private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var upcomingMoviesRV: RecyclerView
+    private lateinit var nowPlayingMoviesRV: RecyclerView
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val movieListViewModel by viewModel<MovieListViewModel>()
@@ -38,7 +39,12 @@ class MediaFragment : Fragment() {
     private val popularMoviesAdapter: MediaListAdapter by lazy {
         MediaListAdapter(itemClickListener = itemClickListener, context = requireContext())
     }
-
+    private val nowPlayingMoviesAdapter: MediaListAdapter by lazy {
+        MediaListAdapter(itemClickListener = itemClickListener, context = requireContext())
+    }
+    private val upcomingMoviesAdapter: MediaListAdapter by lazy {
+        MediaListAdapter(itemClickListener = itemClickListener, context = requireContext())
+    }
     private val topRatedMoviesAdapter: MediaListAdapter by lazy {
         MediaListAdapter(itemClickListener = itemClickListener, context = requireContext())
     }
@@ -48,6 +54,8 @@ class MediaFragment : Fragment() {
         sharedViewModel.selected.observe(requireActivity(), Observer { item ->
             popularMoviesAdapter?.updateItem(item)
             topRatedMoviesAdapter?.updateItem(item)
+            upcomingMoviesAdapter?.updateItem(item)
+            nowPlayingMoviesAdapter?.updateItem(item)
         })
     }
 
@@ -69,21 +77,38 @@ class MediaFragment : Fragment() {
         adapter()
         getMovies(MoviesType.POPULAR)
         getMovies(MoviesType.TOPRATED)
+        getMovies(MoviesType.UPCOMING)
+        getMovies(MoviesType.NOW_PLAYING)
         observe()
     }
 
     private fun bindViews(view: View) {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
         popularMoviesRV = view.findViewById(R.id.rv_popularMovies)
+        upcomingMoviesRV = view.findViewById(R.id.rv_upcomingMovies)
+        nowPlayingMoviesRV = view.findViewById(R.id.rv_nowPlayingMovies)
         topRatedMoviesRV = view.findViewById(R.id.rv_topRatedMovies)
 
         tv_popularMovies.setOnClickListener {
             goToMoviesList(MoviesType.POPULAR)
+            requireActivity().topTitle.text = tv_popularMovies.text
         }
 
         tv_topRatedMovies.setOnClickListener {
             goToMoviesList(MoviesType.TOPRATED)
+            requireActivity().topTitle.text = tv_topRatedMovies.text
         }
+
+        tv_upcomingMovies.setOnClickListener {
+            goToMoviesList(MoviesType.UPCOMING)
+            requireActivity().topTitle.text = tv_upcomingMovies.text
+        }
+
+        tv_nowPlayingMovies.setOnClickListener {
+            goToMoviesList(MoviesType.NOW_PLAYING)
+            requireActivity().topTitle.text = tv_nowPlayingMovies.text
+        }
+
     }
 
     private fun goToMoviesList(type: MoviesType) {
@@ -92,9 +117,8 @@ class MediaFragment : Fragment() {
 
         val movieFragment = MoviesFragment()
         movieFragment.arguments = bundle
-        parentFragmentManager.beginTransaction().add(R.id.frame, movieFragment).addToBackStack(null)
+        parentFragmentManager.beginTransaction().replace(R.id.frame, movieFragment).addToBackStack(null)
             .commit()
-        requireActivity().topTitle.visibility = View.GONE
         requireActivity().bottomNavigationView.visibility = View.GONE
     }
 
@@ -102,9 +126,14 @@ class MediaFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             topRatedMoviesAdapter.clearAll()
             popularMoviesAdapter.clearAll()
+            upcomingMoviesAdapter.clearAll()
+            nowPlayingMoviesAdapter.clearAll()
+            popularMoviesAdapter.clearAll()
             curPage = PaginationCounter.PAGE_START
             getMovies(MoviesType.POPULAR)
             getMovies(MoviesType.TOPRATED)
+            getMovies(MoviesType.UPCOMING)
+            getMovies(MoviesType.NOW_PLAYING)
         }
     }
 
@@ -114,9 +143,15 @@ class MediaFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         topRatedMoviesRV.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        upcomingMoviesRV.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        nowPlayingMoviesRV.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         popularMoviesRV.adapter = popularMoviesAdapter
         topRatedMoviesRV.adapter = topRatedMoviesAdapter
+        upcomingMoviesRV.adapter = upcomingMoviesAdapter
+        nowPlayingMoviesRV.adapter = nowPlayingMoviesAdapter
 
     }
 
@@ -139,6 +174,12 @@ class MediaFragment : Fragment() {
                     }
                     if (result.type == MoviesType.TOPRATED) {
                         topRatedMoviesAdapter.addItems(result.list!!)
+                    }
+                    if (result.type == MoviesType.UPCOMING) {
+                        upcomingMoviesAdapter.addItems(result.list!!)
+                    }
+                    if (result.type == MoviesType.NOW_PLAYING) {
+                        nowPlayingMoviesAdapter.addItems(result.list!!)
                     }
                 }
             }

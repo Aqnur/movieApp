@@ -23,6 +23,20 @@ interface MovieApi {
         @Query("page") page: Int
     ): Response<Movies>
 
+    @GET("/3/movie/upcoming")
+    suspend fun getUpcoming(
+        @Query("api_key") key: String,
+        @Query("language") lang: String,
+        @Query("page") page: Int
+    ): Response<Movies>
+
+    @GET("/3/movie/now_playing")
+    suspend fun getNowPlaying(
+        @Query("api_key") key: String,
+        @Query("language") lang: String,
+        @Query("page") page: Int
+    ): Response<Movies>
+
     @GET("/3/movie/{movie_id}")
     suspend fun getMovieById(
         @Path("movie_id") movieId: Int,
