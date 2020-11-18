@@ -1,7 +1,7 @@
 package com.example.lab6.data.repository
 
-import com.example.lab6.data.api.MovieApi
-import com.example.lab6.data.api.RetrofitService
+import com.example.lab6.data.network.MovieApi
+import com.example.lab6.data.network.RetrofitService
 import com.example.lab6.data.model.account.RequestToken
 import com.google.gson.JsonObject
 import retrofit2.Response

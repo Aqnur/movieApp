@@ -1,4 +1,4 @@
-package com.example.lab6.data.api
+package com.example.lab6.data.network
 
 import com.example.lab6.data.model.account.RequestToken
 import com.example.lab6.data.model.movie.Movies
@@ -11,6 +11,13 @@ import retrofit2.http.*
 interface MovieApi {
     @GET("/3/movie/popular")
     suspend fun getMovieList(
+        @Query("api_key") key: String,
+        @Query("language") lang: String,
+        @Query("page") page: Int
+    ): Response<Movies>
+
+    @GET("/3/movie/top_rated")
+    suspend fun getTopMovies(
         @Query("api_key") key: String,
         @Query("language") lang: String,
         @Query("page") page: Int

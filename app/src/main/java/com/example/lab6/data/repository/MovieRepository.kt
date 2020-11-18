@@ -1,7 +1,7 @@
 package com.example.lab6.data.repository
 
-import com.example.lab6.data.api.MovieApi
-import com.example.lab6.data.api.RetrofitService
+import com.example.lab6.data.network.MovieApi
+import com.example.lab6.data.network.RetrofitService
 import com.example.lab6.data.database.MovieDao
 import com.example.lab6.data.model.movie.Movies
 import com.example.lab6.data.model.movie.Result
@@ -26,6 +26,7 @@ interface MovieRepository {
     suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject): JsonObject?
     suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String): Movies?
     suspend fun searchMovieRemoteDS(key: String, lang: String, query: String): Movies?
+    suspend fun getTopRatedRemoteDS(apiKey: String, language: String, page: Int): Movies?
 }
 
 class MovieRepositoryImpl(
@@ -79,6 +80,10 @@ class MovieRepositoryImpl(
 
     override suspend fun getMoviesRemoteDS(apiKey: String, language: String, page: Int) =
         movieApi.getMovieApi(MovieApi::class.java).getMovieList(apiKey, language, page)
+            .body()
+
+    override suspend fun getTopRatedRemoteDS(apiKey: String, language: String, page: Int) =
+        movieApi.getMovieApi(MovieApi::class.java).getTopMovies(apiKey, language, page)
             .body()
 
     override suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String) =

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
 import com.example.lab6.data.model.PaginationCounter
+import com.example.lab6.data.model.movie.MoviesType
 import com.example.lab6.data.model.movie.Result
 import com.example.lab6.ui.adapters.MoviesAdapter
 import com.example.lab6.view_model.MovieListViewModel
@@ -28,7 +29,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val sharedViewModel: SharedViewModel by activityViewModels()
-
+    private var movieType: MoviesType = MoviesType.POPULAR
     private val movieListViewModel by viewModel<MovieListViewModel>()
 
     private var curPage = PaginationCounter.PAGE_START
@@ -36,7 +37,9 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     private var isLoading = false
     private var itemCnt = 0
 
-    private var moviesAdapter: MoviesAdapter? = null
+    private val moviesAdapter: MoviesAdapter by lazy {
+        MoviesAdapter(itemClickListner = this, context = requireContext())
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -47,6 +50,12 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val bundle = this.arguments
+
+        if (bundle != null) {
+            movieType = bundle.get("type") as MoviesType
+        }
+
         return inflater.inflate(R.layout.fragment_popular_movies, container, false)
     }
 
@@ -73,14 +82,13 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
             itemCnt = 0
             curPage = PaginationCounter.PAGE_START
             isLastPage = false
-            movieListViewModel.getMovies(curPage)
+            movieListViewModel.getPopularMovies(curPage)
         }
     }
 
     private fun adapter() {
-        layoutManager = LinearLayoutManager(requireActivity())
+        layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
-        moviesAdapter = MoviesAdapter(this, requireActivity())
         recyclerView.adapter = moviesAdapter
 
         recyclerView.addOnScrollListener(object : PaginationCounter(layoutManager) {
@@ -97,7 +105,7 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
     }
 
     private fun getMovies(page: Int) {
-        movieListViewModel.getMovies(page)
+        movieListViewModel.getMovies(movieType, page)
         movieListViewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
             when (result) {
                 is MovieListViewModel.State.ShowLoading -> {

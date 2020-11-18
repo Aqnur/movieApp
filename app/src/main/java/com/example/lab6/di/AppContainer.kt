@@ -3,7 +3,7 @@ package com.example.lab6.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.example.lab6.data.api.RetrofitService
+import com.example.lab6.data.network.RetrofitService
 import com.example.lab6.data.database.MarkerDao
 import com.example.lab6.data.database.MovieDao
 import com.example.lab6.data.database.MovieDatabase

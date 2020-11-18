@@ -1,4 +1,4 @@
- package com.example.lab6.data.api
+ package com.example.lab6.data.network
 
 import com.example.lab6.util.BASE_URL
 import okhttp3.OkHttpClient
