@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_actor"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:src="@drawable/movie_poster" />
+
+    <TextView
+            android:id="@+id/tv_actorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:textColor="#000"
+            android:layout_toRightOf="@+id/iv_actor"
+            android:text="Name" />
+
+    <TextView
+            android:id="@+id/tv_actorRoleName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_actorName"
+            android:textColor="#000"
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@+id/iv_actor"
+            android:text="Role" />
+
+</RelativeLayout>

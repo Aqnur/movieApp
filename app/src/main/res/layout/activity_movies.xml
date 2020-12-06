@@ -20,13 +20,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                <TextView
-                        android:id="@+id/tv_popularMovies"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_popular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Популярные"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
+                    <TextView
+                            android:id="@+id/tv_popularMovies"
+                            android:layout_width="wrap_content"
+                            android:textColor="#000"
+                            android:textStyle="bold"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="Популярные"
+                             />
+
+                    <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:text="Все"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:background="@drawable/show_all"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_popularMovies"
@@ -34,16 +54,35 @@
                         android:layout_height="wrap_content"
                         android:scrollbars="horizontal"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_popularMovies" />
+                        app:layout_constraintTop_toBottomOf="@+id/cl_popular" />
 
-                <TextView
-                        android:id="@+id/tv_topRatedMovies"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_topRated"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Лучшие"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/rv_popularMovies" />
+                        app:layout_constraintTop_toBottomOf="@+id/rv_popularMovies">
+                    <TextView
+                            android:id="@+id/tv_topRatedMovies"
+                            android:layout_width="wrap_content"
+                            android:textColor="#000"
+                            android:textStyle="bold"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="Лучшие"
+                            />
+
+                    <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:text="Все"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:background="@drawable/show_all"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_topRatedMovies"
@@ -51,16 +90,35 @@
                         android:layout_height="wrap_content"
                         android:scrollbars="horizontal"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_topRatedMovies" />
+                        app:layout_constraintTop_toBottomOf="@+id/cl_topRated" />
 
-                <TextView
-                        android:id="@+id/tv_upcomingMovies"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_upcomingMovies"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Ожидаемые"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/rv_topRatedMovies" />
+                        app:layout_constraintTop_toBottomOf="@+id/rv_topRatedMovies">
+                    <TextView
+                            android:id="@+id/tv_upcomingMovies"
+                            android:layout_width="wrap_content"
+                            android:textColor="#000"
+                            android:textStyle="bold"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="Ожидаемые"
+                            />
+
+                    <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:text="Все"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:background="@drawable/show_all"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_upcomingMovies"
@@ -68,16 +126,35 @@
                         android:layout_height="wrap_content"
                         android:scrollbars="horizontal"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_upcomingMovies" />
+                        app:layout_constraintTop_toBottomOf="@+id/cl_upcomingMovies" />
 
-                <TextView
-                        android:id="@+id/tv_nowPlayingMovies"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_nowPlayingMovies"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Смотрят сейчас"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/rv_upcomingMovies" />
+                        app:layout_constraintTop_toBottomOf="@+id/rv_upcomingMovies">
+                    <TextView
+                            android:id="@+id/tv_nowPlayingMovies"
+                            android:layout_width="wrap_content"
+                            android:textColor="#000"
+                            android:textStyle="bold"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:text="Смотрят Сейчас"
+                            />
+
+                    <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:text="Все"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:background="@drawable/show_all"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_nowPlayingMovies"
@@ -85,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:scrollbars="horizontal"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_nowPlayingMovies" />
+                        app:layout_constraintTop_toBottomOf="@+id/cl_nowPlayingMovies" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

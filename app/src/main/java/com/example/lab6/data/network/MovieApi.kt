@@ -1,7 +1,11 @@
 package com.example.lab6.data.network
 
+import com.example.lab6.data.model.RatingResponse
 import com.example.lab6.data.model.account.RequestToken
+import com.example.lab6.data.model.cast.CreditResponse
 import com.example.lab6.data.model.movie.Movies
+import com.example.lab6.data.model.movie.RatedMovies
+import com.example.lab6.data.model.movie.RatedMoviesResponse
 import com.example.lab6.data.model.movie.Result
 import com.google.gson.JsonObject
 import retrofit2.Response
@@ -44,6 +48,21 @@ interface MovieApi {
         @Query("language") lang: String
     ): Response<Result>
 
+    @GET("/3/movie/{movie_id}/credits")
+    suspend fun getCredits(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") key: String,
+        @Query("language") lang: String
+    ): Response<CreditResponse>
+
+    @POST("/3/movie/{movie_id}/rating")
+    suspend fun rateMovie(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") key: String,
+        @Query("session_id") sessionId: String,
+        @Body rating: JsonObject
+    ): Response<JsonObject>
+
     @POST("/3/account/{account_id}/favorite")
     suspend fun markFavoriteMovie(
         @Path("account_id") userId: Int,
@@ -51,6 +70,15 @@ interface MovieApi {
         @Query("session_id") sessionId: String,
         @Body favoriteRequest: JsonObject
     ): Response<JsonObject>
+
+    @GET("/3/account/{account_id}/rated/movies")
+    suspend fun getRated(
+        @Path("account_id") userId: Int,
+        @Query("api_key") key: String,
+        @Query("session_id") sessionId: String,
+        @Query("language") lang: String,
+        @Query("sort_by") sort: String
+    ): Response<RatedMoviesResponse>
 
     @GET("/3/movie/{movie_id}/account_states")
     suspend fun hasLike(
@@ -98,6 +126,13 @@ interface MovieApi {
     suspend fun deleteSession(
         @Query("api_key") apiKey: String,
         @Body body: JsonObject
+    ): Response<JsonObject>
+
+    @HTTP(method = "DELETE", path = "/3/movie/{movie_id}/rating", hasBody = true)
+    suspend fun deleteRating(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") key: String,
+        @Query("session_id") sessionId: String
     ): Response<JsonObject>
 
     //search

@@ -17,6 +17,7 @@ data class Result(
     @SerializedName("title") var title: String = "",
     @SerializedName("original_title") var originalTitle: String = "",
     @SerializedName("overview") var overview: String = "",
+    @SerializedName("backdrop_path") var backdrop_path: String = "",
 
     @SerializedName("runtime") var runtime: Int ?= null,
     @SerializedName("tagline") var tagline: String ?= null,

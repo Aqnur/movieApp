@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -22,16 +23,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_nav.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchFragment : Fragment(), SearchAdapter.RecyclerViewItemClick{
+class SearchFragment : Fragment(), SearchAdapter.RecyclerViewItemClick {
 
-    private lateinit var search: EditText
-    private lateinit var searchButton: TextView
+    private lateinit var search: SearchView
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var layoutManager: LinearLayoutManager
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val movieListViewModel by viewModel<MovieListViewModel>()
     private var searchAdapter: SearchAdapter? = null
+    private var query: String? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -51,27 +52,45 @@ class SearchFragment : Fragment(), SearchAdapter.RecyclerViewItemClick{
         super.onViewCreated(view, savedInstanceState)
         bindViews(view)
         setAdapter()
-        search()
+        onSearchPressed()
     }
 
-    private fun search() {
-        searchButton.setOnClickListener {
-            progressBar.visibility = ProgressBar.VISIBLE
-            movieListViewModel.search(search.text.toString())
-            movieListViewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
-                when (result) {
-                    is MovieListViewModel.State.ShowLoading -> {
-                        progressBar.visibility = ProgressBar.VISIBLE
-                    }
-                    is MovieListViewModel.State.HideLoading -> {
-                        progressBar.visibility = ProgressBar.INVISIBLE
-                    }
-                    is MovieListViewModel.State.Result -> {
-                        searchAdapter?.addItems(result.list!!)
-                    }
+    private fun onSearchPressed() {
+        search.setOnClickListener { }
+
+        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                if (!p0.isNullOrEmpty()) {
+                    searchAdapter?.clearAll()
+                    query = p0
+                    search(query = query!!)
                 }
-            })
-        }
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                return false
+            }
+
+        })
+    }
+
+    private fun search(query: String) {
+        progressBar.visibility = ProgressBar.VISIBLE
+        movieListViewModel.search(query)
+        movieListViewModel.liveData.observe(viewLifecycleOwner, Observer { result ->
+            when (result) {
+                is MovieListViewModel.State.ShowLoading -> {
+                    progressBar.visibility = ProgressBar.VISIBLE
+                }
+                is MovieListViewModel.State.HideLoading -> {
+                    progressBar.visibility = ProgressBar.INVISIBLE
+                }
+                is MovieListViewModel.State.Result -> {
+                    searchAdapter?.addItems(result.list!!)
+                }
+            }
+        })
     }
 
     private fun setAdapter() {
@@ -83,7 +102,6 @@ class SearchFragment : Fragment(), SearchAdapter.RecyclerViewItemClick{
 
     private fun bindViews(view: View) {
         search = view.findViewById(R.id.search)
-        searchButton = view.findViewById(R.id.search_button)
         recyclerView = view.findViewById(R.id.searchRecycler)
         progressBar = view.findViewById(R.id.progressBar)
     }
@@ -93,7 +111,8 @@ class SearchFragment : Fragment(), SearchAdapter.RecyclerViewItemClick{
         bundle.putInt("id", item.id)
         val movieDetailFragment = MovieDetailFragment()
         movieDetailFragment.arguments = bundle
-        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment).addToBackStack(null).commit()
+        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment)
+            .addToBackStack(null).commit()
         requireActivity().topTitle.visibility = View.GONE
         requireActivity().bottomNavigationView.visibility = View.GONE
     }

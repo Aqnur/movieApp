@@ -10,28 +10,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <EditText
+        <SearchView
                 android:id="@+id/search"
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Search"
-                android:inputType="text"
-                android:maxLines="1"
-                android:layout_marginTop="30dp"
-                android:layout_marginLeft="10dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-                android:id="@+id/search_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Search"
-                android:layout_marginTop="30dp"
-                app:layout_constraintBottom_toTopOf="@+id/searchRecycler"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/search"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_margin="15dp"
+                android:background="@drawable/search_background"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="15dp" />
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/searchRecycler"

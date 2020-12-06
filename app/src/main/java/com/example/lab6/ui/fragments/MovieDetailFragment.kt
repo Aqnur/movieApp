@@ -1,6 +1,7 @@
 package com.example.lab6.ui.fragments
 
 import android.graphics.drawable.Drawable
+import android.media.Rating
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,16 +14,23 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
+import com.example.lab6.data.model.cast.Crew
 import com.example.lab6.data.model.movie.Result
+import com.example.lab6.ui.adapters.CastAdapter
+import com.example.lab6.ui.adapters.ShortCastAdapter
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.SharedViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.bottom_nav.*
+import kotlinx.android.synthetic.main.cast_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MovieDetailFragment : Fragment() {
+class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
 
     private lateinit var rusTitle: TextView
     private lateinit var posterImage: ImageView
@@ -38,10 +46,18 @@ class MovieDetailFragment : Fragment() {
     private lateinit var like: ImageView
     private lateinit var progressBar: ProgressBar
     private lateinit var nestedScrollView: NestedScrollView
+    private lateinit var backgroundPoster: ImageView
     private var movie: Result? = null
     private var movieId: Int? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val movieDetailsViewModel by viewModel<MovieDetailViewModel>()
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var layoutManager: LinearLayoutManager
+
+    private val shortCastAdapter: ShortCastAdapter by lazy {
+        ShortCastAdapter(itemClickListener = this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,7 +76,9 @@ class MovieDetailFragment : Fragment() {
         movieId = bundle?.getInt("id")
 
         configureBackButton(view)
+        adapter()
         getMovieCoroutine(id = movieId!!)
+        getCast(movieId!!)
     }
 
     private fun getMovieCoroutine(id: Int) {
@@ -90,6 +108,29 @@ class MovieDetailFragment : Fragment() {
         })
     }
 
+    private fun setCrew(crewList: List<Crew>) {
+        var director : String = ""
+        var producer : String = ""
+        for (crew in crewList) {
+            if (crew.job == "Director") director += crew.name + ", "
+            if (crew.job == "Producer") producer += crew.name + ", "
+        }
+        tv_directors.text = director
+        tv_producers.text = producer
+    }
+
+    private fun getCast(id: Int) {
+        movieDetailsViewModel.getCredits(id)
+        movieDetailsViewModel.liveData.observe(requireActivity(), Observer { result ->
+            when (result) {
+                is MovieDetailViewModel.State.Actors -> {
+                    shortCastAdapter.addItems(result.actors!!.cast)
+                    setCrew(result.actors.crew)
+                }
+            }
+        })
+    }
+
     private fun likeMovie(movie: Result) {
         movieDetailsViewModel.addToFavourite(movie)
     }
@@ -98,6 +139,10 @@ class MovieDetailFragment : Fragment() {
         Glide.with(this)
             .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
             .into(posterImage)
+
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w500${movie.backdrop_path}")
+            .into(backgroundPoster)
 
         if(movie.releaseDate.length != 10) {
             titleOriginal.text = movie.originalTitle
@@ -140,6 +185,26 @@ class MovieDetailFragment : Fragment() {
             likeMovie(movie)
             sharedViewModel.select(movie)
         }
+
+        actors(movie.id)
+
+        relLay3.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("id", movie.id)
+            val ratingFragment = RatingFragment()
+            ratingFragment.arguments = bundle
+            parentFragmentManager.beginTransaction().add(R.id.frame, ratingFragment).addToBackStack(null).commit()
+        }
+    }
+
+    private fun actors(id: Int) {
+        tv_showAllCast.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("id", id)
+            val castFragment = CastFragment()
+            castFragment.arguments = bundle
+            parentFragmentManager.beginTransaction().add(R.id.frame, castFragment).addToBackStack(null).commit()
+        }
     }
 
     private fun bindViews(view: View) {
@@ -157,13 +222,27 @@ class MovieDetailFragment : Fragment() {
         like = view.findViewById(R.id.like)
         progressBar = view.findViewById(R.id.progressBar)
         nestedScrollView = view.findViewById(R.id.nestedScrollView2)
+        recyclerView = view.findViewById(R.id.rv_cast)
+        backgroundPoster = view.findViewById(R.id.iv_backgroundPoster)
+    }
+
+    private fun adapter() {
+        layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = shortCastAdapter
     }
 
     private fun configureBackButton(view: View) {
         val back: ImageView = view.findViewById(R.id.back)
         back.setOnClickListener {
             parentFragmentManager.popBackStack()
+            requireActivity().topTitle.visibility = View.VISIBLE
+            requireActivity().bottomNavigationView.visibility = View.VISIBLE
         }
+    }
+
+    override fun itemClick(position: Int, item: Result) {
+        TODO("Not yet implemented")
     }
 
 }

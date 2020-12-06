@@ -23,7 +23,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class AccountFragment : Fragment() {
 
     private lateinit var logout: Button
-    private lateinit var userId: TextView
     private lateinit var userAvatar: ImageView
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var preferences: SharedPreferences
@@ -74,7 +73,6 @@ class AccountFragment : Fragment() {
     private fun bindViews(view: View) {
         logout = view.findViewById(R.id.logout)
         textViewName = view.findViewById<View>(R.id.profileText) as TextView
-        userId = view.findViewById(R.id.profileIdText)
         userAvatar = view.findViewById(R.id.userImage)
 
         val map = view.findViewById<Button>(R.id.map)
@@ -87,7 +85,6 @@ class AccountFragment : Fragment() {
     private fun initViews() {
         val authorizedName = Singleton.getUserName()
         textViewName?.text = authorizedName
-        userId.text = "id:" + Singleton.getAccountId().toString()
     }
 
 }

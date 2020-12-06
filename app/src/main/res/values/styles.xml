@@ -14,4 +14,8 @@
         <item name="colorControlActivated">#FFC107</item>
     </style>
 
+    <style name="rateStartStyle" parent="Widget.AppCompat.RatingBar.Indicator">
+        <item name="colorControlNormal">#FFC107</item>
+        <item name="colorControlActivated">#FFC107</item>
+    </style>
 </resources>

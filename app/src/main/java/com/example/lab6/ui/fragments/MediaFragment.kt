@@ -89,22 +89,22 @@ class MediaFragment : Fragment() {
         nowPlayingMoviesRV = view.findViewById(R.id.rv_nowPlayingMovies)
         topRatedMoviesRV = view.findViewById(R.id.rv_topRatedMovies)
 
-        tv_popularMovies.setOnClickListener {
+        cl_popular.setOnClickListener {
             goToMoviesList(MoviesType.POPULAR)
             requireActivity().topTitle.text = tv_popularMovies.text
         }
 
-        tv_topRatedMovies.setOnClickListener {
+        cl_topRated.setOnClickListener {
             goToMoviesList(MoviesType.TOPRATED)
             requireActivity().topTitle.text = tv_topRatedMovies.text
         }
 
-        tv_upcomingMovies.setOnClickListener {
+        cl_upcomingMovies.setOnClickListener {
             goToMoviesList(MoviesType.UPCOMING)
             requireActivity().topTitle.text = tv_upcomingMovies.text
         }
 
-        tv_nowPlayingMovies.setOnClickListener {
+        cl_nowPlayingMovies.setOnClickListener {
             goToMoviesList(MoviesType.NOW_PLAYING)
             requireActivity().topTitle.text = tv_nowPlayingMovies.text
         }

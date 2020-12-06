@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#fff"
         tools:context=".ui.fragments.MovieDetailFragment">
-
-    <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tool_bar" />
 
     <Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:elevation="4dp">
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-        <ImageView
-                android:id="@+id/back"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_back"
-                />
+            <ImageView
+                    android:id="@+id/back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_back"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             <RelativeLayout
                     android:layout_width="wrap_content"
@@ -65,31 +56,58 @@
             </RelativeLayout>
 
             <ImageView
-                android:id="@+id/like"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:layout_constraintEnd_toEndOf="parent
-"               app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="90dp"
-                android:src="@drawable/ic_like" />
+                    android:id="@+id/like"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="90dp"
+                    android:src="@drawable/ic_like"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </Toolbar>
+
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_lay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tool_bar">
-            >
+            android:layout_height="0dip"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tool_bar">
+
+        <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.core.widget.NestedScrollView
                 android:id="@+id/nestedScrollView2"
                 android:layout_width="match_parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_height="700dp">
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
+                <ImageView
+                        android:id="@+id/iv_backgroundPoster"
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                        android:background="#80E86915"
+                        app:layout_constraintTop_toTopOf="parent"/>
 
                 <ImageView
                         android:id="@+id/moviePhoto"
@@ -156,6 +174,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="24dp"
+                        android:textColor="#000"
                         android:text="tagline"
                         app:layout_constraintStart_toEndOf="@+id/moviePhoto"
                         app:layout_constraintTop_toBottomOf="@+id/countries" />
@@ -292,10 +311,11 @@
                             android:stepSize="0.5" />
 
                     <TextView
-                            android:id="@+id/text2"
+                            android:id="@+id/myRating"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/starRating"
+                            android:textColor="#000"
                             android:layout_margin="10dp"
                             android:text="Моя оценка:  -" />
 
@@ -303,6 +323,7 @@
                             android:id="@+id/rating"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="#000"
                             android:layout_below="@id/text1"
                             android:layout_marginLeft="50dp"
                             android:layout_marginTop="10dp"
@@ -315,9 +336,101 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@id/text1"
                             android:layout_marginLeft="50dp"
+                            android:textColor="#000"
                             android:layout_marginTop="10dp"
                             android:layout_toRightOf="@id/rating"
                             android:text="rating" />
+                </RelativeLayout>
+
+                <TextView
+                        android:id="@+id/tv_mainActors"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="В главных ролях"
+                        android:background="#EDEAE0"
+                        app:layout_constraintTop_toBottomOf="@+id/relLay3" />
+
+                <RelativeLayout
+                        android:id="@+id/relLay4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_mainActors"
+                        tools:layout_editor_absoluteX="-16dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_cast"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    <TextView
+                            android:id="@+id/tv_showAllCast"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/borders"
+                            android:layout_below="@id/rv_cast"
+                            android:textSize="15dp"
+                            android:padding="5dp"
+                            android:textColor="#000"
+                            android:text="Все Роли"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
+                </RelativeLayout>
+
+                <TextView
+                        android:id="@+id/tv_director"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:background="#EDEAE0"
+                        android:text="Создатели"
+                        app:layout_constraintTop_toBottomOf="@+id/relLay4" />
+
+                <RelativeLayout
+                        android:id="@+id/relLay5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/tv_director">
+
+                    <TextView
+                            android:id="@+id/rezhiseri"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:textColor="#000"
+                            android:text="Режисеры"
+                            android:textStyle="bold" />
+
+                    <TextView
+                            android:id="@+id/tv_directors"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:textColor="#000"
+                            android:layout_below="@id/rezhiseri"
+                            android:text="имя"/>
+
+                    <TextView
+                            android:id="@+id/produceri"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_directors"
+                            android:layout_margin="10dp"
+                            android:textColor="#000"
+                            android:text="Продюсеры"
+                            android:textStyle="bold"
+                            />
+
+                    <TextView
+                            android:id="@+id/tv_producers"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:textColor="#000"
+                            android:layout_below="@id/produceri"
+                            android:text="имя"/>
+
                 </RelativeLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

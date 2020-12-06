@@ -108,4 +108,6 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
     implementation "org.koin:koin-androidx-fragment:$koin_version"
     implementation "org.koin:koin-androidx-ext:$koin_version"
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

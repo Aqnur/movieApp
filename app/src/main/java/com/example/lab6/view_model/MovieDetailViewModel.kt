@@ -1,10 +1,14 @@
 package com.example.lab6.view_model
 
+import android.nfc.Tag
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lab6.BuildConfig
+import com.example.lab6.data.model.RatingResponse
 import com.example.lab6.data.model.account.Singleton
+import com.example.lab6.data.model.cast.CreditResponse
 import com.example.lab6.data.model.favorites.FavResponse
 import com.example.lab6.data.model.movie.Result
 import com.example.lab6.data.repository.MovieRepository
@@ -42,6 +46,26 @@ class MovieDetailViewModel(
             }
             liveData.value = State.HideLoading
             liveData.value = State.Movie(movieDetail)
+        }
+    }
+
+    fun getCredits(id: Int) {
+        liveData.value = State.ShowLoading
+        launch {
+            val actors = withContext(Dispatchers.IO) {
+                val response = movieRepository.getCreditsRemoteDS(id, BuildConfig.API_KEY, Locale.getDefault().language)
+                response
+            }
+            liveData.value = State.HideLoading
+            liveData.value = State.Actors(actors)
+        }
+    }
+
+    fun getRating(movieId: Int) {
+        launch {
+            val rating = withContext(Dispatchers.IO) {
+                val response = movieRepository.getRatedRemoteDS(accountId, BuildConfig.API_KEY, sessionId, Locale.getDefault().language, "created_at.asc")
+            }
         }
     }
 
@@ -98,6 +122,26 @@ class MovieDetailViewModel(
         }
     }
 
+    fun rateMovie(movieId: Int, value: Float){
+        val body = JsonObject().apply {
+            addProperty("value", value)
+        }
+        updateRating(movieId, body)
+    }
+
+    private fun updateRating(movieId: Int, body: JsonObject) {
+        launch {
+            try {
+                movieRepository.rateMovieRemoteDS(
+                    movieId,
+                    BuildConfig.API_KEY,
+                    sessionId, body
+                )
+                Log.d("rating", movieId.toString() + " " + sessionId + " " + body.toString())
+            } catch (e: Exception) { }
+        }
+    }
+
     fun likeMovie(favourite: Boolean, movie: Result?, movieId: Int?) {
         liveData.value = State.ShowLoading
         launch {
@@ -129,10 +173,13 @@ class MovieDetailViewModel(
         }
     }
 
+
+
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
         data class Movie(val movie: Result?) : State()
         data class Res(val likeInt: Int?) : State()
+        data class Actors(val actors: CreditResponse?) : State()
     }
 }

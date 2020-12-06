@@ -3,7 +3,10 @@ package com.example.lab6.data.repository
 import com.example.lab6.data.network.MovieApi
 import com.example.lab6.data.network.RetrofitService
 import com.example.lab6.data.database.MovieDao
+import com.example.lab6.data.model.RatingResponse
+import com.example.lab6.data.model.cast.CreditResponse
 import com.example.lab6.data.model.movie.Movies
+import com.example.lab6.data.model.movie.RatedMoviesResponse
 import com.example.lab6.data.model.movie.Result
 import com.google.gson.JsonObject
 
@@ -29,6 +32,10 @@ interface MovieRepository {
     suspend fun getTopRatedRemoteDS(apiKey: String, language: String, page: Int): Movies?
     suspend fun getUpcomingRemoteDS(apiKey: String, language: String, page: Int): Movies?
     suspend fun getNowPlayingRemoteDS(apiKey: String, language: String, page: Int): Movies?
+    suspend fun getCreditsRemoteDS(movieId: Int, apiKey: String, language: String) : CreditResponse?
+    suspend fun rateMovieRemoteDS(movieId: Int, apiKey: String, sessionId: String, rating: JsonObject) : JsonObject?
+    suspend fun getRatedRemoteDS(userId: Int, apiKey: String, sessionId: String, language: String, sort: String) : RatedMoviesResponse?
+    suspend fun deleteRating(movieId: Int, apiKey: String, sessionId: String) : JsonObject?
 }
 
 class MovieRepositoryImpl(
@@ -100,6 +107,10 @@ class MovieRepositoryImpl(
         movieApi.getMovieApi(MovieApi::class.java).getMovieById(movieId, apiKey, language)
             .body()
 
+    override suspend fun getCreditsRemoteDS(movieId: Int, apiKey: String, language: String) =
+        movieApi.getMovieApi(MovieApi::class.java).getCredits(movieId, apiKey, language)
+            .body()
+
     override suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String) =
         movieApi.getMovieApi(MovieApi::class.java).hasLike(movieId, apiKey, sessionId)
             .body()
@@ -107,6 +118,24 @@ class MovieRepositoryImpl(
     override suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject) =
         movieApi.getMovieApi(MovieApi::class.java).markFavoriteMovie(accountId, apiKey, sessionId, body)
             .body()
+
+    override suspend fun rateMovieRemoteDS(movieId: Int, apiKey: String, sessionId: String, rating: JsonObject) =
+        movieApi.getMovieApi(MovieApi::class.java).rateMovie(movieId, apiKey, sessionId, rating)
+            .body()
+
+    override suspend fun getRatedRemoteDS(
+        userId: Int,
+        apiKey: String,
+        sessionId: String,
+        language: String,
+        sort: String
+    ) = movieApi.getMovieApi(MovieApi::class.java).getRated(userId, apiKey, sessionId, language, sort).body()
+
+    override suspend fun deleteRating(
+        movieId: Int,
+        apiKey: String,
+        sessionId: String
+    ) = movieApi.getMovieApi(MovieApi::class.java).deleteRating(movieId, apiKey, sessionId).body()
 
     override suspend fun getFavouriteMoviesRemoteDS(accountId: Int, apiKey: String, sessionId: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getFavoriteMovies(accountId, apiKey, sessionId, language)

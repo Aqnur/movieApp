@@ -23,7 +23,13 @@ class MediaListAdapter(
         return MediaListViewHolder(view)
     }
 
-    override fun getItemCount(): Int = movies.size
+    override fun getItemCount(): Int {
+        return if (movies.size > 10) {
+            10
+        } else {
+            movies.size
+        }
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MediaListViewHolder) {
