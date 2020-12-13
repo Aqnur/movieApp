@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
+import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.movie.Result
 import com.example.lab6.ui.adapters.CastAdapter
 import com.example.lab6.ui.adapters.MoviesAdapter
@@ -98,8 +99,12 @@ class CastFragment : Fragment(), CastAdapter.RecyclerViewItemClick {
         })
     }
 
-    override fun itemClick(position: Int, item: Result) {
-        TODO("Not yet implemented")
+    override fun itemClick(position: Int, item: Cast) {
+        val bundle = Bundle()
+        bundle.putInt("id", item.id)
+        val actorFragment = ActorFragment()
+        actorFragment.arguments = bundle
+        parentFragmentManager.beginTransaction().add(R.id.frame, actorFragment).addToBackStack(null).commit()
     }
 
 }

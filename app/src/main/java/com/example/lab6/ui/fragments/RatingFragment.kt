@@ -19,6 +19,7 @@ class RatingFragment : Fragment() {
 
     private lateinit var ratingBar: RatingBar
     private var movieId: Int? = null
+    private var movieTitle: String? = ""
 
     private val movieDetailsViewModel by viewModel<MovieDetailViewModel>()
 
@@ -36,7 +37,9 @@ class RatingFragment : Fragment() {
 
         val bundle = this.arguments
         movieId = bundle?.getInt("id")
+        movieTitle = bundle?.getString("movieName")
 
+        tv_movieName.text = movieTitle
         rateMovie()
         checkPressed(movieId!!)
         configureBackButton(view)

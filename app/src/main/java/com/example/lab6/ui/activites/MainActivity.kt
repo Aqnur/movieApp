@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_item_search -> {
                     fragmentManager.beginTransaction().hide(activeFragment).show(searchFragment).commit()
                     activeFragment = searchFragment
-                    topTitle.visibility = View.GONE
+                    topTitle.text = "Search"
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_item_acc -> {

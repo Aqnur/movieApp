@@ -11,6 +11,7 @@ import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lab6.R
+import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.cast.Crew
 import com.example.lab6.data.model.movie.Result
 import com.example.lab6.ui.adapters.CastAdapter
@@ -191,10 +193,13 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         relLay3.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("id", movie.id)
+            bundle.putString("movieName", movie.title)
             val ratingFragment = RatingFragment()
             ratingFragment.arguments = bundle
             parentFragmentManager.beginTransaction().add(R.id.frame, ratingFragment).addToBackStack(null).commit()
         }
+
+        openTrailer(movie.id)
     }
 
     private fun actors(id: Int) {
@@ -204,6 +209,16 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
             val castFragment = CastFragment()
             castFragment.arguments = bundle
             parentFragmentManager.beginTransaction().add(R.id.frame, castFragment).addToBackStack(null).commit()
+        }
+    }
+
+    private fun openTrailer(id: Int) {
+        relLay1.setOnClickListener {
+            var dialog = TrailerDialogFragment()
+            val bundle = Bundle()
+            bundle.putInt("id", id)
+            dialog.arguments = bundle
+            dialog.show(parentFragmentManager, "TrailerDialogView")
         }
     }
 
@@ -241,8 +256,12 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         }
     }
 
-    override fun itemClick(position: Int, item: Result) {
-        TODO("Not yet implemented")
+    override fun itemClick(position: Int, item: Cast) {
+        val bundle = Bundle()
+        bundle.putInt("id", item.id)
+        val actorFragment = ActorFragment()
+        actorFragment.arguments = bundle
+        parentFragmentManager.beginTransaction().add(R.id.frame, actorFragment).addToBackStack(null).commit()
     }
 
 }

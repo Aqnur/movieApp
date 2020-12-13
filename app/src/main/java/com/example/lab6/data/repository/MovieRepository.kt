@@ -4,10 +4,12 @@ import com.example.lab6.data.network.MovieApi
 import com.example.lab6.data.network.RetrofitService
 import com.example.lab6.data.database.MovieDao
 import com.example.lab6.data.model.RatingResponse
+import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.cast.CreditResponse
 import com.example.lab6.data.model.movie.Movies
 import com.example.lab6.data.model.movie.RatedMoviesResponse
 import com.example.lab6.data.model.movie.Result
+import com.example.lab6.data.model.video.VideoResponse
 import com.google.gson.JsonObject
 
 interface MovieRepository {
@@ -36,6 +38,8 @@ interface MovieRepository {
     suspend fun rateMovieRemoteDS(movieId: Int, apiKey: String, sessionId: String, rating: JsonObject) : JsonObject?
     suspend fun getRatedRemoteDS(userId: Int, apiKey: String, sessionId: String, language: String, sort: String) : RatedMoviesResponse?
     suspend fun deleteRating(movieId: Int, apiKey: String, sessionId: String) : JsonObject?
+    suspend fun getActor(personId: Int, apiKey: String, language: String) : Cast?
+    suspend fun getVideo(movieId: Int, apiKey: String, language: String) : VideoResponse?
 }
 
 class MovieRepositoryImpl(
@@ -105,6 +109,14 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieRemoteDS(movieId: Int, apiKey: String, language: String) =
         movieApi.getMovieApi(MovieApi::class.java).getMovieById(movieId, apiKey, language)
+            .body()
+
+    override suspend fun getActor(personId: Int, apiKey: String, language: String) =
+        movieApi.getMovieApi(MovieApi::class.java).getActor(personId, apiKey, language)
+            .body()
+
+    override suspend fun getVideo(movieId: Int, apiKey: String, language: String) =
+        movieApi.getMovieApi(MovieApi::class.java).getVideo(movieId, apiKey, language)
             .body()
 
     override suspend fun getCreditsRemoteDS(movieId: Int, apiKey: String, language: String) =

@@ -14,5 +14,9 @@ data class Cast (
     @SerializedName("cast_id") val cast_id : Int,
     @SerializedName("character") val character : String,
     @SerializedName("credit_id") val credit_id : String,
-    @SerializedName("order") val order : Int
+    @SerializedName("order") val order : Int,
+    @SerializedName("birthday") val birthday: String,
+    @SerializedName("place_of_birth") val place_of_birth: String,
+    @SerializedName("also_known_as") val also_known_as: List<String>,
+    @SerializedName("biography") val biography: String
 )

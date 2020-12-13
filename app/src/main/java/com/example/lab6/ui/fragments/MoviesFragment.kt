@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -20,6 +21,7 @@ import com.example.lab6.view_model.SharedViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_nav.*
+import kotlinx.android.synthetic.main.fragment_popular_movies.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
@@ -63,10 +65,12 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         super.onViewCreated(view, savedInstanceState)
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
+        tv_movieType.text = movieType.toString()
 
         bindViews(view)
         swipeRefresh()
         adapter()
+        configureBackButton(view)
         getMovies(curPage)
     }
 
@@ -122,6 +126,15 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
                 }
             }
         })
+    }
+
+    private fun configureBackButton(view: View) {
+        val back: ImageView = view.findViewById(R.id.back)
+        back.setOnClickListener {
+            parentFragmentManager.popBackStack()
+            requireActivity().topTitle.visibility = View.VISIBLE
+            requireActivity().bottomNavigationView.visibility = View.VISIBLE
+        }
     }
 
     override fun itemClick(position: Int, item: Result) {

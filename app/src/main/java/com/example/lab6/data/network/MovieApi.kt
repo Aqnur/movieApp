@@ -2,11 +2,13 @@ package com.example.lab6.data.network
 
 import com.example.lab6.data.model.RatingResponse
 import com.example.lab6.data.model.account.RequestToken
+import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.cast.CreditResponse
 import com.example.lab6.data.model.movie.Movies
 import com.example.lab6.data.model.movie.RatedMovies
 import com.example.lab6.data.model.movie.RatedMoviesResponse
 import com.example.lab6.data.model.movie.Result
+import com.example.lab6.data.model.video.VideoResponse
 import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.*
@@ -143,4 +145,17 @@ interface MovieApi {
         @Query("query") query: String
     ): Response<Movies>
 
+    @GET("/3/person/{person_id}")
+    suspend fun getActor(
+        @Path("person_id") person_id: Int,
+        @Query("api_key") key: String,
+        @Query("language") lang: String
+    ): Response<Cast>
+
+    @GET("/3/movie/{movie_id}/videos")
+    suspend fun getVideo(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") key: String,
+        @Query("language") lang: String
+    ): Response<VideoResponse>
 }

@@ -77,9 +77,9 @@ class MovieListViewModel(
                     Log.d("movies", result.toString())
                     if (!result.isNullOrEmpty()) {
                         movieRepository.insertAllLocalDS(result)
-                        for (movie in result) {
-                            isFavourite(movie)
-                        }
+//                        for (movie in result) {
+//                            isFavourite(movie)
+//                        }
                     }
                     result
                 } catch (e: Exception) {
@@ -105,9 +105,9 @@ class MovieListViewModel(
                     Log.d("movies", result.toString())
                     if (!result.isNullOrEmpty()) {
                         movieRepository.insertAllLocalDS(result)
-                        for (movie in result) {
-                            isFavourite(movie)
-                        }
+//                        for (movie in result) {
+//                            isFavourite(movie)
+//                        }
                     }
                     result
                 } catch (e: Exception) {
@@ -133,9 +133,9 @@ class MovieListViewModel(
                     Log.d("movies", result.toString())
                     if (!result.isNullOrEmpty()) {
                         movieRepository.insertAllLocalDS(result)
-                        for (movie in result) {
-                            isFavourite(movie)
-                        }
+//                        for (movie in result) {
+//                            isFavourite(movie)
+//                        }
                     }
                     result
                 } catch (e: Exception) {

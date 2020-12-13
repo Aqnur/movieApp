@@ -91,22 +91,18 @@ class MediaFragment : Fragment() {
 
         cl_popular.setOnClickListener {
             goToMoviesList(MoviesType.POPULAR)
-            requireActivity().topTitle.text = tv_popularMovies.text
         }
 
         cl_topRated.setOnClickListener {
             goToMoviesList(MoviesType.TOPRATED)
-            requireActivity().topTitle.text = tv_topRatedMovies.text
         }
 
         cl_upcomingMovies.setOnClickListener {
             goToMoviesList(MoviesType.UPCOMING)
-            requireActivity().topTitle.text = tv_upcomingMovies.text
         }
 
         cl_nowPlayingMovies.setOnClickListener {
             goToMoviesList(MoviesType.NOW_PLAYING)
-            requireActivity().topTitle.text = tv_nowPlayingMovies.text
         }
 
     }
@@ -119,6 +115,7 @@ class MediaFragment : Fragment() {
         movieFragment.arguments = bundle
         parentFragmentManager.beginTransaction().replace(R.id.frame, movieFragment).addToBackStack(null)
             .commit()
+        requireActivity().topTitle.visibility = View.GONE
         requireActivity().bottomNavigationView.visibility = View.GONE
     }
 

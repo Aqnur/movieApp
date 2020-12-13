@@ -57,11 +57,16 @@ class CastAdapter(
             Glide.with(itemView.context)
                 .load("https://image.tmdb.org/t/p/w342${cast.profile_path}")
                 .into(castImage)
+
+            itemView.setOnClickListener {
+                itemClickListener?.itemClick(adapterPosition, cast)
+            }
+
         }
 
     }
 
     interface RecyclerViewItemClick {
-        fun itemClick(position: Int, item: Result)
+        fun itemClick(position: Int, item: Cast)
     }
 }

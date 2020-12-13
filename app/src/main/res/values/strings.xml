@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KinoPoisk</string>
+    <string name="app_name">MovieApp</string>
     <string name="user_name">Aigerim</string>
     <string name="user_password">12345</string>
     <string name="genre_name">%1$s,\u0020</string>
