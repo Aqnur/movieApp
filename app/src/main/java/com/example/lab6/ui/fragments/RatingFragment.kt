@@ -42,6 +42,7 @@ class RatingFragment : Fragment() {
         tv_movieName.text = movieTitle
         rateMovie()
         checkPressed(movieId!!)
+        deleteRating(movieId!!)
         configureBackButton(view)
     }
 
@@ -54,7 +55,7 @@ class RatingFragment : Fragment() {
 
     private fun checkPressed(id: Int) {
         rateButton.setOnClickListener {
-            val rating = myRate.text.toString().toFloat()
+            val rating = myRate.text.toString().toInt()
             movieDetailsViewModel.rateMovie(id, rating)
             Toast.makeText(requireContext(), rating.toString(), Toast.LENGTH_LONG)
                 .show()
@@ -62,14 +63,18 @@ class RatingFragment : Fragment() {
         }
     }
 
-    private fun deleteRating() {
-
+    private fun deleteRating(id: Int) {
+        deleteRating.setOnClickListener {
+            movieDetailsViewModel.deleteRating(id)
+            Toast.makeText(requireContext(), "Rating deleted", Toast.LENGTH_LONG)
+                .show()
+        }
     }
 
     private fun rateMovie() {
         ratingBar.onRatingBarChangeListener =
             RatingBar.OnRatingBarChangeListener { p0, p1, p2 ->
-                myRate.text = p1.toString()
+                myRate.text = p1.toInt().toString()
             }
     }
 }

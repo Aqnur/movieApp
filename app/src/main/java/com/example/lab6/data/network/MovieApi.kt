@@ -4,6 +4,7 @@ import com.example.lab6.data.model.RatingResponse
 import com.example.lab6.data.model.account.RequestToken
 import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.cast.CreditResponse
+import com.example.lab6.data.model.favorites.FavResponse
 import com.example.lab6.data.model.movie.Movies
 import com.example.lab6.data.model.movie.RatedMovies
 import com.example.lab6.data.model.movie.RatedMoviesResponse
@@ -89,6 +90,13 @@ interface MovieApi {
         @Query("session_id") sessionId: String?
     ): Response<JsonObject>
 
+    @GET("/3/movie/{movie_id}/account_states")
+    suspend fun accountState(
+        @Path("movie_id") movieId: Int?,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String?
+    ): Response<FavResponse>
+
     @GET("/3/account/{account_id}/favorite/movies")
     suspend fun getFavoriteMovies(
         @Path("account_id") userId: Int,
@@ -158,4 +166,11 @@ interface MovieApi {
         @Query("api_key") key: String,
         @Query("language") lang: String
     ): Response<VideoResponse>
+
+    @GET("/3/movie/{movie_id}/recommendations")
+    suspend fun getRecommendations(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") lang: String
+    ) : Response<Movies>
 }

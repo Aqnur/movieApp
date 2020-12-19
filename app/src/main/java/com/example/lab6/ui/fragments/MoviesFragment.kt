@@ -142,7 +142,8 @@ class MoviesFragment : Fragment(), MoviesAdapter.RecyclerViewItemClick {
         bundle.putInt("id", item.id)
         val movieDetailFragment = MovieDetailFragment()
         movieDetailFragment.arguments = bundle
-        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment).addToBackStack(null).commit()
+        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment)
+            .addToBackStack(null).commit()
         requireActivity().topTitle.visibility = View.GONE
         requireActivity().bottomNavigationView.visibility = View.GONE
     }

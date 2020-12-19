@@ -1,5 +1,6 @@
 package com.example.lab6.ui.fragments
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.media.Rating
 import android.os.Bundle
@@ -23,6 +24,7 @@ import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.cast.Crew
 import com.example.lab6.data.model.movie.Result
 import com.example.lab6.ui.adapters.CastAdapter
+import com.example.lab6.ui.adapters.MediaListAdapter
 import com.example.lab6.ui.adapters.ShortCastAdapter
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.SharedViewModel
@@ -55,7 +57,6 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
     private val movieDetailsViewModel by viewModel<MovieDetailViewModel>()
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var layoutManager: LinearLayoutManager
 
     private val shortCastAdapter: ShortCastAdapter by lazy {
         ShortCastAdapter(itemClickListener = this)
@@ -106,13 +107,21 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
                         movie?.liked = false
                     }
                 }
+                is MovieDetailViewModel.State.Rating -> {
+                    if (result.rating!!.rated is Boolean) {
+                        myRating.text = "Моя оценка: - 0"
+                    } else {
+                        myRating.text = "Моя оценка: - " + result.rating.rated.toString()
+                            .substring(7, result.rating.rated.toString().length - 3)
+                    }
+                }
             }
         })
     }
 
     private fun setCrew(crewList: List<Crew>) {
-        var director : String = ""
-        var producer : String = ""
+        var director: String = ""
+        var producer: String = ""
         for (crew in crewList) {
             if (crew.job == "Director") director += crew.name + ", "
             if (crew.job == "Producer") producer += crew.name + ", "
@@ -137,25 +146,27 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         movieDetailsViewModel.addToFavourite(movie)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setData(movie: Result) {
-        Glide.with(this)
-            .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
-            .into(posterImage)
-
-        Glide.with(this)
-            .load("https://image.tmdb.org/t/p/w500${movie.backdrop_path}")
-            .into(backgroundPoster)
-
-        if(movie.releaseDate.length != 10) {
-            titleOriginal.text = movie.originalTitle
-        } else {
-            titleOriginal.text = movie.originalTitle + "(" + movie.releaseDate.substring(0, movie.releaseDate.length - 6) + ")"
-        }
         rusTitle.text = movie.title
         overview.text = movie.overview
         rating.text = movie.voteAverage.toString()
         votes.text = movie.voteCount.toString()
         ratingBar.rating = movie.voteAverage.toFloat()
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
+            .into(posterImage)
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w500${movie.backdrop_path}")
+            .into(backgroundPoster)
+        if (movie.releaseDate.isNotEmpty()) {
+            titleOriginal.text = movie.originalTitle + "(" + movie.releaseDate.substring(
+                0,
+                movie.releaseDate.length - 6
+            ) + ")"
+        } else {
+            titleOriginal.text = movie.originalTitle
+        }
         if (movie.genres != null) {
             genres.text = movie.genres?.map { it.name }.toString()
                 .substring(1, movie.genres?.map { it.name }.toString().length - 1)
@@ -167,9 +178,6 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
                     movie.productionCountries?.map { it.iso_3166_1 }.toString().length - 1
                 )
         }
-
-        movieDetailsViewModel.isFavourite(movie.id)
-
         if (movie.runtime != null) {
             runtime.text = movie.runtime.toString() + " мин"
         }
@@ -178,7 +186,6 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         }
 
         like.setOnClickListener {
-            val drawable: Drawable = like.drawable
             if (!movie.liked) {
                 like.setImageResource(R.drawable.ic_lliked)
             } else {
@@ -188,17 +195,11 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
             sharedViewModel.select(movie)
         }
 
+        movieDetailsViewModel.isFavourite(movie.id)
+        movieDetailsViewModel.isRated(movie.id)
+
         actors(movie.id)
-
-        relLay3.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("id", movie.id)
-            bundle.putString("movieName", movie.title)
-            val ratingFragment = RatingFragment()
-            ratingFragment.arguments = bundle
-            parentFragmentManager.beginTransaction().add(R.id.frame, ratingFragment).addToBackStack(null).commit()
-        }
-
+        rateMovie(movie.id, movie.title)
         openTrailer(movie.id)
     }
 
@@ -208,8 +209,25 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
             bundle.putInt("id", id)
             val castFragment = CastFragment()
             castFragment.arguments = bundle
-            parentFragmentManager.beginTransaction().add(R.id.frame, castFragment).addToBackStack(null).commit()
+            parentFragmentManager.beginTransaction().add(R.id.frame, castFragment)
+                .addToBackStack(null).commit()
         }
+    }
+
+    private fun rateMovie(id: Int, title: String) {
+        rl_rateMovie.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("id", id)
+            bundle.putString("movieName", title)
+            val ratingFragment = RatingFragment()
+            ratingFragment.arguments = bundle
+            parentFragmentManager.beginTransaction().add(R.id.frame, ratingFragment)
+                .addToBackStack(null).commit()
+        }
+    }
+
+    private fun fragmentTransactions(fragment: Fragment) {
+        parentFragmentManager.beginTransaction().add(R.id.frame, fragment).addToBackStack(null).commit()
     }
 
     private fun openTrailer(id: Int) {
@@ -242,8 +260,7 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
     }
 
     private fun adapter() {
-        layoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = shortCastAdapter
     }
 
@@ -261,7 +278,8 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         bundle.putInt("id", item.id)
         val actorFragment = ActorFragment()
         actorFragment.arguments = bundle
-        parentFragmentManager.beginTransaction().add(R.id.frame, actorFragment).addToBackStack(null).commit()
+        parentFragmentManager.beginTransaction().add(R.id.frame, actorFragment).addToBackStack(null)
+            .commit()
     }
 
 }

@@ -6,6 +6,7 @@ import com.example.lab6.data.database.MovieDao
 import com.example.lab6.data.model.RatingResponse
 import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.cast.CreditResponse
+import com.example.lab6.data.model.favorites.FavResponse
 import com.example.lab6.data.model.movie.Movies
 import com.example.lab6.data.model.movie.RatedMoviesResponse
 import com.example.lab6.data.model.movie.Result
@@ -40,6 +41,8 @@ interface MovieRepository {
     suspend fun deleteRating(movieId: Int, apiKey: String, sessionId: String) : JsonObject?
     suspend fun getActor(personId: Int, apiKey: String, language: String) : Cast?
     suspend fun getVideo(movieId: Int, apiKey: String, language: String) : VideoResponse?
+    suspend fun accountState(movieId: Int, apiKey: String, sessionId: String) : FavResponse?
+    suspend fun getRecommendations(movieId: Int, apiKey: String, language: String) : Movies?
 }
 
 class MovieRepositoryImpl(
@@ -125,6 +128,14 @@ class MovieRepositoryImpl(
 
     override suspend fun hasLikeRemoteDS(movieId: Int, apiKey: String, sessionId: String) =
         movieApi.getMovieApi(MovieApi::class.java).hasLike(movieId, apiKey, sessionId)
+            .body()
+
+    override suspend fun accountState(movieId: Int, apiKey: String, sessionId: String) =
+        movieApi.getMovieApi(MovieApi::class.java).accountState(movieId, apiKey, sessionId)
+            .body()
+
+    override suspend fun getRecommendations(movieId: Int, apiKey: String, language: String) =
+        movieApi.getMovieApi(MovieApi::class.java).getRecommendations(movieId, apiKey, language)
             .body()
 
     override suspend fun markFavouriteRemoteDS(accountId: Int, apiKey: String, sessionId: String, body: JsonObject) =

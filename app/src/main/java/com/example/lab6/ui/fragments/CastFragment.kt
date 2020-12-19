@@ -104,7 +104,8 @@ class CastFragment : Fragment(), CastAdapter.RecyclerViewItemClick {
         bundle.putInt("id", item.id)
         val actorFragment = ActorFragment()
         actorFragment.arguments = bundle
-        parentFragmentManager.beginTransaction().add(R.id.frame, actorFragment).addToBackStack(null).commit()
+        parentFragmentManager.beginTransaction().add(R.id.frame, actorFragment).addToBackStack(null)
+            .commit()
     }
 
 }

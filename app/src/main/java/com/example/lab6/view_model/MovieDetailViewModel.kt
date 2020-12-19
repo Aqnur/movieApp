@@ -116,6 +116,18 @@ class MovieDetailViewModel(
         }
     }
 
+    fun isRated(movieId: Int) {
+        liveData.value = State.ShowLoading
+        launch {
+            val rating = withContext(Dispatchers.IO) {
+                val result = movieRepository.accountState(movieId, BuildConfig.API_KEY, sessionId)
+                result
+            }
+            liveData.value = State.HideLoading
+            liveData.value = State.Rating(rating)
+        }
+    }
+
     fun isFavourite(movieId: Int) {
         launch {
             val likeInt = withContext(Dispatchers.IO) {
@@ -170,11 +182,21 @@ class MovieDetailViewModel(
         }
     }
 
-    fun rateMovie(movieId: Int, value: Float) {
+    fun rateMovie(movieId: Int, value: Int) {
         val body = JsonObject().apply {
             addProperty("value", value)
         }
         updateRating(movieId, body)
+    }
+
+    fun deleteRating(movieId: Int) {
+        liveData.value = State.ShowLoading
+        launch {
+            withContext(Dispatchers.IO) {
+                movieRepository.deleteRating(movieId, BuildConfig.API_KEY, sessionId)
+            }
+            liveData.value = State.HideLoading
+        }
     }
 
     private fun updateRating(movieId: Int, body: JsonObject) {
@@ -224,7 +246,6 @@ class MovieDetailViewModel(
         }
     }
 
-
     sealed class State {
         object ShowLoading : State()
         object HideLoading : State()
@@ -233,5 +254,6 @@ class MovieDetailViewModel(
         data class Actors(val actors: CreditResponse?) : State()
         data class Actor(val actor: Cast?) : State()
         data class Videos(val videoResponse: VideoResponse?) : State()
+        data class Rating(val rating: FavResponse?) : State()
     }
 }

@@ -286,7 +286,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                        android:id="@+id/relLay3"
+                        android:id="@+id/rl_rateMovie"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/borders"
@@ -349,7 +349,7 @@
                         android:padding="10dp"
                         android:text="В главных ролях"
                         android:background="#EDEAE0"
-                        app:layout_constraintTop_toBottomOf="@+id/relLay3" />
+                        app:layout_constraintTop_toBottomOf="@+id/rl_rateMovie" />
 
                 <RelativeLayout
                         android:id="@+id/relLay4"

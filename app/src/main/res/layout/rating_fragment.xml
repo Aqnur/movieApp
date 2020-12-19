@@ -84,7 +84,7 @@
                 android:isIndicator="false"
                 android:numStars="10"
                 android:rating="5"
-                android:stepSize="0.5" />
+                android:stepSize="1" />
     </RelativeLayout>
 
     <Button

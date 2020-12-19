@@ -113,7 +113,8 @@ class MediaFragment : Fragment() {
 
         val movieFragment = MoviesFragment()
         movieFragment.arguments = bundle
-        parentFragmentManager.beginTransaction().replace(R.id.frame, movieFragment).addToBackStack(null)
+        parentFragmentManager.beginTransaction().replace(R.id.frame, movieFragment)
+            .addToBackStack(null)
             .commit()
         requireActivity().topTitle.visibility = View.GONE
         requireActivity().bottomNavigationView.visibility = View.GONE
@@ -135,7 +136,6 @@ class MediaFragment : Fragment() {
     }
 
     private fun adapter() {
-
         popularMoviesRV.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         topRatedMoviesRV.layoutManager =
@@ -149,7 +149,6 @@ class MediaFragment : Fragment() {
         topRatedMoviesRV.adapter = topRatedMoviesAdapter
         upcomingMoviesRV.adapter = upcomingMoviesAdapter
         nowPlayingMoviesRV.adapter = nowPlayingMoviesAdapter
-
     }
 
     private fun getMovies(type: MoviesType) {

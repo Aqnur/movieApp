@@ -206,7 +206,6 @@ class MovieListViewModel(
             try {
                 val result =
                     movieRepository.hasLikeRemoteDS(movie.id, BuildConfig.API_KEY, sessionId)
-                Log.d("is_favourite", result.toString())
                 val gson = Gson()
                 val like = gson.fromJson(
                     result,

@@ -54,6 +54,16 @@ class FavouritesAdapter(
         notifyDataSetChanged()
     }
 
+    fun deleteItem(position: Int) {
+        val id = movies[position].id
+        itemClickListner?.removeFromFavourite(position, movies[position])
+        val foundMovie = movies.find { it.id == id}
+        if (foundMovie != null) {
+            (movies as? ArrayList<Result>)?.remove(foundMovie)
+        }
+        notifyDataSetChanged()
+    }
+
     fun clearAll() {
         (movies as? ArrayList<Result>)?.clear()
         notifyDataSetChanged()

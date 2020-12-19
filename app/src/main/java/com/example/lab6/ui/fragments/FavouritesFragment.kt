@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.lab6.R
 import com.example.lab6.data.model.movie.Result
 import com.example.lab6.ui.adapters.FavouritesAdapter
+import com.example.lab6.ui.adapters.SwipeToDelete
 import com.example.lab6.view_model.MovieListViewModel
 import com.example.lab6.view_model.SharedViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,9 +32,13 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         sharedViewModel.selected.observe(viewLifecycleOwner, Observer { item ->
-            if (item.liked) favoriteAdapter?.addItem(item)
-            else favoriteAdapter?.removeItem(item)
+            if (item.liked) {
+                favoriteAdapter?.addItem(item)
+            } else {
+                favoriteAdapter?.removeItem(item)
+            }
         })
     }
 
@@ -51,6 +57,9 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
         swipeRefresh()
         setAdapter()
         getFavMovieCoroutine()
+
+        val itemTouchHelper = ItemTouchHelper(SwipeToDelete(favoriteAdapter!!))
+        itemTouchHelper.attachToRecyclerView(recyclerViewFav)
     }
 
     private fun bindViews(view: View) {
@@ -95,7 +104,8 @@ class FavouritesFragment : Fragment(), FavouritesAdapter.RecyclerViewItemClick {
         bundle.putInt("id", item.id)
         val movieDetailFragment = MovieDetailFragment()
         movieDetailFragment.arguments = bundle
-        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment).addToBackStack(null).commit()
+        parentFragmentManager.beginTransaction().add(R.id.frame, movieDetailFragment)
+            .addToBackStack(null).commit()
         requireActivity().topTitle.visibility = View.GONE
         requireActivity().bottomNavigationView.visibility = View.GONE
     }

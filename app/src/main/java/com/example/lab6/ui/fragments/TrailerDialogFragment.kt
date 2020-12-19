@@ -27,7 +27,7 @@ class TrailerDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var rootView: View = inflater.inflate(R.layout.trailer_dialog_fragment, container, false)
+        val rootView: View = inflater.inflate(R.layout.trailer_dialog_fragment, container, false)
 
         rootView.textView3.setOnClickListener {
             dismiss()
@@ -47,8 +47,8 @@ class TrailerDialogFragment : DialogFragment() {
 
     private fun getVideo(id: Int) {
         movieDetailViewModel.getVideo(id)
-        movieDetailViewModel.liveData.observe(requireActivity(), Observer {result ->
-            when(result) {
+        movieDetailViewModel.liveData.observe(requireActivity(), Observer { result ->
+            when (result) {
                 is MovieDetailViewModel.State.Videos -> {
                     val key = result.videoResponse!!.results
                     link = path + key[0].key
