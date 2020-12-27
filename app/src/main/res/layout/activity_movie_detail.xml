@@ -101,15 +101,18 @@
                 <ImageView
                         android:id="@+id/iv_backgroundPoster"
                         android:layout_width="match_parent"
-                        android:layout_height="220dp"
+                        android:layout_height="0dp"
                         android:scaleType="centerCrop"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintBottom_toBottomOf="@+id/viewLine"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
+                        android:id="@+id/imageView2"
                         android:layout_width="match_parent"
-                        android:layout_height="220dp"
+                        android:layout_height="0dp"
                         android:background="#80E86915"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintBottom_toBottomOf="@+id/viewLine"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                         android:id="@+id/moviePhoto"
@@ -193,7 +196,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/originalTitle" />
 
                 <View
-                        android:id="@+id/view"
+                        android:id="@+id/viewLine"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="30dp"
@@ -209,7 +212,7 @@
                         android:text="Смотреть по подписке"
                         android:textAllCaps="false"
                         android:textColor="#fff"
-                        app:layout_constraintTop_toBottomOf="@+id/view"
+                        app:layout_constraintTop_toBottomOf="@+id/viewLine"
                         tools:layout_editor_absoluteX="20dp" />
 
                 <View

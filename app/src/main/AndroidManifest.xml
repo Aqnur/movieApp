@@ -47,7 +47,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".ui.activites.TestActivity"></activity>
         <service
                 android:name=".Service.MyFirebaseMessagingService"
                 android:exported="false">
