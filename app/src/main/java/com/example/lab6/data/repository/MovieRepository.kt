@@ -37,7 +37,7 @@ interface MovieRepository {
     suspend fun getNowPlayingRemoteDS(apiKey: String, language: String, page: Int): Movies?
     suspend fun getCreditsRemoteDS(movieId: Int, apiKey: String, language: String) : CreditResponse?
     suspend fun rateMovieRemoteDS(movieId: Int, apiKey: String, sessionId: String, rating: JsonObject) : JsonObject?
-    suspend fun getRatedRemoteDS(userId: Int, apiKey: String, sessionId: String, language: String, sort: String) : RatedMoviesResponse?
+    suspend fun getRatedRemoteDS(userId: Int, apiKey: String, sessionId: String, language: String, sort: String) : Movies?
     suspend fun deleteRating(movieId: Int, apiKey: String, sessionId: String) : JsonObject?
     suspend fun getActor(personId: Int, apiKey: String, language: String) : Cast?
     suspend fun getVideo(movieId: Int, apiKey: String, language: String) : VideoResponse?

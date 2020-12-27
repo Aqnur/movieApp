@@ -15,9 +15,13 @@ import com.bumptech.glide.Glide
 import com.example.lab6.R
 import com.example.lab6.data.model.account.Account
 import com.example.lab6.data.model.account.Singleton
+import com.example.lab6.data.model.movie.MoviesType
 import com.example.lab6.ui.activites.GoogleMapsActivity
 import com.example.lab6.ui.activites.LoginActivity
 import com.example.lab6.view_model.ProfileViewModel
+import kotlinx.android.synthetic.main.activity_account.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_nav.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AccountFragment : Fragment() {
@@ -43,7 +47,7 @@ class AccountFragment : Fragment() {
         bindViews(view)
         initViews()
         accountDetails()
-
+        getRatedMovies()
         preferences = requireActivity().getSharedPreferences("Username", 0) as SharedPreferences
 
         logout.setOnClickListener {
@@ -79,6 +83,20 @@ class AccountFragment : Fragment() {
         map.setOnClickListener {
             val intent = Intent(requireActivity(), GoogleMapsActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun getRatedMovies() {
+        ratedMovies.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable("type", MoviesType.RATED)
+            val movieFragment = MoviesFragment()
+            movieFragment.arguments = bundle
+            parentFragmentManager.beginTransaction().replace(R.id.frame, movieFragment)
+                .addToBackStack(null)
+                .commit()
+            requireActivity().topTitle.visibility = View.GONE
+            requireActivity().bottomNavigationView.visibility = View.GONE
         }
     }
 

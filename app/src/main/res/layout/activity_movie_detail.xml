@@ -7,6 +7,18 @@
         android:background="#fff"
         tools:context=".ui.fragments.MovieDetailFragment">
 
+    <include
+            android:id="@+id/offlineStatus"
+            layout="@layout/offline_status"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tool_bar"
+            />
+
     <Toolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
@@ -70,21 +82,11 @@
             android:id="@+id/main_lay"
             android:layout_width="match_parent"
             android:layout_height="0dip"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tool_bar">
-
-        <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.core.widget.NestedScrollView
                 android:id="@+id/nestedScrollView2"
@@ -219,16 +221,36 @@
                         app:layout_constraintTop_toBottomOf="@id/button2"
                         tools:layout_editor_absoluteX="0dp" />
 
-                <TextView
-                        android:id="@+id/overview"
+                <com.ms.square.android.expandabletextview.ExpandableTextView
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/expandable_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="20dp"
-                        android:text="overview"
-                        android:textColor="#000"
+                        expandableTextView:maxCollapsedLines="5"
+                        expandableTextView:animDuration="200"
                         app:layout_constraintTop_toBottomOf="@+id/view1"
-                        tools:layout_editor_absoluteX="20dp" />
+                        >
+
+                    <TextView
+                            android:id="@+id/expandable_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_marginTop="20dp"
+                            android:text="overview"
+                            android:textColor="#000"
+                            tools:layout_editor_absoluteX="20dp" />
+
+                    <ImageButton
+                            android:id="@+id/expand_collapse"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|bottom"
+                            android:layout_marginRight="10dp"
+                            android:background="@android:color/transparent"
+                            />
+                </com.ms.square.android.expandabletextview.ExpandableTextView>
 
                 <RelativeLayout
                         android:id="@+id/relLay1"
@@ -238,7 +260,7 @@
                         android:background="@drawable/borders"
                         android:gravity="center"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/overview">
+                        app:layout_constraintTop_toBottomOf="@+id/expandable_text_view">
 
                     <ImageView
                             android:id="@+id/img_plenka"
@@ -266,7 +288,7 @@
                         android:gravity="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/relLay1"
-                        app:layout_constraintTop_toBottomOf="@+id/overview">
+                        app:layout_constraintTop_toBottomOf="@+id/expandable_text_view">
 
                     <ImageView
                             android:id="@+id/img_recenziya"

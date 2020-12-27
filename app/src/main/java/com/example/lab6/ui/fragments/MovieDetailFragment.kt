@@ -1,8 +1,11 @@
 package com.example.lab6.ui.fragments
 
 import android.annotation.SuppressLint
+import android.app.Service
 import android.graphics.drawable.Drawable
 import android.media.Rating
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +14,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RatingBar
 import android.widget.TextView
+import androidx.core.view.isInvisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -19,6 +23,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.ethanhua.skeleton.RecyclerViewSkeletonScreen
+import com.ethanhua.skeleton.Skeleton
+import com.ethanhua.skeleton.ViewSkeletonScreen
 import com.example.lab6.R
 import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.data.model.cast.Crew
@@ -28,6 +35,7 @@ import com.example.lab6.ui.adapters.MediaListAdapter
 import com.example.lab6.ui.adapters.ShortCastAdapter
 import com.example.lab6.view_model.MovieDetailViewModel
 import com.example.lab6.view_model.SharedViewModel
+import com.ms.square.android.expandabletextview.ExpandableTextView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.bottom_nav.*
@@ -43,18 +51,21 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
     private lateinit var tagline: TextView
     private lateinit var countries: TextView
     private lateinit var runtime: TextView
-    private lateinit var overview: TextView
+    private lateinit var overview: ExpandableTextView
     private lateinit var rating: TextView
     private lateinit var votes: TextView
     private lateinit var ratingBar: RatingBar
     private lateinit var like: ImageView
-    private lateinit var progressBar: ProgressBar
     private lateinit var nestedScrollView: NestedScrollView
     private lateinit var backgroundPoster: ImageView
     private var movie: Result? = null
     private var movieId: Int? = null
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val movieDetailsViewModel by viewModel<MovieDetailViewModel>()
+    private var connectivityManager: ConnectivityManager? = null
+    private var info: NetworkInfo? = null
+
+    private lateinit var skeletonScreen: ViewSkeletonScreen
 
     private lateinit var recyclerView: RecyclerView
 
@@ -73,26 +84,35 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bindViews(view)
+        configureBackButton(view)
 
         val bundle = this.arguments
         movieId = bundle?.getInt("id")
 
-        configureBackButton(view)
-        adapter()
-        getMovieCoroutine(id = movieId!!)
-        getCast(movieId!!)
+
+        connectivityManager =
+            context?.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            info = connectivityManager!!.activeNetworkInfo
+            if (info != null) {
+                bindViews(view)
+                adapter()
+                getMovieCoroutine(id = movieId!!)
+                getCast(movieId!!)
+            } else {
+                offlineStatus.visibility = View.VISIBLE
+                main_lay.visibility = View.INVISIBLE
+            }
+        }
+
     }
 
     private fun getMovieCoroutine(id: Int) {
         movieDetailsViewModel.getMovie(id)
         movieDetailsViewModel.liveData.observe(requireActivity(), Observer { result ->
             when (result) {
-                is MovieDetailViewModel.State.ShowLoading -> {
-                    progressBar.visibility = ProgressBar.VISIBLE
-                }
                 is MovieDetailViewModel.State.HideLoading -> {
-                    progressBar.visibility = ProgressBar.INVISIBLE
+                    skeletonScreen.hide()
                 }
                 is MovieDetailViewModel.State.Movie -> {
                     movie = result.movie
@@ -149,6 +169,7 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
     @SuppressLint("SetTextI18n")
     private fun setData(movie: Result) {
         rusTitle.text = movie.title
+
         overview.text = movie.overview
         rating.text = movie.voteAverage.toString()
         votes.text = movie.voteCount.toString()
@@ -227,7 +248,8 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
     }
 
     private fun fragmentTransactions(fragment: Fragment) {
-        parentFragmentManager.beginTransaction().add(R.id.frame, fragment).addToBackStack(null).commit()
+        parentFragmentManager.beginTransaction().add(R.id.frame, fragment).addToBackStack(null)
+            .commit()
     }
 
     private fun openTrailer(id: Int) {
@@ -248,15 +270,19 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         countries = view.findViewById(R.id.countries)
         runtime = view.findViewById(R.id.runtime)
         rusTitle = view.findViewById(R.id.rusTitle)
-        overview = view.findViewById(R.id.overview)
+        overview = view.findViewById(R.id.expandable_text_view)
         rating = view.findViewById(R.id.rating)
         votes = view.findViewById(R.id.voteCount)
         ratingBar = view.findViewById(R.id.starRating)
         like = view.findViewById(R.id.like)
-        progressBar = view.findViewById(R.id.progressBar)
         nestedScrollView = view.findViewById(R.id.nestedScrollView2)
         recyclerView = view.findViewById(R.id.rv_cast)
         backgroundPoster = view.findViewById(R.id.iv_backgroundPoster)
+        skeletonScreen = Skeleton.bind(main_lay)
+            .load(R.layout.movie_details_skelet_view)
+            .shimmer(true)
+            .duration(1000)
+            .show()
     }
 
     private fun adapter() {

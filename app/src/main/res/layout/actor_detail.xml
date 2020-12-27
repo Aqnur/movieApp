@@ -39,134 +39,129 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/srl_actor"
+    <RelativeLayout
+            android:id="@+id/actorsLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <RelativeLayout
+        <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="0dp">
+                android:layout_height="wrap_content">
 
-            <androidx.core.widget.NestedScrollView
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:background="#fff"
+                        android:padding="10dp"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/constraintLayout2"
-                            android:layout_width="match_parent"
+                    <androidx.cardview.widget.CardView
+                            android:id="@+id/cardView"
+                            android:layout_width="150dp"
+                            android:layout_height="200dp"
+                            app:cardCornerRadius="15dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                                android:id="@+id/iv_actorImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <RelativeLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="#fff"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:padding="10dp">
+                            android:layout_margin="10dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/cardView"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <androidx.cardview.widget.CardView
-                                android:id="@+id/cardView"
-                                android:layout_width="150dp"
-                                android:layout_height="200dp"
-                                app:cardCornerRadius="15dp"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent">
-
-                            <ImageView
-                                    android:id="@+id/iv_actorImage"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:scaleType="centerCrop" />
-
-                        </androidx.cardview.widget.CardView>
-
-                        <RelativeLayout
-                                android:layout_width="0dp"
+                        <TextView
+                                android:id="@+id/tv_actorName"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="10dp"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/cardView"
-                                app:layout_constraintTop_toTopOf="parent">
+                                android:text="name"
+                                android:textColor="#000" />
 
-                            <TextView
-                                    android:id="@+id/tv_actorName"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="name"
-                                    android:textColor="#000" />
+                        <TextView
+                                android:id="@+id/tv_actorBirthday"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tv_actorName"
+                                android:layout_marginTop="10dp"
+                                android:text="birthday"
+                                android:textColor="#000" />
 
-                            <TextView
-                                    android:id="@+id/tv_actorBirthday"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_below="@id/tv_actorName"
-                                    android:layout_marginTop="10dp"
-                                    android:text="birthday"
-                                    android:textColor="#000" />
+                        <TextView
+                                android:id="@+id/tv_actorPlaceOfBirth"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tv_actorBirthday"
+                                android:layout_marginTop="10dp"
+                                android:text="place"
+                                android:textColor="#000" />
 
-                            <TextView
-                                    android:id="@+id/tv_actorPlaceOfBirth"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_below="@id/tv_actorBirthday"
-                                    android:layout_marginTop="10dp"
-                                    android:text="place"
-                                    android:textColor="#000" />
+                        <TextView
+                                android:id="@+id/tv_actorGender"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tv_actorPlaceOfBirth"
+                                android:layout_marginTop="10dp"
+                                android:text="gender"
+                                android:textColor="#000" />
 
-                            <TextView
-                                    android:id="@+id/tv_actorGender"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_below="@id/tv_actorPlaceOfBirth"
-                                    android:layout_marginTop="10dp"
-                                    android:text="gender"
-                                    android:textColor="#000" />
+                        <TextView
+                                android:id="@+id/tv_actorKnownFor"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tv_actorGender"
+                                android:layout_marginTop="10dp"
+                                android:text="known for"
+                                android:textColor="#000" />
 
-                            <TextView
-                                    android:id="@+id/tv_actorKnownFor"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_below="@id/tv_actorGender"
-                                    android:layout_marginTop="10dp"
-                                    android:text="known for"
-                                    android:textColor="#000" />
-
-                            <TextView
-                                    android:id="@+id/tv_actorAlsoKnownFor"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_below="@id/tv_actorKnownFor"
-                                    android:layout_marginTop="10dp"
-                                    android:text="Also known for"
-                                    android:textColor="#000" />
-                        </RelativeLayout>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <TextView
-                            android:id="@+id/textView2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Биография"
-                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
-
-                    <TextView
-                            android:id="@+id/tv_actorBiography"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="#fff"
-                            android:padding="10dp"
-                            android:text="z"
-                            android:textColor="#000"
-                            app:layout_constraintTop_toBottomOf="@id/textView2"
-                            tools:layout_editor_absoluteX="10dp" />
-
+                        <TextView
+                                android:id="@+id/tv_actorAlsoKnownFor"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/tv_actorKnownFor"
+                                android:layout_marginTop="10dp"
+                                android:text="Also known for"
+                                android:textColor="#000" />
+                    </RelativeLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.core.widget.NestedScrollView>
-        </RelativeLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Биография"
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
+                <TextView
+                        android:id="@+id/tv_actorBiography"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#fff"
+                        android:padding="10dp"
+                        android:text="z"
+                        android:textColor="#000"
+                        app:layout_constraintTop_toBottomOf="@id/textView2"
+                        tools:layout_editor_absoluteX="10dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </RelativeLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

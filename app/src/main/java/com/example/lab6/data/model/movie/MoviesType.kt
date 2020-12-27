@@ -5,7 +5,8 @@ enum class MoviesType {
     FAVOURITES,
     TOPRATED,
     UPCOMING,
-    NOW_PLAYING;
+    NOW_PLAYING,
+    RATED;
 
     companion object {
         fun typeToString(type: MoviesType): String {
@@ -15,6 +16,7 @@ enum class MoviesType {
                 TOPRATED -> "Top Rated"
                 UPCOMING -> "Upcoming"
                 NOW_PLAYING -> "Now Playing"
+                RATED -> "Rated"
             }
         }
     }

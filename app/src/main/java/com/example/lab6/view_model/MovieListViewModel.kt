@@ -32,6 +32,7 @@ class MovieListViewModel(
             MoviesType.UPCOMING -> getUpcomingMovies(page)
             MoviesType.NOW_PLAYING -> getNowPlayingMovies(page)
             MoviesType.FAVOURITES -> getFavorites()
+            MoviesType.RATED -> getRating(page)
         }
     }
 
@@ -144,6 +145,32 @@ class MovieListViewModel(
             }
             liveData.value = State.HideLoading
             liveData.value = State.Result(list, MoviesType.NOW_PLAYING)
+        }
+    }
+
+    fun getRating(page: Int = 1) {
+        launch {
+            if (page == 1) liveData.value = State.ShowLoading
+            val rating = withContext(Dispatchers.IO) {
+                try {
+                    val response = movieRepository.getRatedRemoteDS(
+                        accountId,
+                        BuildConfig.API_KEY,
+                        sessionId,
+                        Locale.getDefault().language,
+                        "created_at.asc"
+                    )
+                    val result = response!!.results
+                    if (!result.isNullOrEmpty()) {
+                        movieRepository.insertAllLocalDS(result)
+                    }
+                    result
+                } catch (e: Exception) {
+                    movieRepository.getMoviesLocalDS() ?: emptyList()
+                }
+            }
+            liveData.value = State.HideLoading
+            liveData.value = State.Result(rating, MoviesType.RATED)
         }
     }
 

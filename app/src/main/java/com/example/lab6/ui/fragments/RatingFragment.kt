@@ -59,7 +59,6 @@ class RatingFragment : Fragment() {
             movieDetailsViewModel.rateMovie(id, rating)
             Toast.makeText(requireContext(), rating.toString(), Toast.LENGTH_LONG)
                 .show()
-//            parentFragmentManager.popBackStack()
         }
     }
 

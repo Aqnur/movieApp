@@ -81,7 +81,7 @@ interface MovieApi {
         @Query("session_id") sessionId: String,
         @Query("language") lang: String,
         @Query("sort_by") sort: String
-    ): Response<RatedMoviesResponse>
+    ): Response<Movies>
 
     @GET("/3/movie/{movie_id}/account_states")
     suspend fun hasLike(

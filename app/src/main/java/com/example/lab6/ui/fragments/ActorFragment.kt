@@ -1,5 +1,6 @@
 package com.example.lab6.ui.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,14 +9,20 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.ethanhua.skeleton.Skeleton
+import com.ethanhua.skeleton.ViewSkeletonScreen
 import com.example.lab6.R
 import com.example.lab6.data.model.cast.Cast
 import com.example.lab6.view_model.MovieDetailViewModel
+import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.actor_detail.*
 import kotlinx.android.synthetic.main.cast_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActorFragment : Fragment() {
+
+    private lateinit var skeletonScreen: ViewSkeletonScreen
+
     private val movieDetailViewModel by viewModel<MovieDetailViewModel>()
 
     private var actorId: Int? = null
@@ -34,33 +41,37 @@ class ActorFragment : Fragment() {
         val bundle = this.arguments
         actorId = bundle?.getInt("id")
 
+        skeletonScreen = Skeleton.bind(actorsLayout)
+            .load(R.layout.movie_details_skelet_view)
+            .shimmer(true)
+            .duration(1000)
+            .show()
+
         getActor(actorId!!)
         configureBackButton(view)
     }
+
 
     private fun getActor(id: Int) {
         movieDetailViewModel.getActor(id)
         movieDetailViewModel.liveData.observe(requireActivity(), Observer { result ->
             when(result) {
-                is MovieDetailViewModel.State.ShowLoading -> {
-                    srl_actor.isRefreshing = true
-                }
                 is MovieDetailViewModel.State.HideLoading -> {
-                    srl_actor.isRefreshing = false
+                    skeletonScreen.hide()
                 }
                 is MovieDetailViewModel.State.Actor -> {
                     setData(result.actor!!)
                 }
             }
         })
+
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setData(cast: Cast) {
-
         Glide.with(this)
             .load("https://image.tmdb.org/t/p/w342${cast.profile_path}")
             .into(iv_actorImage)
-
         tv_actorName.text = cast.name
         tv_actorBirthday.text = cast.birthday
         tv_actorPlaceOfBirth.text = cast.place_of_birth

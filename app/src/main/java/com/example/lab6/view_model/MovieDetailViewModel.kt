@@ -102,20 +102,6 @@ class MovieDetailViewModel(
         }
     }
 
-    fun getRating(movieId: Int) {
-        launch {
-            val rating = withContext(Dispatchers.IO) {
-                val response = movieRepository.getRatedRemoteDS(
-                    accountId,
-                    BuildConfig.API_KEY,
-                    sessionId,
-                    Locale.getDefault().language,
-                    "created_at.asc"
-                )
-            }
-        }
-    }
-
     fun isRated(movieId: Int) {
         liveData.value = State.ShowLoading
         launch {
@@ -207,7 +193,6 @@ class MovieDetailViewModel(
                     BuildConfig.API_KEY,
                     sessionId, body
                 )
-                Log.d("rating", movieId.toString() + " " + sessionId + " " + body.toString())
             } catch (e: Exception) {
             }
         }
