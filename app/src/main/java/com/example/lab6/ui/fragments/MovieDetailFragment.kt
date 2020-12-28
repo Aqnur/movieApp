@@ -1,7 +1,9 @@
 package com.example.lab6.ui.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Service
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.media.Rating
 import android.net.ConnectivityManager
@@ -89,7 +91,6 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         val bundle = this.arguments
         movieId = bundle?.getInt("id")
 
-
         connectivityManager =
             context?.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (connectivityManager != null) {
@@ -105,6 +106,14 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
             }
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            val ratingData = data?.getIntExtra("rating", 0)
+            myRating.text = "Моя оценка - " + ratingData
+        }
     }
 
     private fun getMovieCoroutine(id: Int) {
@@ -129,9 +138,9 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
                 }
                 is MovieDetailViewModel.State.Rating -> {
                     if (result.rating!!.rated is Boolean) {
-                        myRating.text = "Моя оценка: - 0"
+                        myRating.text = "Моя оценка - нет рейтинга"
                     } else {
-                        myRating.text = "Моя оценка: - " + result.rating.rated.toString()
+                        myRating.text = "Моя оценка - " + result.rating.rated.toString()
                             .substring(7, result.rating.rated.toString().length - 3)
                     }
                 }
@@ -281,6 +290,7 @@ class MovieDetailFragment : Fragment(), ShortCastAdapter.RecyclerViewItemClick {
         skeletonScreen = Skeleton.bind(main_lay)
             .load(R.layout.movie_details_skelet_view)
             .shimmer(true)
+            .color(R.color.colorOfSkeleton)
             .duration(1000)
             .show()
     }

@@ -3,4 +3,5 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#FAFAFA</color>
     <color name="colorAccent">#FAC9A4</color>
+    <color name="colorOfSkeleton">#E94800</color>
 </resources>

@@ -44,6 +44,7 @@ class ActorFragment : Fragment() {
         skeletonScreen = Skeleton.bind(actorsLayout)
             .load(R.layout.movie_details_skelet_view)
             .shimmer(true)
+            .color(R.color.colorOfSkeleton)
             .duration(1000)
             .show()
 

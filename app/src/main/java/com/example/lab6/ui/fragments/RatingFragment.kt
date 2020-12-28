@@ -1,5 +1,7 @@
 package com.example.lab6.ui.fragments
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +51,9 @@ class RatingFragment : Fragment() {
     private fun configureBackButton(view: View) {
         val back: ImageView = view.findViewById(R.id.back)
         back.setOnClickListener {
+            val intent = Intent(context, MovieDetailViewModel::class.java)
+            intent.putExtra("rating", myRate.text.toString().toInt())
+            targetFragment?.onActivityResult(targetRequestCode, RESULT_OK, intent)
             parentFragmentManager.popBackStack()
         }
     }
@@ -76,4 +81,6 @@ class RatingFragment : Fragment() {
                 myRate.text = p1.toInt().toString()
             }
     }
+
+
 }
